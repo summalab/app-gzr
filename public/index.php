@@ -17,14 +17,15 @@ ini_set('error_log', $rutaLogs . '/errores_sistema.log');
 
 use Core\Contenedor;
 use Core\Router;
+use Core\EnvLoader;
 use Core\ConnexionDB;
 use Core\RateLimiter;
-use Shared\Dominio\Servicios\SesionUsuarioInterface;
-use Shared\Infraestructura\Servicios\NativaPhpSesionUsuario;
-use UsuariosFuncionalidad\UsuariosModulo;
+use Shared\SharedModulo;
 use AuthFuncionalidad\AuthModulo;
 use UbicacionesFuncionalidad\UbicacionesModulo;
-use Core\EnvLoader;
+use UsuariosFuncionalidad\UsuariosModulo;
+use Shared\Dominio\Servicios\SesionUsuarioInterface;
+use Shared\Infraestructura\Servicios\NativaPhpSesionUsuario;
 
 // 2. Cabeceras CORS seguras (Lista blanca de orígenes permitidos)
 /*
@@ -141,6 +142,7 @@ try {
 
     $esEntornoLocal = (EnvLoader::obtener('APP_ENV', 'local') === 'local');
 
+    SharedModulo::registrarDependencias($contenedor);
 
     UsuariosModulo::registrarDependencias($contenedor, $esEntornoLocal);
     UsuariosModulo::registrarRutas($enrutador);
