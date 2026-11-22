@@ -143,6 +143,6 @@ try {
     (new ManejadorGlobalExcepciones(
         new ArchivoRegistradorLog(),
         new ArchivoCatalogoMensajes()
-    ))->manejar($e, 'Arranque');
+    ))->manejar($e, 'index.php');
     exit;
 }

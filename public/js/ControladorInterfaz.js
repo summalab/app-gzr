@@ -139,17 +139,11 @@ export class ControladorInterfaz {
         }
     }
 
-
     /**
      * Cambia la interfaz entre modo Invitado (Landing Page) y modo Autenticado (Privado).
      *
      * @param {object|null} usuario Datos del usuario logueado o null si es invitado.
      */
-    /**
- * Cambia la interfaz entre modo Invitado (Landing Page) y modo Autenticado (Privado).
- *
- * @param {object|null} usuario Datos del usuario logueado o null si es invitado.
- */
     async actualizarEstadoSesion(usuario) {
         this.usuarioActual = usuario;
 
@@ -416,6 +410,16 @@ export class ControladorInterfaz {
 
         contenedor.textContent = mensaje;
         contenedor.className = `alerta-modal ${esExito ? 'alerta-exito' : 'alerta-error'}`;
+    }
+
+    async cargarMarcadoresEnMapa() {
+        const datosPublicas = await this.servicioUbicacion.listarPublicas();
+
+        if (datosPublicas?.geocerca && this.gestorMapa) {
+            const { lat, lng, radioKm } = datosPublicas.geocerca;
+            this.gestorMapa.actualizarGeocerca(lat, lng, radioKm);
+        }
+
     }
 
 };

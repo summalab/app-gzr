@@ -11,6 +11,8 @@ use AuthFuncionalidad\Aplicacion\CasosDeUso\LoginCasoDeUso;
 use AuthFuncionalidad\Aplicacion\CasosDeUso\LogoutCasoDeUso;
 use AuthFuncionalidad\Aplicacion\CasosDeUso\VerificarSesionCasoDeUso;
 use UsuariosFuncionalidad\Dominio\Excepciones\ReglaNegocioExcepcion;
+use Shared\Http\ManejadorGlobalExcepciones;
+
 
 class AuthControlador
 {
@@ -58,8 +60,10 @@ class AuthControlador
             ]);
 
         } catch (Throwable $e) {
-            //$this->manejarExcepcion($e);
-            $this->mManejadorExcepciones->manejar($e, static::class);
+            (new \Shared\Http\ManejadorGlobalExcepciones(
+                new \Shared\Infraestructura\Servicios\ArchivoRegistradorLog(),
+                new \Shared\Infraestructura\Servicios\ArchivoCatalogoMensajes()
+            ))->manejar($e, 'AuthControlador.login()');
         }
     }
 
@@ -84,8 +88,10 @@ class AuthControlador
             ]);
 
         } catch (Throwable $e) {
-            //$this->manejarExcepcion($e);
-            $this->mManejadorExcepciones->manejar($e, static::class);
+            (new \Shared\Http\ManejadorGlobalExcepciones(
+                new \Shared\Infraestructura\Servicios\ArchivoRegistradorLog(),
+                new \Shared\Infraestructura\Servicios\ArchivoCatalogoMensajes()
+            ))->manejar($e, 'AuthControlador.logout()');
         }
     }
 
@@ -115,8 +121,10 @@ class AuthControlador
             ]);
 
         } catch (Throwable $e) {
-            //$this->manejarExcepcion($e);
-            $this->mManejadorExcepciones->manejar($e, static::class);
+            (new \Shared\Http\ManejadorGlobalExcepciones(
+                new \Shared\Infraestructura\Servicios\ArchivoRegistradorLog(),
+                new \Shared\Infraestructura\Servicios\ArchivoCatalogoMensajes()
+            ))->manejar($e, 'AuthControlador.verificarSesion()');
         }
     }
 

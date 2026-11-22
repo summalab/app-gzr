@@ -6,6 +6,7 @@ namespace UbicacionesFuncionalidad\Http;
 
 use InvalidArgumentException;
 use Throwable;
+use Core\EnvLoader;
 use Shared\Dominio\Servicios\SesionUsuarioInterface;
 use Shared\Http\ManejadorGlobalExcepciones;
 use UbicacionesFuncionalidad\Aplicacion\CasosDeUso\CrearUbicacionCasoDeUso;
@@ -41,7 +42,12 @@ class UbicacionControlador
 
             $this->responderJson(200, [
                 'success'     => true,
-                'ubicaciones' => $ubicaciones
+                'ubicaciones' => $ubicaciones,
+                'geocerca'    => [
+                    'lat'     => (float)EnvLoader::obtener('GEO_CENTRO_LAT', '4.8133'),
+                    'lng'     => (float)EnvLoader::obtener('GEO_CENTRO_LNG', '-75.6961'),
+                    'radioKm' => (float)EnvLoader::obtener('GEO_RADIO_KM', '40'),
+                ],
             ]);
         } catch (Throwable $e) {
             //$this->manejarExcepcion($e);

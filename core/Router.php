@@ -68,22 +68,10 @@ class Router
                     return;
 
                 } catch (\Throwable $e) {
-                    // Aislamiento Defensivo: Si ocurre un error catastrófico dentro de un módulo,
-                    // el enrutador captura la falla de forma segura para no tumbar por completo el servidor web.
-                    http_response_code(500);
-                    header('Content-Type: application/json');
-                    echo json_encode([
-                        'success' => false,
-                        'error'   => 'Error en la ejecución del módulo solicitado.',
-                        // ini-> details muestra los detalles de los errores.
-                        //'details' => $e->getMessage() // Puedes ocultar 'details' en producción por seguridad
-                        // <-fin
-                    ]);
-                        
-                    // ini-> errores se escriben en log de errores.
-                    error_log($e->getMessage(),0);
-                    // <-fin
-                    return;
+                    (new \Shared\Http\ManejadorGlobalExcepciones(
+                        new \Shared\Infraestructura\Servicios\ArchivoRegistradorLog(),
+                        new \Shared\Infraestructura\Servicios\ArchivoCatalogoMensajes()
+                    ))->manejar($e, 'Core\Router.dispatch()');
                 }
             }
         }

@@ -65,7 +65,30 @@ export class GestorMapaLeaflet {
         }
     }
 
+    actualizarGeocerca(lat, lng, radioKm) {
+        if (!this.mapa) return;
 
+        if (this.capaGeocerca) {
+            this.mapa.removeLayer(this.capaGeocerca);
+        }
+
+        this.capaGeocerca = L.circle([lat, lng], {
+            radius: radioKm * 1000,
+            color: '#2563eb',
+            weight: 1.5,
+            fillColor: '#3b82f6',
+            fillOpacity: 0.06,
+            interactive: false
+        }).addTo(this.mapa);
+
+        // Ajustar límites de arrastre proporcionalmente al radio autorizado
+        const margenGrados = (radioKm / 111) * 1.6;
+        const limites = L.latLngBounds(
+            [lat - margenGrados, lng - margenGrados],
+            [lat + margenGrados, lng + margenGrados]
+        );
+        this.mapa.setMaxBounds(limites);
+    }
 
     /**
      * Configura el mapa en modo Landing Page (Invitado) y pinta ubicaciones comunitarias.
