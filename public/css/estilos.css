@@ -1,0 +1,393 @@
+/* ============================================================================
+   1. VARIABLES DE DISEÑO (CSS3 NATIVO)
+   ============================================================================ */
+:root {
+    --color-fondo: #f3f4f6;
+    --color-superficie: #ffffff;
+    --color-texto: #1f2937;
+    --color-texto-secundario: #4b5563;
+    --color-primario: #2563eb;
+    --color-primario-hover: #1d4ed8;
+    --color-peligro: #dc2626;
+    --color-peligro-hover: #b91c1c;
+    --color-borde: #e5e7eb;
+    --color-exito-fondo: #d1fae5;
+    --color-exito-texto: #065f46;
+    --color-error-fondo: #fee2e2;
+    --color-error-texto: #991b1b;
+    --altura-navbar: 64px;
+    --fuente-sistema: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ============================================================================
+   2. RESETS Y LAYOUT BASE (PANTALLA COMPLETA)
+   ============================================================================ */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    font-family: var(--fuente-sistema);
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    overflow: hidden;
+}
+
+.oculto {
+    display: none !important;
+}
+
+/* ============================================================================
+   3. BARRA DE NAVEGACIÓN SUPERIOR (NAVBAR)
+   ============================================================================ */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--altura-navbar);
+    background-color: var(--color-superficie);
+    border-bottom: 1px solid var(--color-borde);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    z-index: 1000;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.navbar-marca {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-primario);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-acciones {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.saludo-usuario {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-texto-secundario);
+    margin-right: 0.5rem;
+}
+
+/* ============================================================================
+   4. BOTONES REUTILIZABLES
+   ============================================================================ */
+.btn {
+    padding: 0.55rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-primario {
+    background-color: var(--color-primario);
+    color: #ffffff;
+}
+
+.btn-primario:hover {
+    background-color: var(--color-primario-hover);
+}
+
+.btn-secundario {
+    background-color: #ffffff;
+    color: var(--color-texto);
+    border-color: var(--color-borde);
+}
+
+.btn-secundario:hover {
+    background-color: var(--color-fondo);
+}
+
+.btn-peligro {
+    background-color: var(--color-peligro);
+    color: #ffffff;
+}
+
+.btn-peligro:hover {
+    background-color: var(--color-peligro-hover);
+}
+
+.btn-ancho-completo {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-hamburguesa {
+    background: none;
+    border: 1px solid var(--color-borde);
+    border-radius: 6px;
+    padding: 0.45rem 0.7rem;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: var(--color-texto);
+}
+
+.btn-hamburguesa:hover {
+    background-color: var(--color-fondo);
+}
+
+/* ============================================================================
+   5. LIENZO DEL MAPA (LEAFLET.JS) E INDICADOR DE VISTA
+   ============================================================================ */
+.contenedor-principal {
+    position: relative;
+    margin-top: var(--altura-navbar);
+    height: calc(100vh - var(--altura-navbar));
+    width: 100%;
+}
+
+#mapa-leaflet {
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+}
+
+.insignia-vista {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    z-index: 800;
+    background-color: var(--color-superficie);
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--color-borde);
+}
+
+/* ============================================================================
+   6. ALERTAS FLOTANTES GLOBALES Y DE MODAL
+   ============================================================================ */
+.alerta-global {
+    position: fixed;
+    top: calc(var(--altura-navbar) + 1rem);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2000;
+    min-width: 300px;
+    max-width: 90%;
+    padding: 0.85rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-align: center;
+}
+
+.alerta-modal {
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.alerta-exito {
+    padding: 0.75rem;
+    background-color: var(--color-exito-fondo);
+    color: var(--color-exito-texto);
+    border-radius: 6px;
+    border: 1px solid rgba(6, 95, 70, 0.2);
+}
+
+.alerta-error {
+    padding: 0.75rem;
+    background-color: var(--color-error-fondo);
+    color: var(--color-error-texto);
+    border-radius: 6px;
+    border: 1px solid rgba(153, 27, 27, 0.2);
+}
+
+/* ============================================================================
+   7. PANEL LATERAL DESLIZABLE (MENÚ HAMBURGUESA)
+   ============================================================================ */
+.panel-lateral {
+    position: fixed;
+    top: var(--altura-navbar);
+    right: 0;
+    bottom: 0;
+    width: 300px;
+    max-width: 85vw;
+    background-color: var(--color-superficie);
+    border-left: 1px solid var(--color-borde);
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+    z-index: 1100;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transform: translateX(100%);
+    transition: transform 0.25s ease-in-out;
+}
+
+.panel-lateral.abierto {
+    transform: translateX(0);
+}
+
+.panel-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-borde);
+    margin-bottom: 1rem;
+}
+
+.panel-lista-opciones {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.panel-opcion {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-texto);
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.panel-opcion:hover {
+    background-color: var(--color-fondo);
+}
+
+.panel-opcion-peligro {
+    color: var(--color-peligro);
+}
+
+.panel-opcion-peligro:hover {
+    background-color: var(--color-error-fondo);
+}
+
+/* ============================================================================
+   8. MODALES NATIVOS HTML5 (<dialog>) Y FORMULARIOS
+   ============================================================================ */
+dialog.modal-nativo {
+    margin: auto;
+    border: none;
+    border-radius: 12px;
+    padding: 2rem;
+    width: 92%;
+    max-width: 420px;
+    background-color: var(--color-superficie);
+    color: var(--color-texto);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+}
+
+dialog.modal-nativo::backdrop {
+    background-color: rgba(17, 24, 39, 0.55);
+    backdrop-filter: blur(2px);
+}
+
+.modal-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.modal-cabecera h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.btn-cerrar-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--color-texto-secundario);
+}
+
+.grupo-campo {
+    margin-bottom: 1rem;
+}
+
+.grupo-campo label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--color-texto-secundario);
+}
+
+.grupo-campo input {
+    width: 100%;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid var(--color-borde);
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.grupo-campo input:focus {
+    outline: none;
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.enlace-accion {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--color-primario);
+    background: none;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+
+.alerta-modal.alerta-exito {
+    display: block;
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+    padding: 0.65rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+}
+
+
+/* ============================================================================
+   9. ADAPTABILIDAD MÓVIL
+   ============================================================================ */
+@media (max-width: 600px) {
+    .saludo-usuario {
+        display: none;
+    }
+
+    .navbar {
+        padding: 0 1rem;
+    }
+}

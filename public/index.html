@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecosistema de Mapas - Registro de Identidad</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="navbar-marca">Ecosistema de Mapas</div>
+        <div id="nav-invitado" class="navbar-acciones">
+            <button type="button" id="btn-abrir-login" class="btn btn-secundario">Iniciar Sesión</button>
+            <button type="button" id="btn-abrir-registro" class="btn btn-primario">Registrarse</button>
+        </div>
+        <div id="nav-autenticado" class="navbar-acciones oculto">
+            <span id="saludo-usuario" class="saludo-usuario"></span>
+            <button type="button" id="btn-nueva-ubicacion" class="btn btn-primario">+ Ubicación</button>
+            <button type="button" id="btn-menu-hamburguesa" class="btn-hamburguesa" aria-label="Menú">☰</button>
+        </div>
+    </header>
+    <div id="alerta-global" class="alerta-global oculto" role="alert"></div>
+    <main class="contenedor-principal">
+        <div id="mapa-leaflet"></div>
+        <div id="insignia-vista" class="insignia-vista">Vista Pública</div>
+    </main>
+
+
+    <aside id="panel-perfil" class="panel-lateral">
+        <div>
+            <div class="panel-cabecera">
+                <strong>Mi Cuenta</strong>
+                <button type="button" id="btn-cerrar-panel" class="btn-cerrar-modal">&times;</button>
+            </div>
+            <ul class="panel-lista-opciones">
+                <li><button type="button" id="opcion-editar-apodo" class="panel-opcion">✏️ Cambiar apodo</button></li>
+                <li><button type="button" id="opcion-editar-correo" class="panel-opcion">✉️ Actualizar correo</button>
+                </li>
+                <li><button type="button" id="opcion-cambiar-clave" class="panel-opcion">🔑 Cambiar contraseña</button>
+                </li>
+                <li><button type="button" id="opcion-eliminar-cuenta" class="panel-opcion panel-opcion-peligro">🗑️
+                        Eliminar cuenta</button></li>
+            </ul>
+        </div>
+        <button type="button" id="btn-cerrar-sesion" class="btn btn-secundario btn-ancho-completo">Cerrar
+            Sesión</button>
+    </aside>
+
+    <!-- MODAL: INICIAR SESIÓN -->
+    <dialog id="modal-login" class="modal-nativo">
+        <div class="modal-cabecera">
+            <h2>Iniciar Sesión</h2>
+            <button type="button" class="btn-cerrar-modal" data-cerrar-modal>&times;</button>
+        </div>
+        <form id="form-login">
+            <div class="alerta-modal"></div>
+            <div class="grupo-campo">
+                <label for="login-correo">Correo Electrónico</label>
+                <input type="email" id="login-correo" name="correo_usuario" required placeholder="ejemplo@correo.com">
+            </div>
+            <div class="grupo-campo">
+                <label for="login-contrasena">Contraseña</label>
+                <input type="password" id="login-contrasena" name="contrasena" required placeholder="Tu contraseña">
+            </div>
+            <button type="submit" class="btn btn-primario btn-ancho-completo">Entrar</button>
+            <button type="button" id="btn-ir-recuperar" class="enlace-accion">¿Olvidaste tu contraseña?</button>
+        </form>
+    </dialog>
+
+    <!-- MODAL: REGISTRARSE -->
+    <dialog id="modal-registro" class="modal-nativo">
+        <div class="modal-cabecera">
+            <h2>Crear Cuenta</h2>
+            <button type="button" class="btn-cerrar-modal" data-cerrar-modal>&times;</button>
+        </div>
+        <form id="form-registro">
+            <div class="alerta-modal"></div>
+            <div class="grupo-campo">
+                <label for="reg-apodo">Apodo de Usuario</label>
+                <input type="text" id="reg-apodo" name="apodo_usuario" required placeholder="Ej: viajero99">
+            </div>
+            <div class="grupo-campo">
+                <label for="reg-correo">Correo Electrónico</label>
+                <input type="email" id="reg-correo" name="correo_usuario" required placeholder="ejemplo@correo.com">
+            </div>
+            <div class="grupo-campo">
+                <label for="reg-contrasena">Contraseña</label>
+                <input type="password" id="reg-contrasena" name="contrasena_hash_usuario" minlength="8" required
+                    placeholder="Mínimo 8 caracteres">
+            </div>
+            <div class="grupo-campo">
+                <label for="reg-confirmar">Confirmar Contraseña</label>
+                <input type="password" id="reg-confirmar" name="confirmar_contrasena" minlength="8" required
+                    placeholder="Repita su contraseña">
+            </div>
+            <button type="submit" class="btn btn-primario btn-ancho-completo">Registrarse</button>
+        </form>
+    </dialog>
+
+    <!-- MODAL: SOLICITAR RECUPERACIÓN DE CONTRASEÑA -->
+    <dialog id="modal-recuperar" class="modal-nativo">
+        <div class="modal-cabecera">
+            <h2>Recuperar Contraseña</h2>
+            <button type="button" class="btn-cerrar-modal" data-cerrar-modal>&times;</button>
+        </div>
+        <form id="form-recuperar">
+            <div class="alerta-modal"></div>
+            <div class="grupo-campo">
+                <label for="rec-correo">Ingresa tu correo registrado</label>
+                <input type="email" id="rec-correo" name="correo_usuario" required placeholder="ejemplo@correo.com">
+            </div>
+            <button type="submit" class="btn btn-primario btn-ancho-completo">Enviar Enlace</button>
+        </form>
+    </dialog>
+
+    <!-- MODAL: RESTABLECER NUEVA CONTRASEÑA (?recuperar=TOKEN) -->
+    <dialog id="modal-restablecer" class="modal-nativo">
+        <div class="modal-cabecera">
+            <h2>Nueva Contraseña</h2>
+            <button type="button" class="btn-cerrar-modal" data-cerrar-modal>&times;</button>
+        </div>
+        <form id="form-restablecer">
+            <div class="alerta-modal"></div>
+            <input type="hidden" id="token-recuperacion" name="token">
+            <div class="grupo-campo">
+                <label for="rest-nueva">Nueva Contraseña</label>
+                <input type="password" id="rest-nueva" name="nueva_contrasena" minlength="8" required
+                    placeholder="Mínimo 8 caracteres">
+            </div>
+            <div class="grupo-campo">
+                <label for="rest-confirmar">Confirmar Nueva Contraseña</label>
+                <input type="password" id="rest-confirmar" name="confirmar_nueva_contrasena" minlength="8" required
+                    placeholder="Repita la contraseña">
+            </div>
+            <button type="submit" class="btn btn-primario btn-ancho-completo">Restablecer Clave</button>
+        </form>
+    </dialog>
+
+    <!-- MODAL: EDITAR APODO -->
+    <dialog id="modal-editar-apodo" class="modal-nativo">
+        <div class="modal-cabecera">
+            <h2>Cambiar Apodo</h2>
+            <button type="button" class="btn-cerrar-modal" data-cerrar-modal>&times;</button>
+        </div>
+        <form id="form-editar-apodo">
+            <div class="alerta-modal"></div>
+            <div class="grupo-campo">
+                <label for="nuevo-apodo">Nuevo Apodo</label>
+                <input type="text" id="nuevo-apodo" name="nuevo_apodo" required placeholder="Tu nuevo apodo">
+            </div>
+            <button type="submit" class="btn btn-primario btn-ancho-completo">Guardar Apodo</button>
+        </form>
+    </dialog>
+
+    <!-- MODAL: ACTUALIZAR CORREO -->
+    <dialog id="modal-editar-correo" class="modal-nativo">
+        <div class="modal-cabecera">
+            <h2>Actualizar Correo</h2>
+            <button type="button" class="btn-cerrar-modal" data-cerrar-modal>&times;</button>
+        </div>
+        <form id="form-editar-correo">
+            <div class="alerta-modal"></div>
+            <div class="grupo-campo">
+                <label for="nuevo-correo">Nuevo Correo Electrónico</label>
+                <input type="email" id="nuevo-correo" name="nuevo_correo" required placeholder="nuevo@correo.com">
+            </div>
+            <button type="submit" class="btn btn-primario btn-ancho-completo">Actualizar y Enviar Verificación</button>
+        </form>
+    </dialog>
+
+    <!-- MODAL: CAMBIAR CONTRASEÑA -->
+    <dialog id="modal-cambiar-clave" class="modal-nativo">
+        <div class="modal-cabecera">
+            <h2>Cambiar Contraseña</h2>
+            <button type="button" class="btn-cerrar-modal" data-cerrar-modal>&times;</button>
+        </div>
+        <form id="form-cambiar-clave">
+            <div class="alerta-modal"></div>
+            <div class="grupo-campo">
+                <label for="clave-actual">Contraseña Actual</label>
+                <input type="password" id="clave-actual" name="contrasena_actual" required>
+            </div>
+            <div class="grupo-campo">
+                <label for="clave-nueva">Nueva Contraseña</label>
+                <input type="password" id="clave-nueva" name="contrasena_nueva" minlength="8" required
+                    placeholder="Mínimo 8 caracteres">
+            </div>
+            <div class="grupo-campo">
+                <label for="clave-confirmar">Confirmar Nueva Contraseña</label>
+                <input type="password" id="clave-confirmar" name="confirmar_contrasena_nueva" minlength="8" required>
+            </div>
+            <button type="submit" class="btn btn-primario btn-ancho-completo">Actualizar Contraseña</button>
+        </form>
+    </dialog>
+
+    <!-- MODAL: ELIMINAR CUENTA (SOFT DELETE) -->
+    <dialog id="modal-eliminar-cuenta" class="modal-nativo">
+        <div class="modal-cabecera">
+            <h2>Eliminar Cuenta</h2>
+            <button type="button" class="btn-cerrar-modal" data-cerrar-modal>&times;</button>
+        </div>
+        <form id="form-eliminar-cuenta">
+            <div class="alerta-modal"></div>
+            <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #4b5563;">
+                Esta acción desactivará tu cuenta de forma permanente. Confirma tu contraseña para continuar.
+            </p>
+            <div class="grupo-campo">
+                <label for="clave-eliminar">Contraseña Actual</label>
+                <input type="password" id="clave-eliminar" name="contrasena_confirmacion" required>
+            </div>
+            <button type="submit" class="btn btn-peligro btn-ancho-completo">Confirmar Baja de Cuenta</button>
+        </form>
+    </dialog>
+
+
+    <!-- MODAL: AÑADIR NUEVA UBICACIÓN -->
+    <dialog id="modal-nueva-ubicacion" class="modal-nativo">
+        <div class="modal-cabecera">
+            <h2>Nueva Ubicación</h2>
+            <button type="button" class="btn-cerrar-modal" data-cerrar-modal>&times;</button>
+        </div>
+        <div class="grupo-campo">
+            <button type="button" id="btn-usar-gps" class="btn btn-secundario btn-ancho-completo">
+                📍 Usar mi ubicación actual (GPS)
+            </button>
+        </div>
+        <form id="form-nueva-ubicacion">
+            <div class="alerta-modal"></div>
+            <div class="grupo-campo">
+                <label for="ubicacion-titulo">Título del lugar *</label>
+                <input type="text" id="ubicacion-titulo" name="titulo" maxlength="120" required
+                    placeholder="Ej. Edificio del Valle">
+            </div>
+            <div class="grupo-campo">
+                <label for="ubicacion-descripcion">Descripción *</label>
+                <input type="text" id="ubicacion-descripcion" name="descripcion" minlength="15" required placeholder="Explica qué hace relevante este sitio (mín. 15 caracteres)">
+            </div>
+            <div class="grupo-campo">
+                <label for="ubicacion-latitud">Latitud *</label>
+                <input type="number" id="ubicacion-latitud" name="latitud" step="any" min="-90" max="90" required
+                    placeholder="Ej. 4.8133">
+            </div>
+            <div class="grupo-campo">
+                <label for="ubicacion-longitud">Longitud *</label>
+                <input type="number" id="ubicacion-longitud" name="longitud" step="any" min="-180" max="180" required
+                    placeholder="Ej. -75.6961">
+            </div>
+            <button type="submit" class="btn btn-primario btn-ancho-completo">Guardar en el Mapa</button>
+        </form>
+    </dialog>
+
+    <script type="module" src="js/AppInitializer.js"></script>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+</body>
+
+</html>

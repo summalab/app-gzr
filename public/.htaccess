@@ -1,0 +1,41 @@
+# 1. Priorizar index.html como puerta de entrada visual de la Landing Page
+DirectoryIndex index.html index.php
+
+# Configuración pública y cabeceras de seguridad
+# 2. Asegurar compatibilidad activando el motor de reescritura de Apache
+RewriteEngine On
+
+# 3. Configurar la base de las rutas relativas a partir de la carpeta raíz pública
+RewriteBase /
+
+# 3.1 Bloquear archivos ocultos dentro de /public
+RewriteRule ^\. - [F,L]
+
+# 4. DIRECTIVAS DE CORRECCIÓN DE BARRAS INTERMEDIAS (Opcional - Evita bucles)
+# Si la petición no es para un directorio real, normaliza quitando barras flotantes al final
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+# 5. LA REGLA DE ORO DEL FRONT CONTROLLER (Filtros defensivos de desvío)
+# Front Controller: enviar solo rutas virtuales a index.php
+# Condición A: Si el archivo solicitado por el navegador NO EXISTE físicamente en el disco...
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# Condición B: Y si el directorio solicitado por el navegador TAMPOCO EXISTE físicamente...
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Acción: Redirige de forma transparente absolutamente todo el flujo hacia el archivo index.php
+# [QSA] (Query String Append): Preserva cualquier parámetro extra en la URL (ej: /register?source=web)
+# [L] (Last): Detiene la ejecución de subsiguientes reglas si esta condición se cumple con éxito
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# 6. POLÍTICAS DE SEGURIDAD BÁSICAS DE INFRAESTRUCTURA (Anti-Browsing)
+# Evita que intrusos listen el contenido de las carpetas si falta un archivo index de respaldo
+Options -Indexes
+
+# Prevenir que el navegador intente adivinar el tipo de contenido (MIME-Sniffing)
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

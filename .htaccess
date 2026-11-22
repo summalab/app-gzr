@@ -1,0 +1,15 @@
+DirectoryIndex index.html index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1. Bloquear acceso directo a carpetas privadas y archivos ocultos (.env, .git)
+    RewriteRule ^(\.env|\.git|core|src|storage)(/|$) - [F,L,NC]
+
+    # 2. Redirigir cualquier otra petición hacia la carpeta public/
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Impedir listado de directorios en todo el proyecto
+Options -Indexes
