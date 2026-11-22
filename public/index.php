@@ -26,6 +26,9 @@ use UbicacionesFuncionalidad\UbicacionesModulo;
 use UsuariosFuncionalidad\UsuariosModulo;
 use Shared\Dominio\Servicios\SesionUsuarioInterface;
 use Shared\Infraestructura\Servicios\NativaPhpSesionUsuario;
+use Shared\Http\ManejadorGlobalExcepciones;
+use Shared\Infraestructura\Servicios\ArchivoRegistradorLog;
+use Shared\Infraestructura\Servicios\ArchivoCatalogoMensajes;
 
 // 2. Cabeceras CORS seguras (Lista blanca de orígenes permitidos)
 /*
@@ -173,7 +176,11 @@ try {
     );
 
 } catch (\Throwable $e) {
-    error_log('Error crítico en arranque index.php: ' . $e->getMessage());
+    //error_log('Error crítico en arranque index.php: ' . $e->getMessage());
+    error_log(new ManejadorGlobalExcepciones(
+        new ArchivoRegistradorLog(), 
+        new ArchivoCatalogoMensajes()
+    ))->manejar($e, 'Arranque');
     http_response_code(500);
     header('Content-Type: application/json');
     echo json_encode([
