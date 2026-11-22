@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace UbicacionesFuncionalidad\Http;
 
 use InvalidArgumentException;
-use Shared\Dominio\Servicios\SesionUsuarioInterface;
 use Throwable;
+use Shared\Dominio\Servicios\SesionUsuarioInterface;
+use Shared\Http\ManejadorGlobalExcepciones;
 use UbicacionesFuncionalidad\Aplicacion\CasosDeUso\CrearUbicacionCasoDeUso;
 use UbicacionesFuncionalidad\Aplicacion\CasosDeUso\EliminarUbicacionCasoDeUso;
 use UbicacionesFuncionalidad\Aplicacion\CasosDeUso\ListarUbicacionesPublicasCasoDeUso;

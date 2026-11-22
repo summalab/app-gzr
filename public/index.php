@@ -24,35 +24,11 @@ use Shared\SharedModulo;
 use AuthFuncionalidad\AuthModulo;
 use UbicacionesFuncionalidad\UbicacionesModulo;
 use UsuariosFuncionalidad\UsuariosModulo;
-use Shared\Dominio\Servicios\SesionUsuarioInterface;
-use Shared\Infraestructura\Servicios\NativaPhpSesionUsuario;
 use Shared\Http\ManejadorGlobalExcepciones;
 use Shared\Infraestructura\Servicios\ArchivoRegistradorLog;
 use Shared\Infraestructura\Servicios\ArchivoCatalogoMensajes;
 
-// 2. Cabeceras CORS seguras (Lista blanca de orígenes permitidos)
-/*
-$origenesPermitidos = [
-    'http://app-gzr.test',
-    'http://localhost',
-    'https://tudominio.com',     // Reemplaza por tu dominio real en producción
-    'https://tudominio.com',
-];
 
-$origenPeticion = $_SERVER['HTTP_ORIGIN'] ?? '';
-if (in_array($origenPeticion, $origenesPermitidos, true)) {
-    header("Access-Control-Allow-Origin: {$origenPeticion}");
-    header('Access-Control-Allow-Credentials: true');
-}
-
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-*/
 
 try {
     // 3. Autoloader nativo PSR-4 (Compatible con Linux Case-Sensitive)
@@ -127,21 +103,9 @@ try {
         return ConnexionDB::getInstance();
     });
 
-    $contenedor->bind(
-        SesionUsuarioInterface::class,
-        NativaPhpSesionUsuario::class
-    );
-
     // 6. Inicialización del Enrutador y carga de Módulos independientes
     $enrutador = new Router();
 
-    /*
-    $esEntornoLocal = in_array(
-        $_SERVER['SERVER_NAME'] ?? 'localhost',
-        ['localhost', '127.0.0.1', 'app-gzr.test'],
-        true
-    );
-    */
 
     $esEntornoLocal = (EnvLoader::obtener('APP_ENV', 'local') === 'local');
 
@@ -176,16 +140,9 @@ try {
     );
 
 } catch (\Throwable $e) {
-    //error_log('Error crítico en arranque index.php: ' . $e->getMessage());
-    error_log(new ManejadorGlobalExcepciones(
-        new ArchivoRegistradorLog(), 
+    (new ManejadorGlobalExcepciones(
+        new ArchivoRegistradorLog(),
         new ArchivoCatalogoMensajes()
     ))->manejar($e, 'Arranque');
-    http_response_code(500);
-    header('Content-Type: application/json');
-    echo json_encode([
-        'success' => false,
-        'error'   => 'Error crítico en el arranque del servidor.'
-    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
