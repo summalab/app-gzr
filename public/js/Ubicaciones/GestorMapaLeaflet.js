@@ -14,6 +14,7 @@ export class GestorMapaLeaflet {
         this.mapa = null;
         this.capaMarcadores = null;
         this.alEliminarUbicacion = null;
+        this.capaGeocerca = null;
     }
 
 
@@ -50,7 +51,6 @@ export class GestorMapaLeaflet {
         // 2. Agrega la capa base de OpenStreetMap y el círculo de radio (40 km)
         // 2. Cargar teselas gratuitas de OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.mapa);
-        L.circle([4.8133, -75.6961], { radius: 40000, color: '#2563eb', interactive: false }).addTo(this.mapa);
 
         // 3. Inicializa grupo de capas y escucha eventos de clic
         this.capaMarcadores = L.layerGroup().addTo(this.mapa);
@@ -71,6 +71,8 @@ export class GestorMapaLeaflet {
         if (this.capaGeocerca) {
             this.mapa.removeLayer(this.capaGeocerca);
         }
+
+        this.mapa.setView([lat, lng]);
 
         this.capaGeocerca = L.circle([lat, lng], {
             radius: radioKm * 1000,

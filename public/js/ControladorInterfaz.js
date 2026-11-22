@@ -155,20 +155,32 @@ export class ControladorInterfaz {
             if (zonaInvitado) zonaInvitado.classList.add('oculto');
             if (zonaAutenticado) zonaAutenticado.classList.remove('oculto');
             if (saludo) saludo.textContent = `Hola, ${usuario.apodo_usuario}`;
-
-            const res = await this.servicioUbicacion.listarPropias();
-            this.gestorMapa.cargarVistaPrivada(res.ubicaciones || [], usuario.apodo_usuario);
         } else {
             if (zonaAutenticado) zonaAutenticado.classList.add('oculto');
             if (zonaInvitado) zonaInvitado.classList.remove('oculto');
             if (saludo) saludo.textContent = '';
-
             this.alternarPanelPerfil(false);
+        }
 
-            const res = await this.servicioUbicacion.listarPublicas();
-            this.gestorMapa.cargarVistaPublica(res.ubicaciones || []);
+        await this.cargarMarcadoresEnMapa();
+    }
+
+    async cargarMarcadoresEnMapa() {
+        const datosPublicas = await this.servicioUbicacion.listarPublicas();
+
+        if (datosPublicas?.geocerca && this.gestorMapa) {
+            const { lat, lng, radioKm } = datosPublicas.geocerca;
+            this.gestorMapa.actualizarGeocerca(lat, lng, radioKm);
+        }
+
+        if (this.usuarioActual) {
+            const res = await this.servicioUbicacion.listarPropias();
+            this.gestorMapa.cargarVistaPrivada(res.ubicaciones || [], this.usuarioActual.apodo_usuario);
+        } else {
+            this.gestorMapa.cargarVistaPublica(datosPublicas.ubicaciones || []);
         }
     }
+
 
 
     // ========================================================================

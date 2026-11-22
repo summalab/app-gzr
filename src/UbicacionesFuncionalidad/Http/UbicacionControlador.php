@@ -173,24 +173,4 @@ class UbicacionControlador
         http_response_code($codigoHttp);
         echo json_encode($datos, JSON_UNESCAPED_UNICODE);
     }
-
-    /*
-    private function manejarExcepcion(Throwable $e): void
-    {
-        if ($e instanceof ReglaNegocioExcepcion || $e instanceof InvalidArgumentException) {
-            $codigoHttp = ($e->getCode() >= 400 && $e->getCode() < 500) ? (int)$e->getCode() : 422;
-            $this->responderJson($codigoHttp, [
-                'success' => false,
-                'error'   => $e->getMessage()
-            ]);
-            return;
-        }
-
-        error_log('Error crítico en UbicacionControlador: ' . $e->getMessage());
-        $this->responderJson(500, [
-            'success' => false,
-            'error'   => 'Ocurrió un error interno en el servidor. Inténtelo más tarde.'
-        ]);
-    }
-    */
 }
