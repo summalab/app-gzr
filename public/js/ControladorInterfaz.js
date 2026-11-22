@@ -173,6 +173,7 @@ export class ControladorInterfaz {
             this.gestorMapa.actualizarGeocerca(lat, lng, radioKm);
         }
 
+
         if (this.usuarioActual) {
             const res = await this.servicioUbicacion.listarPropias();
             this.gestorMapa.cargarVistaPrivada(res.ubicaciones || [], this.usuarioActual.apodo_usuario);
@@ -422,16 +423,6 @@ export class ControladorInterfaz {
 
         contenedor.textContent = mensaje;
         contenedor.className = `alerta-modal ${esExito ? 'alerta-exito' : 'alerta-error'}`;
-    }
-
-    async cargarMarcadoresEnMapa() {
-        const datosPublicas = await this.servicioUbicacion.listarPublicas();
-
-        if (datosPublicas?.geocerca && this.gestorMapa) {
-            const { lat, lng, radioKm } = datosPublicas.geocerca;
-            this.gestorMapa.actualizarGeocerca(lat, lng, radioKm);
-        }
-
     }
 
 };
