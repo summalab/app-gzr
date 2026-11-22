@@ -169,10 +169,9 @@ export class ControladorInterfaz {
         const datosPublicas = await this.servicioUbicacion.listarPublicas();
 
         if (datosPublicas?.geocerca && this.gestorMapa) {
-            const { lat, lng, radioKm } = datosPublicas.geocerca;
-            this.gestorMapa.actualizarGeocerca(lat, lng, radioKm);
+            const { lat, lng, radioKm, modo } = datosPublicas.geocerca;
+            this.gestorMapa.actualizarGeocerca(lat, lng, radioKm, modo || 'circular');
         }
-
 
         if (this.usuarioActual) {
             const res = await this.servicioUbicacion.listarPropias();

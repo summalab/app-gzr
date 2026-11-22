@@ -16,6 +16,8 @@ return [
         'creada_exito'         => 'Ubicación guardada correctamente.',
         'eliminada_exito'      => 'Ubicación eliminada correctamente.',
         'no_encontrada'        => 'La ubicación solicitada no existe o no tienes permiso para modificarla.',
+        'fuera_de_pais'        => 'Ubicación fuera de zona: el punto debe estar dentro del territorio de Colombia.',
+
     ],
     'usuario' => [
         'correo_invalido'      => 'El formato del correo electrónico no es válido.',

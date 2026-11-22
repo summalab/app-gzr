@@ -65,13 +65,25 @@ export class GestorMapaLeaflet {
         }
     }
 
-    actualizarGeocerca(lat, lng, radioKm) {
+    actualizarGeocerca(lat, lng, radioKm, modo = 'circular') {
         if (!this.mapa) return;
 
         if (this.capaGeocerca) {
             this.mapa.removeLayer(this.capaGeocerca);
+            this.capaGeocerca = null;
         }
 
+        if (modo === 'nacional') {
+            // Cobertura en todo Colombia: sin círculo, zoom nacional y límites del país
+            const limitesColombia = L.latLngBounds([-4.50, -82.00], [13.80, -66.50]);
+            this.mapa.setMaxBounds(limitesColombia);
+            this.mapa.setMinZoom(5);
+            this.mapa.setView([4.5709, -74.2973], 6);
+            return;
+        }
+
+        // Modo circular (regional)
+        this.mapa.setMinZoom(9);
         this.mapa.setView([lat, lng]);
 
         this.capaGeocerca = L.circle([lat, lng], {
@@ -83,7 +95,6 @@ export class GestorMapaLeaflet {
             interactive: false
         }).addTo(this.mapa);
 
-        // Ajustar límites de arrastre proporcionalmente al radio autorizado
         const margenGrados = (radioKm / 111) * 1.6;
         const limites = L.latLngBounds(
             [lat - margenGrados, lng - margenGrados],
@@ -91,6 +102,7 @@ export class GestorMapaLeaflet {
         );
         this.mapa.setMaxBounds(limites);
     }
+
 
     /**
      * Configura el mapa en modo Landing Page (Invitado) y pinta ubicaciones comunitarias.

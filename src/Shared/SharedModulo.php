@@ -12,6 +12,8 @@ use Shared\Dominio\Servicios\SesionUsuarioInterface;
 use Shared\Infraestructura\Servicios\ArchivoCatalogoMensajes;
 use Shared\Infraestructura\Servicios\ArchivoRegistradorLog;
 use Shared\Infraestructura\Servicios\NativaPhpSesionUsuario;
+use Shared\Dominio\Servicios\GestorTransaccionesInterface;
+use Shared\Infraestructura\Persistencia\PdoGestorTransacciones;
 
 class SharedModulo
 {
@@ -32,6 +34,12 @@ class SharedModulo
             CatalogoMensajesInterface::class,
             ArchivoCatalogoMensajes::class
         );
+
+        $contenedor->bind(
+            GestorTransaccionesInterface::class,
+            PdoGestorTransacciones::class
+        );
+
 
     }
 

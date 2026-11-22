@@ -47,6 +47,7 @@ class UbicacionControlador
                     'lat'     => (float)EnvLoader::obtener('GEO_CENTRO_LAT', '4.8133'),
                     'lng'     => (float)EnvLoader::obtener('GEO_CENTRO_LNG', '-75.6961'),
                     'radioKm' => (float)EnvLoader::obtener('GEO_RADIO_KM', '40'),
+                    'modo'    => strtolower(EnvLoader::obtener('GEO_MODO', 'circular')),
                 ],
             ]);
         } catch (Throwable $e) {

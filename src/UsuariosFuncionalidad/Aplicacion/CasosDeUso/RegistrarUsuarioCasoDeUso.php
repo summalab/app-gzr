@@ -22,7 +22,8 @@ class RegistrarUsuarioCasoDeUso
     public function __construct(
         private UsuarioRepositorioInterface $mUsuarioRepositorio,
         private GenerarTokenConfirmacionUsuarioCasoDeUso $mGenerarTokenConfirmacionUsuarioCasoDeUso,
-        private EnviadorCorreoInterface $mEnviadorCorreoInterfaceImp
+        private EnviadorCorreoInterface $mEnviadorCorreoInterfaceImp,
+        private GestorTransaccionesInterface $transacciones
     ) {}
 
     /**
@@ -35,35 +36,28 @@ class RegistrarUsuarioCasoDeUso
     public function execute(RegistrarUsuarioEntradaDTO $mUsuarioDto): void
     {
 
-        // Le ordenamos a la infraestructura que abra una transacción en MySQL
-        $this->mUsuarioRepositorio->beginTransaction();
+        //---------------------------------------------------------------------
 
         try {
-            // 1. Registrar el usuario en base de datos
-            $datos_usuario_reg = $this->registrarUsuario($mUsuarioDto);
 
-            // 2. Generar el token de verificación
-            $token_verificacion = $this->generarTokenConfirmacion(
-                $datos_usuario_reg['id_usuario'],
-                $datos_usuario_reg['esta_verificado_usuario']
-            );
+            // 2. Escritura atómica ACID en múltiples tablas
+            $token_verificacion = $this->transacciones->ejecutar(function () use ($mUsuarioDto) {
 
-            // 3. Confirmar la transacción en MySQL
-            // Si ambas operaciones funcionaron a la perfección, confirmamos los cambios en el disco duro
+                // 1. Registrar el usuario en base de datos
+                $datos_usuario_reg = $this->registrarUsuario($mUsuarioDto);
 
-            $this->mUsuarioRepositorio->commit();
-
-            // 4. Armar URL dinámica y enviar correo fuera de la transacción
-            /*
-            $protocolo = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-            $host = $_SERVER['HTTP_HOST'] ?? 'app-gzr.test';
-            $enlaceVerificacion = "{$protocolo}://{$host}/?token={$token_verificacion}";
-            */
+                // 2. Generar el token de verificación
+                return $this->generarTokenConfirmacion(
+                    $datos_usuario_reg['id_usuario'],
+                    $datos_usuario_reg['esta_verificado_usuario']
+                );
+            });
 
             // 4. Armar URL dinámica desde .env y enviar correo fuera de la transacción
             $urlBase = rtrim(\Core\EnvLoader::obtener('APP_URL', 'http://app-gzr.test'), '/');
             $enlaceVerificacion = "{$urlBase}/?token={$token_verificacion}";
 
+            // 3. Envío de correo SMTP fuera de la transacción (la red nunca debe mantener abierta una transacción BD)
             $this->mEnviadorCorreoInterfaceImp->enviarCorreoVerificacion(
                 $datos_usuario_reg['correo_usuario'],
                 $datos_usuario_reg['apodo_usuario'],

@@ -72,6 +72,22 @@ class CrearUbicacionCasoDeUso
 
     private function validarDentroDeGeocerca(float $latitud, float $longitud): void
     {
+        $modo = strtolower(EnvLoader::obtener('GEO_MODO', 'circular'));
+
+        if ($modo === 'nacional') {
+            // Límites geográficos continentales/insulares de Colombia
+            $dentroColombia = ($latitud >= -4.23 && $latitud <= 13.50)
+                           && ($longitud >= -81.80 && $longitud <= -66.85);
+
+            if (!$dentroColombia) {
+                throw new InvalidArgumentException(
+                    $this->mensajes->obtener('ubicacion.fuera_de_pais')
+                );
+            }
+            return;
+        }
+
+        // Modo circular (regional)
         $centroLat = (float)EnvLoader::obtener('GEO_CENTRO_LAT', '4.8133');
         $centroLng = (float)EnvLoader::obtener('GEO_CENTRO_LNG', '-75.6961');
         $radioMaxKm = (float)EnvLoader::obtener('GEO_RADIO_KM', '40');
@@ -80,10 +96,11 @@ class CrearUbicacionCasoDeUso
 
         if ($distanciaKm > $radioMaxKm) {
             throw new InvalidArgumentException(
-                "Ubicación fuera de zona: el punto debe estar dentro de un radio de {$radioMaxKm} km alrededor de Pereira."
+                $this->mensajes->obtener('ubicacion.fuera_de_zona', ['radio' => $radioMaxKm])
             );
         }
     }
+
 
     /*
     private function validarProximidadMinima(float $latitud, float $longitud, float $minimoKm): void
