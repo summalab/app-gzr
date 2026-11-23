@@ -15,6 +15,8 @@ import { VistaPopupUbicacion } from './Presentacion/Ubicaciones/VistaPopupUbicac
 import { ControladorInterfaz } from './ControladorInterfaz.js';
 import './Presentacion/Componentes/RegistrarComponentesUI.js';
 import { CargadorComponentes } from './Presentacion/Componentes/CargadorComponentes.js';
+import { GestorTema } from './Presentacion/Shared/GestorTema.js';
+import { ConstructorDashboard } from './Presentacion/Shared/ConstructorDashboard.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -34,6 +36,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cuentaUsuario = new CuentaUsuarioUseCases(new UsuarioGateway(clienteHttp));
     const ubicaciones = new UbicacionUseCases(new UbicacionGateway(clienteHttp));
     const vista = new VistaInterfaz();
+    const gestorTema = new GestorTema();
+    gestorTema.inicializar();
+    gestorTema.enlazarControles(vista);
+    vista.constructorDashboard = new ConstructorDashboard();
     const popupUbicacion = new VistaPopupUbicacion();
     const mapa = new LeafletMapAdapter(
         'mapa-interactivo',

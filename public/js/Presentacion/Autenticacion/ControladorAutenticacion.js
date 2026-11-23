@@ -11,8 +11,14 @@ export class ControladorAutenticacion {
     }
 
     inicializar() {
-        this.vista.enlazarClick('boton-abrir-inicio-sesion', () => this.vista.abrirModal('modal-inicio-sesion'));
-        this.vista.enlazarClick('boton-abrir-registro', () => this.vista.abrirModal('modal-registro'));
+        this.vista.enlazarClick('boton-abrir-inicio-sesion', () => {
+            this.vista.alternarPanelPerfil(false);
+            this.vista.abrirModal('modal-inicio-sesion');
+        });
+        this.vista.enlazarClick('boton-abrir-registro', () => {
+            this.vista.alternarPanelPerfil(false);
+            this.vista.abrirModal('modal-registro');
+        });
         this.vista.enlazarClick('boton-ir-recuperacion', () => {
             this.vista.cerrarModal('modal-inicio-sesion');
             this.vista.abrirModal('modal-recuperacion');

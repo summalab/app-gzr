@@ -1,18 +1,13 @@
 <header class="barra-navegacion">
     <div class="marca-aplicacion">Peligro Estructural Inminente</div>
     <nav aria-label="Navegación principal">
-        <div id="navegacion-invitado" class="acciones-navegacion">
-            <boton-ui id="boton-abrir-inicio-sesion" tipo="button" variante="secundario">Iniciar sesión</boton-ui>
-            <boton-ui id="boton-abrir-registro" tipo="button" variante="principal">Registrarse</boton-ui>
-        </div>
         <div id="navegacion-autenticada" class="acciones-navegacion oculto">
             <contenedor-ui class="identidad-usuario">
                 <span id="saludo-usuario" class="saludo-usuario"></span>
                 <span id="rol-usuario" class="rol-usuario"></span>
             </contenedor-ui>
-            <boton-ui id="boton-nueva-ubicacion" tipo="button" variante="principal">+ Ubicación</boton-ui>
-            <boton-ui id="boton-menu-cuenta" tipo="button" variante="menu" aria-label="Abrir menú de cuenta"
-                aria-controls="panel-cuenta" aria-expanded="false">☰</boton-ui>
         </div>
+        <boton-ui id="boton-menu-principal" tipo="button" variante="menu"
+            aria-label="Abrir menú principal" aria-controls="panel-cuenta" aria-expanded="false">☰</boton-ui>
     </nav>
 </header>

@@ -1,6 +1,7 @@
 export class VistaInterfaz {
     constructor(documento = globalThis.document) {
         this.documento = documento;
+        this.constructorDashboard = null;
     }
 
     enlazarClick(idElemento, manejador) {
@@ -94,7 +95,7 @@ export class VistaInterfaz {
 
     alternarPanelPerfil(abrir) {
         this.documento.getElementById('panel-cuenta')?.classList.toggle('abierto', abrir);
-        this.documento.getElementById('boton-menu-cuenta')?.setAttribute('aria-expanded', String(abrir));
+        this.documento.getElementById('boton-menu-principal')?.setAttribute('aria-expanded', String(abrir));
     }
 
     mostrarAlertaGlobal(mensaje, esExito = true) {
@@ -119,24 +120,55 @@ export class VistaInterfaz {
     }
 
     renderizarSesion(usuario) {
-        const zonaInvitado = this.documento.getElementById('navegacion-invitado');
         const zonaAutenticado = this.documento.getElementById('navegacion-autenticada');
         const saludo = this.documento.getElementById('saludo-usuario');
         const rol = this.documento.getElementById('rol-usuario');
+        const accionesInvitado = this.documento.getElementById('acciones-invitado');
+        const dashboard = this.documento.getElementById('contenedor-dashboard');
+        const accionesCuenta = this.documento.getElementById('acciones-cuenta');
+        const botonCerrarSesion = this.documento.getElementById('boton-cerrar-sesion');
+        const botonNuevaUbicacion = this.documento.getElementById('boton-nueva-ubicacion');
 
         if (usuario) {
-            zonaInvitado?.classList.add('oculto');
             zonaAutenticado?.classList.remove('oculto');
+            accionesInvitado?.classList.add('oculto');
+            dashboard?.classList.remove('oculto');
+            accionesCuenta?.classList.remove('oculto');
+            botonCerrarSesion?.classList.remove('oculto');
+            botonNuevaUbicacion?.classList.remove('oculto');
             if (saludo) saludo.textContent = `Hola, ${usuario.apodo_usuario}`;
             if (rol) rol.textContent = this.etiquetaRol(usuario.rol_usuario);
+            this.constructorDashboard?.construir(usuario.rol_usuario);
+            this.configurarAccionesDashboard(usuario.rol_usuario);
             return;
         }
 
         zonaAutenticado?.classList.add('oculto');
-        zonaInvitado?.classList.remove('oculto');
+        accionesInvitado?.classList.remove('oculto');
+        dashboard?.classList.add('oculto');
+        accionesCuenta?.classList.add('oculto');
+        botonCerrarSesion?.classList.add('oculto');
+        botonNuevaUbicacion?.classList.add('oculto');
         if (saludo) saludo.textContent = '';
         if (rol) rol.textContent = '';
         this.alternarPanelPerfil(false);
+    }
+
+    configurarAccionesDashboard(rol) {
+        const esAdministrador = String(rol).toLowerCase() === 'administrador';
+        const esModerador = String(rol).toLowerCase() === 'moderador';
+
+        const accionNueva = this.documento.getElementById('accion-nueva-ubicacion');
+        if (accionNueva) {
+            accionNueva.addEventListener('click', () => this.abrirModal('modal-nueva-ubicacion'));
+        }
+        const accionMisUbicaciones = this.documento.getElementById('accion-mis-ubicaciones');
+        if (accionMisUbicaciones) {
+            accionMisUbicaciones.setAttribute('aria-label',
+                esAdministrador ? 'Ver mis ubicaciones y gestionar el mapa'
+                    : esModerador ? 'Ver mis ubicaciones y moderar el mapa'
+                        : 'Ver mis ubicaciones');
+        }
     }
 
     etiquetaRol(rol) {

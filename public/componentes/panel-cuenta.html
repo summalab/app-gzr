@@ -1,16 +1,44 @@
 <aside id="panel-cuenta" class="panel-lateral" aria-label="Panel de cuenta">
     <contenedor-ui class="contenido-panel">
         <div class="cabecera-panel">
-            <strong>Mi cuenta</strong>
+            <strong id="titulo-menu-principal">Menú principal</strong>
             <boton-ui id="boton-cerrar-panel-cuenta" tipo="button" variante="cerrar"
                 aria-label="Cerrar panel de cuenta">&times;</boton-ui>
         </div>
-        <ul class="lista-opciones-panel">
+
+        <div id="acciones-invitado" class="grupo-menu">
+            <boton-ui id="boton-abrir-inicio-sesion" tipo="button" variante="secundario" ancho="completo">
+                Iniciar sesión
+            </boton-ui>
+            <boton-ui id="boton-abrir-registro" tipo="button" variante="principal" ancho="completo">
+                Registrarse
+            </boton-ui>
+        </div>
+
+        <section id="contenedor-dashboard" class="contenedor-dashboard oculto" aria-label="Dashboard">
+            <div class="encabezado-dashboard">
+                <span id="nombre-dashboard" class="nombre-dashboard"></span>
+            </div>
+            <div id="acciones-dashboard" class="acciones-dashboard"></div>
+        </section>
+
+        <fieldset class="selector-tema">
+            <legend>Tema de la aplicación</legend>
+            <div class="opciones-tema" role="radiogroup" aria-label="Elegir tema">
+                <boton-ui id="boton-tema-claro" tipo="button" variante="tema" aria-label="Usar tema claro">☀️ Claro</boton-ui>
+                <boton-ui id="boton-tema-oscuro" tipo="button" variante="tema" aria-label="Usar tema oscuro">🌙 Oscuro</boton-ui>
+                <boton-ui id="boton-tema-sistema" tipo="button" variante="tema" aria-label="Usar tema del sistema">⚙ Sistema</boton-ui>
+            </div>
+        </fieldset>
+
+        <ul id="acciones-cuenta" class="lista-opciones-panel oculto">
             <li><boton-ui id="opcion-editar-apodo" tipo="button" variante="opcion">✏️ Cambiar apodo</boton-ui></li>
             <li><boton-ui id="opcion-editar-correo" tipo="button" variante="opcion">✉️ Actualizar correo</boton-ui></li>
             <li><boton-ui id="opcion-cambiar-clave" tipo="button" variante="opcion">🔑 Cambiar contraseña</boton-ui></li>
             <li><boton-ui id="opcion-eliminar-cuenta" tipo="button" variante="opcion-peligro">🗑️ Eliminar cuenta</boton-ui></li>
         </ul>
     </contenedor-ui>
-    <boton-ui id="boton-cerrar-sesion" tipo="button" variante="secundario" ancho="completo">Cerrar sesión</boton-ui>
+    <boton-ui id="boton-cerrar-sesion" tipo="button" variante="secundario" ancho="completo" class="oculto">
+        Cerrar sesión
+    </boton-ui>
 </aside>

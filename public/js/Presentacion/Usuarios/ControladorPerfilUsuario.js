@@ -13,7 +13,10 @@ export class ControladorPerfilUsuario {
     }
 
     inicializar() {
-        this.vista.enlazarClick('boton-menu-cuenta', () => this.vista.alternarPanelPerfil(true));
+        this.vista.enlazarClick('boton-menu-principal', () => {
+            const panel = this.vista.documento.getElementById('panel-cuenta');
+            this.vista.alternarPanelPerfil(!panel?.classList.contains('abierto'));
+        });
         this.vista.enlazarClick('boton-cerrar-panel-cuenta', () => this.vista.alternarPanelPerfil(false));
         this.vista.enlazarClick('opcion-editar-apodo', () => this.abrirOpcion('modal-editar-apodo'));
         this.vista.enlazarClick('opcion-editar-correo', () => this.abrirOpcion('modal-editar-correo'));

@@ -6,8 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#ffffff">
     <title>Peligro Estructural Inminente</title>
+    <script>
+        (() => {
+            const preferencia = (() => {
+                try {
+                    const guardado = localStorage.getItem('preferencia-tema');
+                    return ['claro', 'oscuro', 'sistema'].includes(guardado) ? guardado : 'sistema';
+                } catch {
+                    return 'sistema';
+                }
+            })();
+            const tema = preferencia === 'sistema'
+                ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'oscuro' : 'claro')
+                : preferencia;
+            document.documentElement.dataset.tema = tema;
+            document.documentElement.dataset.preferenciaTema = preferencia;
+            document.documentElement.style.colorScheme = tema;
+        })();
+    </script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/tema-claro.css">
+    <link rel="stylesheet" href="css/tema-oscuro.css">
+    <link rel="stylesheet" href="css/estructura-general.css">
 </head>
 
 <body>

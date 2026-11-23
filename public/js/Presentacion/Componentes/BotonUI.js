@@ -6,7 +6,10 @@ const CLASES_VARIANTE = Object.freeze({
     cerrar: 'boton-cerrar',
     enlace: 'boton-enlace',
     opcion: 'boton-opcion',
-    'opcion-peligro': 'boton-opcion-peligro'
+    'opcion-peligro': 'boton-opcion-peligro',
+    flotante: 'boton-flotante',
+    tema: 'boton-tema',
+    dashboard: 'boton-dashboard'
 });
 
 export class BotonUI extends HTMLElement {
