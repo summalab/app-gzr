@@ -22,6 +22,7 @@ use UsuariosFuncionalidad\Aplicacion\CasosDeUso\CambiarContrasenaCasoDeUso;
 use UsuariosFuncionalidad\Aplicacion\CasosDeUso\SolicitarRecuperacionContrasenaCasoDeUso;
 use UsuariosFuncionalidad\Aplicacion\CasosDeUso\RestablecerContrasenaCasoDeUso;
 use UsuariosFuncionalidad\Aplicacion\CasosDeUso\EliminarCuentaUsuarioCasoDeUso;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
 
 class UsuarioControlador
 {
@@ -35,7 +36,8 @@ class UsuarioControlador
         private RestablecerContrasenaCasoDeUso $mRestablecerContrasenaCasoDeUso,
         private EliminarCuentaUsuarioCasoDeUso $mEliminarCuentaCasoDeUso,
         private SesionUsuarioInterface $mSesionUsuario,
-        private ManejadorGlobalExcepciones $mManejadorExcepciones
+        private ManejadorGlobalExcepciones $mManejadorExcepciones,
+        private CatalogoMensajesInterface $mensajes
     ) {}
 
     public function registrar(): void
@@ -43,7 +45,7 @@ class UsuarioControlador
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->responderJson(405, ['success' => false, 'error' => 'Método no permitido. Se requiere POST.']);
+            $this->responderJson(405, ['success' => false, 'error' => $this->mensajes->obtener('sistema.metodo_no_permitido')]);
             return;
         }
 
@@ -53,7 +55,7 @@ class UsuarioControlador
             $contrasena = isset($_POST['contrasena_hash_usuario']) ? (string)$_POST['contrasena_hash_usuario'] : '';
 
             if (empty($apodo) || empty($correo) || empty($contrasena)) {
-                $this->responderJson(400, ['success' => false, 'error' => 'El apodo, el correo electrónico y la contraseña son obligatorios.']);
+                $this->responderJson(400, ['success' => false, 'error' => $this->mensajes->obtener('usuario.campos_registro_obligatorios')]);
                 return;
             }
 
@@ -62,7 +64,7 @@ class UsuarioControlador
 
             $this->responderJson(201, [
                 'success' => true,
-                'message' => 'Usuario registrado exitosamente. Revisa tu correo para activar la cuenta.'
+                'message' => $this->mensajes->obtener('sistema.registro_exito')
             ]);
         } catch (Throwable $e) {
             //$this->manejarExcepcion($e);
@@ -75,7 +77,7 @@ class UsuarioControlador
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-            $this->responderJson(405, ['success' => false, 'error' => 'Método no permitido. Se requiere GET.']);
+            $this->responderJson(405, ['success' => false, 'error' => $this->mensajes->obtener('sistema.metodo_no_permitido')]);
             return;
         }
 
@@ -83,7 +85,7 @@ class UsuarioControlador
             $token = isset($_GET['token']) ? (string)$_GET['token'] : '';
 
             if (empty($token)) {
-                $this->responderJson(400, ['success' => false, 'error' => 'Falta el token de verificación.']);
+                $this->responderJson(400, ['success' => false, 'error' => $this->mensajes->obtener('usuario.token_verificacion_obligatorio')]);
                 return;
             }
 
@@ -91,7 +93,7 @@ class UsuarioControlador
 
             $this->responderJson(200, [
                 'success' => true,
-                'message' => 'Cuenta de correo verificada con éxito. Ya puede iniciar sesión.'
+                'message' => $this->mensajes->obtener('sistema.verificacion_exito')
             ]);
         } catch (Throwable $e) {
             //$this->manejarExcepcion($e);
@@ -104,20 +106,20 @@ class UsuarioControlador
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->responderJson(405, ['success' => false, 'error' => 'Método no permitido. Se requiere POST.']);
+            $this->responderJson(405, ['success' => false, 'error' => $this->mensajes->obtener('sistema.metodo_no_permitido')]);
             return;
         }
 
         try {
             $idUsuarioSesion = $this->mSesionUsuario->obtenerIdUsuarioAutenticado();
             if ($idUsuarioSesion === null) {
-                $this->responderJson(401, ['success' => false, 'error' => 'No autorizado. Debe iniciar sesión.']);
+                $this->responderJson(401, ['success' => false, 'error' => $this->mensajes->obtener('sistema.no_autorizado')]);
                 return;
             }
 
             $nuevoApodo = isset($_POST['nuevo_apodo']) ? (string)$_POST['nuevo_apodo'] : '';
             if (empty($nuevoApodo)) {
-                $this->responderJson(400, ['success' => false, 'error' => 'El nuevo apodo es obligatorio.']);
+                $this->responderJson(400, ['success' => false, 'error' => $this->mensajes->obtener('usuario.nuevo_apodo_obligatorio')]);
                 return;
             }
 
@@ -126,7 +128,7 @@ class UsuarioControlador
 
             $this->responderJson(200, [
                 'success' => true,
-                'message' => 'Apodo actualizado correctamente.'
+                'message' => $this->mensajes->obtener('sistema.apodo_actualizado')
             ]);
         } catch (Throwable $e) {
             //$this->manejarExcepcion($e);
@@ -139,20 +141,20 @@ class UsuarioControlador
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->responderJson(405, ['success' => false, 'error' => 'Método no permitido. Se requiere POST.']);
+            $this->responderJson(405, ['success' => false, 'error' => $this->mensajes->obtener('sistema.metodo_no_permitido')]);
             return;
         }
 
         try {
             $idUsuarioSesion = $this->mSesionUsuario->obtenerIdUsuarioAutenticado();
             if ($idUsuarioSesion === null) {
-                $this->responderJson(401, ['success' => false, 'error' => 'No autorizado. Debe iniciar sesión.']);
+                $this->responderJson(401, ['success' => false, 'error' => $this->mensajes->obtener('sistema.no_autorizado')]);
                 return;
             }
 
             $nuevoCorreo = isset($_POST['nuevo_correo']) ? (string)$_POST['nuevo_correo'] : '';
             if (empty($nuevoCorreo)) {
-                $this->responderJson(400, ['success' => false, 'error' => 'El nuevo correo electrónico es obligatorio.']);
+                $this->responderJson(400, ['success' => false, 'error' => $this->mensajes->obtener('usuario.nuevo_correo_obligatorio')]);
                 return;
             }
 
@@ -161,7 +163,7 @@ class UsuarioControlador
 
             $this->responderJson(200, [
                 'success' => true,
-                'message' => 'Correo actualizado. Revisa tu bandeja para verificar la nueva dirección.'
+                'message' => $this->mensajes->obtener('sistema.correo_actualizado')
             ]);
         } catch (Throwable $e) {
             //$this->manejarExcepcion($e);
@@ -174,14 +176,14 @@ class UsuarioControlador
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->responderJson(405, ['success' => false, 'error' => 'Método no permitido. Se requiere POST.']);
+            $this->responderJson(405, ['success' => false, 'error' => $this->mensajes->obtener('sistema.metodo_no_permitido')]);
             return;
         }
 
         try {
             $idUsuarioSesion = $this->mSesionUsuario->obtenerIdUsuarioAutenticado();
             if ($idUsuarioSesion === null) {
-                $this->responderJson(401, ['success' => false, 'error' => 'No autorizado. Debe iniciar sesión.']);
+                $this->responderJson(401, ['success' => false, 'error' => $this->mensajes->obtener('sistema.no_autorizado')]);
                 return;
             }
 
@@ -189,7 +191,7 @@ class UsuarioControlador
             $contrasenaNueva  = isset($_POST['contrasena_nueva']) ? (string)$_POST['contrasena_nueva'] : '';
 
             if (empty($contrasenaActual) || empty($contrasenaNueva)) {
-                $this->responderJson(400, ['success' => false, 'error' => 'Debe ingresar la contraseña actual y la nueva.']);
+                $this->responderJson(400, ['success' => false, 'error' => $this->mensajes->obtener('usuario.contrasena_obligatoria')]);
                 return;
             }
 
@@ -198,7 +200,7 @@ class UsuarioControlador
 
             $this->responderJson(200, [
                 'success' => true,
-                'message' => 'Contraseña actualizada correctamente.'
+                'message' => $this->mensajes->obtener('sistema.contrasena_actualizada')
             ]);
         } catch (Throwable $e) {
             //$this->manejarExcepcion($e);
@@ -211,14 +213,14 @@ class UsuarioControlador
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->responderJson(405, ['success' => false, 'error' => 'Método no permitido. Se requiere POST.']);
+            $this->responderJson(405, ['success' => false, 'error' => $this->mensajes->obtener('sistema.metodo_no_permitido')]);
             return;
         }
 
         try {
             $correo = isset($_POST['correo_usuario']) ? (string)$_POST['correo_usuario'] : '';
             if (empty($correo)) {
-                $this->responderJson(400, ['success' => false, 'error' => 'Debe ingresar su correo electrónico.']);
+                $this->responderJson(400, ['success' => false, 'error' => $this->mensajes->obtener('usuario.correo_obligatorio')]);
                 return;
             }
 
@@ -227,7 +229,7 @@ class UsuarioControlador
             // Mensaje genérico por seguridad anti-enumeración
             $this->responderJson(200, [
                 'success' => true,
-                'message' => 'Si el correo está registrado, recibirás un enlace para restablecer tu contraseña.'
+                'message' => $this->mensajes->obtener('sistema.recuperacion_exito')
             ]);
         } catch (Throwable $e) {
             //$this->manejarExcepcion($e);
@@ -240,7 +242,7 @@ class UsuarioControlador
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->responderJson(405, ['success' => false, 'error' => 'Método no permitido. Se requiere POST.']);
+            $this->responderJson(405, ['success' => false, 'error' => $this->mensajes->obtener('sistema.metodo_no_permitido')]);
             return;
         }
 
@@ -249,14 +251,14 @@ class UsuarioControlador
             $nuevaContrasena = isset($_POST['nueva_contrasena']) ? (string)$_POST['nueva_contrasena'] : '';
 
             if (empty($token) || empty($nuevaContrasena)) {
-                $this->responderJson(400, ['success' => false, 'error' => 'El token y la nueva contraseña son obligatorios.']);
+                $this->responderJson(400, ['success' => false, 'error' => $this->mensajes->obtener('usuario.restablecimiento_campos_obligatorios')]);
                 return;
             }
             $inputDto = new RestablecerContrasenaEntradaDTO($token, $nuevaContrasena);
             $this->mRestablecerContrasenaCasoDeUso->execute($inputDto);
             $this->responderJson(200, [
                 'success' => true,
-                'message' => 'Contraseña restablecida con éxito. Ya puede iniciar sesión con su nueva clave.'
+                'message' => $this->mensajes->obtener('sistema.contrasena_restablecida')
             ]);
         } catch (Throwable $e) {
             //$this->manejarExcepcion($e);
@@ -268,7 +270,7 @@ class UsuarioControlador
     {
         header('Content-Type: application/json');
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->responderJson(405, ['success' => false, 'error' => 'Método no permitido. Se requiere POST.']);
+            $this->responderJson(405, ['success' => false, 'error' => $this->mensajes->obtener('sistema.metodo_no_permitido')]);
             return;
         }
         try {
@@ -276,14 +278,14 @@ class UsuarioControlador
             $idUsuarioSesion = $this->mSesionUsuario->obtenerIdUsuarioAutenticado();
 
             if ($idUsuarioSesion === null) {
-                $this->responderJson(401, ['success' => false, 'error' => 'No autorizado. Debe iniciar sesión.']);
+                $this->responderJson(401, ['success' => false, 'error' => $this->mensajes->obtener('sistema.no_autorizado')]);
                 return;
             }
 
             $contrasenaConfirmacion = isset($_POST['contrasena_confirmacion']) ? (string)$_POST['contrasena_confirmacion'] : '';
             
             if (empty($contrasenaConfirmacion)) {
-                $this->responderJson(400, ['success' => false, 'error' => 'Debe confirmar su contraseña para eliminar la cuenta.']);
+                $this->responderJson(400, ['success' => false, 'error' => $this->mensajes->obtener('usuario.confirmacion_cuenta_obligatoria')]);
                 return;
             }
             
@@ -291,7 +293,7 @@ class UsuarioControlador
             
             $this->responderJson(200, [
                 'success' => true,
-                'message' => 'Su cuenta ha sido dada de baja correctamente.'
+                'message' => $this->mensajes->obtener('sistema.cuenta_eliminada')
             ]);
             
         } catch (Throwable $e) {
@@ -306,23 +308,4 @@ class UsuarioControlador
         echo json_encode($datos);
     }
 
-    /*          
-    private function manejarExcepcion(Throwable $e): void
-    {
-        if ($e instanceof ReglaNegocioExcepcion || $e instanceof InvalidArgumentException) {
-            $codigoHttp = ($e->getCode() >= 400 && $e->getCode() < 500) ? (int)$e->getCode() : 422;
-            $this->responderJson($codigoHttp, [
-                'success' => false,
-                'error'   => $e->getMessage()
-            ]);
-            return;
-        }
-        
-        error_log('Error crítico en UsuarioControlador: ' . $e->getMessage());
-            $this->responderJson(500, [
-            'success' => false,
-            'error'   => 'Ocurrió un error interno en el servidor. Inténtelo más tarde.'
-        ]);
-    }
-    */
 }

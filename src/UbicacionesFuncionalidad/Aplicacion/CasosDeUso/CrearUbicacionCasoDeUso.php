@@ -35,11 +35,11 @@ class CrearUbicacionCasoDeUso
 
         // 1. Regla de calidad de contenido (evita títulos basura como "111" o "aaa")
         if (mb_strlen($tituloLimpio) < 5 || !preg_match('/[a-zA-ZáéíóúÁÉÍÓÚñÑ]{3,}/', $tituloLimpio)) {
-            throw new InvalidArgumentException('El título debe tener al menos 5 caracteres y palabras descriptivas reales.');
+            throw new InvalidArgumentException($this->mensajes->obtener('ubicacion.titulo_invalido', ['minimo' => 5]));
         }
 
         if ($descripcionLimpia === null || mb_strlen($descripcionLimpia) < 15) {
-            throw new InvalidArgumentException('La descripción es obligatoria y debe explicar brevemente el lugar (mínimo 15 caracteres).');
+            throw new InvalidArgumentException($this->mensajes->obtener('ubicacion.descripcion_corta', ['minimo' => 15]));
         }
 
         // 2. Regla geográfica: Validar que esté dentro del radio autorizado alrededor de Pereira
@@ -120,7 +120,7 @@ class CrearUbicacionCasoDeUso
 
             if ($this->calcularDistanciaKm($latExistente, $lngExistente, $latitud, $longitud) < $minimoKm) {
                 throw new InvalidArgumentException(
-                    'Ya existe una ubicación registrada exactamente en este punto (a menos de 25 metros).'
+                    $this->mensajes->obtener('ubicacion.duplicada_cercana', ['metros' => 25])
                 );
             }
         }

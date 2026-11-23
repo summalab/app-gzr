@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core;
 
 use Exception;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
 
 class Router
 {
@@ -78,11 +79,12 @@ class Router
         }
 
         // 3. Si recorrió todo el ciclo y ninguna combinación de método/ruta coincidió
+        $mensajes = new \Shared\Infraestructura\Servicios\ArchivoCatalogoMensajes();
         http_response_code(404);
         header('Content-Type: application/json');
         echo json_encode([
             'success' => false,
-            'error'   => "Ruta no encontrada: [{$method}] {$cleanPath}"
+            'error'   => $mensajes->obtener('sistema.ruta_no_encontrada')
         ]);
     }
 }

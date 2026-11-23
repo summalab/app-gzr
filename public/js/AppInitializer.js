@@ -17,6 +17,7 @@ import './Presentacion/Componentes/RegistrarComponentesUI.js';
 import { CargadorComponentes } from './Presentacion/Componentes/CargadorComponentes.js';
 import { GestorTema } from './Presentacion/Shared/GestorTema.js';
 import { ConstructorDashboard } from './Presentacion/Shared/ConstructorDashboard.js';
+import { AplicadorTextos } from './Presentacion/Shared/AplicadorTextos.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const aviso = document.createElement('p');
         aviso.className = 'error-carga-componentes';
         aviso.setAttribute('role', 'alert');
-        aviso.textContent = 'No se pudo cargar la interfaz. Recarga la página o inténtalo más tarde.';
+        aviso.textContent = new AplicadorTextos().obtener('cargarInterfazError');
         document.body.prepend(aviso);
         return;
     }
@@ -36,6 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cuentaUsuario = new CuentaUsuarioUseCases(new UsuarioGateway(clienteHttp));
     const ubicaciones = new UbicacionUseCases(new UbicacionGateway(clienteHttp));
     const vista = new VistaInterfaz();
+    new AplicadorTextos().aplicar();
     const gestorTema = new GestorTema();
     gestorTema.inicializar();
     gestorTema.enlazarControles(vista);

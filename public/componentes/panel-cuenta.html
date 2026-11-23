@@ -1,16 +1,16 @@
 <aside id="panel-cuenta" class="panel-lateral" aria-label="Panel de cuenta">
     <contenedor-ui class="contenido-panel">
         <div class="cabecera-panel">
-            <strong id="titulo-menu-principal">Menú principal</strong>
+            <strong id="titulo-menu-principal" data-texto="menuPrincipal">Menú principal</strong>
             <boton-ui id="boton-cerrar-panel-cuenta" tipo="button" variante="cerrar"
-                aria-label="Cerrar panel de cuenta">&times;</boton-ui>
+                aria-label="Cerrar panel de cuenta" data-aria-texto="cerrarPanel">&times;</boton-ui>
         </div>
 
         <div id="acciones-invitado" class="grupo-menu">
-            <boton-ui id="boton-abrir-inicio-sesion" tipo="button" variante="secundario" ancho="completo">
+            <boton-ui id="boton-abrir-inicio-sesion" tipo="button" variante="secundario" ancho="completo" data-texto="inicioSesion">
                 Iniciar sesión
             </boton-ui>
-            <boton-ui id="boton-abrir-registro" tipo="button" variante="principal" ancho="completo">
+            <boton-ui id="boton-abrir-registro" tipo="button" variante="principal" ancho="completo" data-texto="registrarse">
                 Registrarse
             </boton-ui>
         </div>
@@ -23,11 +23,11 @@
         </section>
 
         <fieldset class="selector-tema">
-            <legend>Tema de la aplicación</legend>
+            <legend data-texto="tema">Tema de la aplicación</legend>
             <div class="opciones-tema" role="radiogroup" aria-label="Elegir tema">
-                <boton-ui id="boton-tema-claro" tipo="button" variante="tema" aria-label="Usar tema claro">☀️ Claro</boton-ui>
-                <boton-ui id="boton-tema-oscuro" tipo="button" variante="tema" aria-label="Usar tema oscuro">🌙 Oscuro</boton-ui>
-                <boton-ui id="boton-tema-sistema" tipo="button" variante="tema" aria-label="Usar tema del sistema">⚙ Sistema</boton-ui>
+                <boton-ui id="boton-tema-claro" tipo="button" variante="tema" aria-label="Usar tema claro" data-aria-texto="temaClaro" data-texto="claro">☀️ Claro</boton-ui>
+                <boton-ui id="boton-tema-oscuro" tipo="button" variante="tema" aria-label="Usar tema oscuro" data-aria-texto="temaOscuro" data-texto="oscuro">🌙 Oscuro</boton-ui>
+                <boton-ui id="boton-tema-sistema" tipo="button" variante="tema" aria-label="Usar tema del sistema" data-aria-texto="temaSistema" data-texto="sistema">⚙ Sistema</boton-ui>
             </div>
         </fieldset>
 

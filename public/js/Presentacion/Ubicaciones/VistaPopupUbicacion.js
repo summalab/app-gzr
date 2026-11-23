@@ -1,3 +1,5 @@
+import { TEXTOS_ES } from '../../textos-es.js';
+
 export class VistaPopupUbicacion {
     construir(ubicacion, mostrarAutor, alEliminar) {
         const contenedor = document.createElement('div');
@@ -5,7 +7,7 @@ export class VistaPopupUbicacion {
 
         const titulo = document.createElement('h3');
         titulo.className = 'popup-titulo';
-        titulo.textContent = ubicacion.titulo || 'Ubicación sin título';
+        titulo.textContent = ubicacion.titulo || TEXTOS_ES.ubicacionSinTitulo;
         contenedor.appendChild(titulo);
 
         if (ubicacion.descripcion) {
@@ -18,7 +20,7 @@ export class VistaPopupUbicacion {
         if (mostrarAutor && ubicacion.apodo_usuario) {
             const autor = document.createElement('small');
             autor.className = 'popup-autor';
-            autor.textContent = `Compartido por: ${ubicacion.apodo_usuario}`;
+            autor.textContent = `${TEXTOS_ES.compartirAutor}: ${ubicacion.apodo_usuario}`;
             contenedor.appendChild(autor);
         }
 
@@ -29,10 +31,10 @@ export class VistaPopupUbicacion {
             botonEliminar.setAttribute('tipo', 'button');
             botonEliminar.setAttribute('variante', 'peligro');
             botonEliminar.setAttribute('ancho', 'completo');
-            botonEliminar.textContent = '🗑️ Eliminar ubicación';
+            botonEliminar.textContent = `🗑️ ${TEXTOS_ES.eliminarUbicacion}`;
             botonEliminar.addEventListener('click', () => {
                 botonEliminar.disabled = true;
-                botonEliminar.texto = 'Eliminando...';
+                botonEliminar.texto = TEXTOS_ES.eliminandoUbicacion;
                 alEliminar(ubicacion.id_ubicacion);
             });
             accion.appendChild(botonEliminar);

@@ -4,34 +4,39 @@ declare(strict_types=1);
 
 namespace UsuariosFuncionalidad\Dominio\Excepciones;
 
-use Exception;
+use Shared\Dominio\Excepciones\ExcepcionNegocio;
 
-class ReglaNegocioExcepcion extends Exception
+class ReglaNegocioExcepcion extends ExcepcionNegocio
 {
 
     public static function apodoDuplicado(string $apodo): self
     {
-        return new self("El apodo '{$apodo}' ya se encuentra registrado por otro usuario.", 422);
+        $mensajes = require dirname(__DIR__, 3) . '/Shared/Infraestructura/Idiomas/es.php';
+        return new self($mensajes['usuario']['apodo_duplicado'], 422);
     }
 
     public static function correoDuplicado(string $correo): self
     {
-        return new self("El correo electrónico '{$correo}' ya se encuentra registrado.", 422);
+        $mensajes = require dirname(__DIR__, 3) . '/Shared/Infraestructura/Idiomas/es.php';
+        return new self($mensajes['usuario']['correo_duplicado'], 422);
     }
 
     public static function contrasenaCorta(int $minimo = 8): self
     {
-        return new self("La contraseña debe tener al menos {$minimo} caracteres.", 422);
+        $mensajes = require dirname(__DIR__, 3) . '/Shared/Infraestructura/Idiomas/es.php';
+        return new self(str_replace('{minimo}', (string)$minimo, $mensajes['usuario']['contrasena_corta']), 422);
     }
 
     public static function tokenInvalido(): self
     {
-        return new self("El enlace de verificación no es válido o ya fue utilizado.", 422);
+        $mensajes = require dirname(__DIR__, 3) . '/Shared/Infraestructura/Idiomas/es.php';
+        return new self($mensajes['usuario']['token_invalido'], 422);
     }
 
     public static function tokenExpirado(): self
     {
-        return new self("El enlace ha expirado. Por favor, solicita uno nuevo.", 422);
+        $mensajes = require dirname(__DIR__, 3) . '/Shared/Infraestructura/Idiomas/es.php';
+        return new self($mensajes['usuario']['token_expirado'], 422);
     }
 
 }

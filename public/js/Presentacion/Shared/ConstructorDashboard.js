@@ -1,3 +1,5 @@
+import { TEXTOS_ES } from '../../textos-es.js';
+
 export class ConstructorDashboard {
     constructor(documento = globalThis.document) {
         this.documento = documento;
@@ -6,30 +8,30 @@ export class ConstructorDashboard {
     construir(rol) {
         const configuraciones = {
             usuario: {
-                nombre: 'Dashboard de usuario',
+                nombre: TEXTOS_ES.dashboardUsuario,
                 acciones: [
-                    ['accion-mis-ubicaciones', '📍 Mis ubicaciones'],
-                    ['accion-nueva-ubicacion', '＋ Nueva ubicación'],
-                    ['accion-reportar', '⚑ Reportar ubicación']
+                    ['accion-mis-ubicaciones', TEXTOS_ES.misUbicaciones],
+                    ['accion-nueva-ubicacion', TEXTOS_ES.nuevaUbicacion],
+                    ['accion-reportar', TEXTOS_ES.reportarUbicacion]
                 ]
             },
             moderador: {
-                nombre: 'Dashboard de moderación',
+                nombre: TEXTOS_ES.dashboardModerador,
                 acciones: [
-                    ['accion-mis-ubicaciones', '📍 Mis ubicaciones'],
-                    ['accion-nueva-ubicacion', '＋ Nueva ubicación'],
-                    ['accion-revisar-reportes', '🛡 Revisar reportes'],
-                    ['accion-aprobar-ubicaciones', '✓ Aprobar ubicaciones']
+                    ['accion-mis-ubicaciones', TEXTOS_ES.misUbicaciones],
+                    ['accion-nueva-ubicacion', TEXTOS_ES.nuevaUbicacion],
+                    ['accion-revisar-reportes', TEXTOS_ES.revisarReportes],
+                    ['accion-aprobar-ubicaciones', TEXTOS_ES.aprobarUbicaciones]
                 ]
             },
             administrador: {
-                nombre: 'Dashboard administrativo',
+                nombre: TEXTOS_ES.dashboardAdministrador,
                 acciones: [
-                    ['accion-mis-ubicaciones', '📍 Mis ubicaciones'],
-                    ['accion-nueva-ubicacion', '＋ Nueva ubicación'],
-                    ['accion-gestion-usuarios', '👥 Gestionar usuarios'],
-                    ['accion-auditoria', '📋 Auditoría'],
-                    ['accion-configuracion', '⚙ Configuración']
+                    ['accion-mis-ubicaciones', TEXTOS_ES.misUbicaciones],
+                    ['accion-nueva-ubicacion', TEXTOS_ES.nuevaUbicacion],
+                    ['accion-gestion-usuarios', TEXTOS_ES.gestionarUsuarios],
+                    ['accion-auditoria', TEXTOS_ES.auditoria],
+                    ['accion-configuracion', TEXTOS_ES.configuracion]
                 ]
             }
         };

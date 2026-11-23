@@ -1,3 +1,5 @@
+import { TEXTOS_ES } from '../../textos-es.js';
+
 export class VistaInterfaz {
     constructor(documento = globalThis.document) {
         this.documento = documento;
@@ -136,7 +138,7 @@ export class VistaInterfaz {
             accionesCuenta?.classList.remove('oculto');
             botonCerrarSesion?.classList.remove('oculto');
             botonNuevaUbicacion?.classList.remove('oculto');
-            if (saludo) saludo.textContent = `Hola, ${usuario.apodo_usuario}`;
+            if (saludo) saludo.textContent = `${TEXTOS_ES.hola}, ${usuario.apodo_usuario}`;
             if (rol) rol.textContent = this.etiquetaRol(usuario.rol_usuario);
             this.constructorDashboard?.construir(usuario.rol_usuario);
             this.configurarAccionesDashboard(usuario.rol_usuario);
@@ -165,19 +167,19 @@ export class VistaInterfaz {
         const accionMisUbicaciones = this.documento.getElementById('accion-mis-ubicaciones');
         if (accionMisUbicaciones) {
             accionMisUbicaciones.setAttribute('aria-label',
-                esAdministrador ? 'Ver mis ubicaciones y gestionar el mapa'
-                    : esModerador ? 'Ver mis ubicaciones y moderar el mapa'
-                        : 'Ver mis ubicaciones');
+                esAdministrador ? TEXTOS_ES.verMisUbicacionesMapa
+                    : esModerador ? TEXTOS_ES.verMisUbicacionesModerar
+                        : TEXTOS_ES.verMisUbicaciones);
         }
     }
 
     etiquetaRol(rol) {
         const etiquetas = {
-            usuario: 'Usuario',
-            moderador: 'Moderador',
-            administrador: 'Administrador'
+            usuario: TEXTOS_ES.rolUsuario,
+            moderador: TEXTOS_ES.rolModerador,
+            administrador: TEXTOS_ES.rolAdministrador
         };
         const rolNormalizado = String(rol || '').toLowerCase();
-        return `Rol: ${etiquetas[rolNormalizado] || 'No disponible'}`;
+        return `Rol: ${etiquetas[rolNormalizado] || TEXTOS_ES.rolNoDisponible}`;
     }
 }

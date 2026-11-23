@@ -16,6 +16,7 @@ use UbicacionesFuncionalidad\Aplicacion\CasosDeUso\ListarUbicacionesUsuarioCasoD
 use UbicacionesFuncionalidad\Aplicacion\DTOs\CrearUbicacionEntradaDTO;
 use UbicacionesFuncionalidad\Aplicacion\DTOs\EliminarUbicacionEntradaDTO;
 use UsuariosFuncionalidad\Dominio\Excepciones\ReglaNegocioExcepcion;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
 
 class UbicacionControlador
 {
@@ -25,7 +26,8 @@ class UbicacionControlador
         private ListarUbicacionesUsuarioCasoDeUso $mListarUsuarioCasoDeUso,
         private EliminarUbicacionCasoDeUso $mEliminarUbicacionCasoDeUso,
         private SesionUsuarioInterface $mSesionUsuario,
-        private ManejadorGlobalExcepciones $mManejadorExcepciones
+        private ManejadorGlobalExcepciones $mManejadorExcepciones,
+        private CatalogoMensajesInterface $mensajes
     ) {}
 
     public function listarPublicas(): void
@@ -33,7 +35,7 @@ class UbicacionControlador
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-            $this->responderJson(405, ['success' => false, 'error' => 'Método no permitido. Se requiere GET.']);
+            $this->responderJson(405, ['success' => false, 'error' => $this->mensajes->obtener('sistema.metodo_no_permitido')]);
             return;
         }
 
@@ -61,14 +63,14 @@ class UbicacionControlador
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-            $this->responderJson(405, ['success' => false, 'error' => 'Método no permitido. Se requiere GET.']);
+            $this->responderJson(405, ['success' => false, 'error' => $this->mensajes->obtener('sistema.metodo_no_permitido')]);
             return;
         }
 
         try {
             $idUsuarioSesion = $this->mSesionUsuario->obtenerIdUsuarioAutenticado();
             if ($idUsuarioSesion === null) {
-                $this->responderJson(401, ['success' => false, 'error' => 'No autorizado. Debe iniciar sesión.']);
+                $this->responderJson(401, ['success' => false, 'error' => $this->mensajes->obtener('sistema.no_autorizado')]);
                 return;
             }
 
@@ -89,14 +91,14 @@ class UbicacionControlador
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->responderJson(405, ['success' => false, 'error' => 'Método no permitido. Se requiere POST.']);
+            $this->responderJson(405, ['success' => false, 'error' => $this->mensajes->obtener('sistema.metodo_no_permitido')]);
             return;
         }
 
         try {
             $idUsuarioSesion = $this->mSesionUsuario->obtenerIdUsuarioAutenticado();
             if ($idUsuarioSesion === null) {
-                $this->responderJson(401, ['success' => false, 'error' => 'No autorizado. Debe iniciar sesión.']);
+                $this->responderJson(401, ['success' => false, 'error' => $this->mensajes->obtener('sistema.no_autorizado')]);
                 return;
             }
 
@@ -108,7 +110,7 @@ class UbicacionControlador
             if (trim($titulo) === '' || !is_numeric($latitudRaw) || !is_numeric($longitudRaw)) {
                 $this->responderJson(400, [
                     'success' => false,
-                    'error'   => 'El título, la latitud y la longitud son obligatorios y deben tener formato válido.'
+                    'error'   => $this->mensajes->obtener('ubicacion.campos_obligatorios')
                 ]);
                 return;
             }
@@ -125,7 +127,7 @@ class UbicacionControlador
 
             $this->responderJson(201, [
                 'success'   => true,
-                'message'   => 'Ubicación guardada correctamente.',
+                'message'   => $this->mensajes->obtener('ubicacion.creada_exito'),
                 'ubicacion' => $ubicacionCreada
             ]);
         } catch (Throwable $e) {
@@ -139,20 +141,20 @@ class UbicacionControlador
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->responderJson(405, ['success' => false, 'error' => 'Método no permitido. Se requiere POST.']);
+            $this->responderJson(405, ['success' => false, 'error' => $this->mensajes->obtener('sistema.metodo_no_permitido')]);
             return;
         }
 
         try {
             $idUsuarioSesion = $this->mSesionUsuario->obtenerIdUsuarioAutenticado();
             if ($idUsuarioSesion === null) {
-                $this->responderJson(401, ['success' => false, 'error' => 'No autorizado. Debe iniciar sesión.']);
+                $this->responderJson(401, ['success' => false, 'error' => $this->mensajes->obtener('sistema.no_autorizado')]);
                 return;
             }
 
             $idUbicacionRaw = $_POST['id_ubicacion'] ?? null;
             if (!is_numeric($idUbicacionRaw) || (int)$idUbicacionRaw <= 0) {
-                $this->responderJson(400, ['success' => false, 'error' => 'El identificador de la ubicación no es válido.']);
+                $this->responderJson(400, ['success' => false, 'error' => $this->mensajes->obtener('ubicacion.identificador_invalido')]);
                 return;
             }
 
@@ -161,7 +163,7 @@ class UbicacionControlador
 
             $this->responderJson(200, [
                 'success' => true,
-                'message' => 'Ubicación eliminada correctamente.'
+                'message' => $this->mensajes->obtener('ubicacion.eliminada_exito')
             ]);
         } catch (Throwable $e) {
             //$this->manejarExcepcion($e);

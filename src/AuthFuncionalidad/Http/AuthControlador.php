@@ -12,6 +12,7 @@ use AuthFuncionalidad\Aplicacion\CasosDeUso\LogoutCasoDeUso;
 use AuthFuncionalidad\Aplicacion\CasosDeUso\VerificarSesionCasoDeUso;
 use UsuariosFuncionalidad\Dominio\Excepciones\ReglaNegocioExcepcion;
 use Shared\Http\ManejadorGlobalExcepciones;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
 
 
 class AuthControlador
@@ -20,7 +21,8 @@ class AuthControlador
         private LoginCasoDeUso $mLoginCasoDeUso,
         private LogoutCasoDeUso $mLogoutCasoDeUso,
         private VerificarSesionCasoDeUso $mVerificarSesionCasoDeUso,
-        private ManejadorGlobalExcepciones $mManejadorExcepciones
+        private ManejadorGlobalExcepciones $mManejadorExcepciones,
+        private CatalogoMensajesInterface $mensajes
     ) {}
 
     public function login(): void
@@ -33,7 +35,7 @@ class AuthControlador
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->responderJson(405, [
                 'success' => false,
-                'error'   => 'Método no permitido. Se requiere POST.'
+                'error'   => $this->mensajes->obtener('sistema.metodo_no_permitido')
             ]);
             return;
         }
@@ -45,7 +47,7 @@ class AuthControlador
             if (empty($correo) || empty($contrasena)) {
                 $this->responderJson(400, [
                     'success' => false,
-                    'error'   => 'El correo electrónico y la contraseña son obligatorios.'
+                    'error'   => $this->mensajes->obtener('usuario.campos_login_obligatorios')
                 ]);
                 return;
             }
@@ -55,15 +57,12 @@ class AuthControlador
 
             $this->responderJson(200, [
                 'success' => true,
-                'message' => 'Sesión iniciada correctamente.',
+                'message' => $this->mensajes->obtener('sistema.sesion_exito'),
                 'usuario' => $datosUsuario
             ]);
 
         } catch (Throwable $e) {
-            (new \Shared\Http\ManejadorGlobalExcepciones(
-                new \Shared\Infraestructura\Servicios\ArchivoRegistradorLog(),
-                new \Shared\Infraestructura\Servicios\ArchivoCatalogoMensajes()
-            ))->manejar($e, 'AuthControlador.login()');
+            $this->mManejadorExcepciones->manejar($e, 'AuthControlador.login()');
         }
     }
 
@@ -74,7 +73,7 @@ class AuthControlador
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->responderJson(405, [
                 'success' => false,
-                'error'   => 'Método no permitido. Se requiere POST.'
+                'error'   => $this->mensajes->obtener('sistema.metodo_no_permitido')
             ]);
             return;
         }
@@ -84,14 +83,11 @@ class AuthControlador
 
             $this->responderJson(200, [
                 'success' => true,
-                'message' => 'Sesión cerrada correctamente.'
+                'message' => $this->mensajes->obtener('sistema.logout_exito')
             ]);
 
         } catch (Throwable $e) {
-            (new \Shared\Http\ManejadorGlobalExcepciones(
-                new \Shared\Infraestructura\Servicios\ArchivoRegistradorLog(),
-                new \Shared\Infraestructura\Servicios\ArchivoCatalogoMensajes()
-            ))->manejar($e, 'AuthControlador.logout()');
+            $this->mManejadorExcepciones->manejar($e, 'AuthControlador.logout()');
         }
     }
 
@@ -104,7 +100,7 @@ class AuthControlador
         if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
             $this->responderJson(405, [
                 'success' => false,
-                'error'   => 'Método no permitido. Se requiere GET.'
+                'error'   => $this->mensajes->obtener('sistema.metodo_no_permitido')
             ]);
             return;
         }
@@ -121,10 +117,7 @@ class AuthControlador
             ]);
 
         } catch (Throwable $e) {
-            (new \Shared\Http\ManejadorGlobalExcepciones(
-                new \Shared\Infraestructura\Servicios\ArchivoRegistradorLog(),
-                new \Shared\Infraestructura\Servicios\ArchivoCatalogoMensajes()
-            ))->manejar($e, 'AuthControlador.verificarSesion()');
+            $this->mManejadorExcepciones->manejar($e, 'AuthControlador.verificarSesion()');
         }
     }
 
@@ -136,35 +129,4 @@ class AuthControlador
         echo json_encode($datos);
     }
 
-    /*
-    private function manejarExcepcion(Throwable $e): void
-    {
-        // Maneja excepciones de negocio/validación o registra errores críticos en el servidor.
-        // 1. Errores seguros de negocio o validación de formato (Controlados)
-        if ($e instanceof ReglaNegocioExcepcion || $e instanceof InvalidArgumentException) {
-            
-            // Respetamos códigos específicos (ej: 401 Credenciales inválidas, 403 Cuenta sin verificar, 404 No encontrado)
-            // Si la excepción no trae un código HTTP 4xx válido, usamos 422 (Unprocessable Entity) por defecto
-            $codigoHttp = ($e->getCode() >= 400 && $e->getCode() < 500) 
-                ? (int)$e->getCode() 
-                : 422;
-
-            $this->responderJson($codigoHttp, [
-                'success' => false,
-                'error'   => $e->getMessage()
-            ]);
-            return;
-        }
-
-        // 2. Errores críticos de infraestructura o sistema (No controlados: PDOException, TypeError, etc.)
-        // Guardamos el detalle técnico real en el log privado del servidor (storage/logs/errores_sistema.log)
-        error_log('Error crítico en AuthControlador: ' . $e->getMessage() . ' en ' . $e->getFile() . ':' . $e->getLine());
-
-        // Devolvemos un mensaje genérico al navegador sin exponer tablas, consultas SQL ni rutas internas
-        $this->responderJson(500, [
-            'success' => false,
-            'error'   => 'Ocurrió un error interno en el servidor. Inténtelo más tarde.'
-        ]);
-    }
-    */
 }
