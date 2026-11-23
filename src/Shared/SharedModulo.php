@@ -16,6 +16,8 @@ use Shared\Dominio\Servicios\GestorTransaccionesInterface;
 use Shared\Infraestructura\Persistencia\PdoGestorTransacciones;
 use Shared\Dominio\Servicios\AutorizadorInterface;
 use Shared\Infraestructura\SeguridadSesionAutorizador;
+use Shared\Infraestructura\Seguridad\SesionAutorizador;
+
 
 class SharedModulo
 {

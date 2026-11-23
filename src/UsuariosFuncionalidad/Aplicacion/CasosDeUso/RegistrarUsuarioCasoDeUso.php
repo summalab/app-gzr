@@ -9,8 +9,8 @@ use UsuariosFuncionalidad\Dominio\Entidades\UsuarioEntidad;
 use UsuariosFuncionalidad\Dominio\Repositorios\UsuarioRepositorioInterface;
 use UsuariosFuncionalidad\Dominio\Servicios\EnviadorCorreoInterface;
 use UsuariosFuncionalidad\Dominio\Excepciones\ReglaNegocioExcepcion;
+use Shared\Dominio\Servicios\GestorTransaccionesInterface;
 
-// Este namespace es nativo de PHP
 use InvalidArgumentException;
 
 class RegistrarUsuarioCasoDeUso
@@ -41,17 +41,23 @@ class RegistrarUsuarioCasoDeUso
         try {
 
             // 2. Escritura atómica ACID en múltiples tablas
-            $token_verificacion = $this->transacciones->ejecutar(function () use ($mUsuarioDto) {
+            $registro = $this->transacciones->ejecutar(function () use ($mUsuarioDto) {
 
                 // 1. Registrar el usuario en base de datos
                 $datos_usuario_reg = $this->registrarUsuario($mUsuarioDto);
 
                 // 2. Generar el token de verificación
-                return $this->generarTokenConfirmacion(
-                    $datos_usuario_reg['id_usuario'],
-                    $datos_usuario_reg['esta_verificado_usuario']
-                );
+                return [
+                    'usuario' => $datos_usuario_reg,
+                    'token' => $this->generarTokenConfirmacion(
+                        $datos_usuario_reg['id_usuario'],
+                        $datos_usuario_reg['esta_verificado_usuario']
+                    ),
+                ];
             });
+
+            $datos_usuario_reg = $registro['usuario'];
+            $token_verificacion = $registro['token'];
 
             // 4. Armar URL dinámica desde .env y enviar correo fuera de la transacción
             $urlBase = rtrim(\Core\EnvLoader::obtener('APP_URL', 'http://app-gzr.test'), '/');
@@ -65,16 +71,10 @@ class RegistrarUsuarioCasoDeUso
             );
 
         } catch (ReglaNegocioExcepcion | InvalidArgumentException $reglaExcepcion) {
-            $this->mUsuarioRepositorio->rollBack();
-            // Relanzamos intacta la excepción de negocio para que el controlador responda 422
             throw $reglaExcepcion;
 
         } catch (\Throwable $falla) {
 
-            // ¡EL SALVAVIDAS! Si la operación 1 o la operación 2 fallaron, 
-            // MySQL borra todo rastro del usuario recién creado. Cero basura, cero inconsistencias.
-            $this->mUsuarioRepositorio->rollBack();
-            // Registramos el fallo técnico en el log privado y lanzamos error genérico
             error_log("Error crítico en RegistrarUsuarioCasoDeUso: " . $falla->getMessage());
             throw new \Exception("No se pudo completar el registro por un problema interno.");
         }
@@ -115,7 +115,7 @@ class RegistrarUsuarioCasoDeUso
             apodo_usuario: $apodo_usuario_clean,
             correo_usuario: $correo_usuario_clean,
             contrasena_hash_usuario: $contrasena_hash_usuario,
-            esta_verificado_usuario: false //El FALSE es OBLIGATORIO al crear nuevo usuario, indica que cuenta nace sin verificacion
+            esta_verificado_usuario: false
         );
 
         // 5. Persistencia: Solicitamos al repositorio guardar la entidad estructurada

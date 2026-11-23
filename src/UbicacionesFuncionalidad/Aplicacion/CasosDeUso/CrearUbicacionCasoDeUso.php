@@ -11,12 +11,14 @@ use UbicacionesFuncionalidad\Aplicacion\DTOs\CrearUbicacionEntradaDTO;
 use UbicacionesFuncionalidad\Dominio\Entidades\UbicacionEntidad;
 use UbicacionesFuncionalidad\Dominio\Repositorios\UbicacionRepositorioInterface;
 use Shared\Dominio\Servicios\AutorizadorInterface;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
 
 class CrearUbicacionCasoDeUso
 {
     public function __construct(
         private UbicacionRepositorioInterface $mUbicacionRepositorio,
-        private AutorizadorInterface $mAutorizador
+        private AutorizadorInterface $mAutorizador,
+        private CatalogoMensajesInterface $mensajes
     ) {}
 
     public function execute(CrearUbicacionEntradaDTO $dto): array

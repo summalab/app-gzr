@@ -7,6 +7,7 @@ namespace UsuariosFuncionalidad\Http;
 use InvalidArgumentException;
 use Throwable;
 use Shared\Dominio\Servicios\SesionUsuarioInterface;
+use Shared\Http\ManejadorGlobalExcepciones;
 use UsuariosFuncionalidad\Dominio\Excepciones\ReglaNegocioExcepcion;
 use UsuariosFuncionalidad\Aplicacion\DTOs\RegistrarUsuarioEntradaDTO;
 use UsuariosFuncionalidad\Aplicacion\DTOs\ActualizarApodoEntradaDTO;

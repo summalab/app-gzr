@@ -51,7 +51,16 @@ class LoginCasoDeUso
             }
 
             // 3. Iniciar la sesión segura en el servidor (regenera ID de sesión)
-            $this->mSesionUsuario->iniciarSesion($mUsuarioEntidad->obtenerId());
+            $idUsuario = $mUsuarioEntidad->obtenerId();
+            if ($idUsuario === null) {
+                throw new \LogicException('El usuario autenticado no tiene un identificador persistido.');
+            }
+
+            $this->mSesionUsuario->iniciarSesion(
+                $idUsuario,
+                $mUsuarioEntidad->obtenerApodo(),
+                $mUsuarioEntidad->obtenerRol()
+            );
 
             // 4. Retornar datos públicos seguros para que el Frontend actualice la interfaz
             return [

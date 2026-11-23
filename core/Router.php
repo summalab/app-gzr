@@ -72,6 +72,7 @@ class Router
                         new \Shared\Infraestructura\Servicios\ArchivoRegistradorLog(),
                         new \Shared\Infraestructura\Servicios\ArchivoCatalogoMensajes()
                     ))->manejar($e, 'Core\Router.dispatch()');
+                    return;
                 }
             }
         }

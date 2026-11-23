@@ -12,7 +12,7 @@ class UsuarioEntidad
         private string $correo_usuario,
         private string $contrasena_hash_usuario,
         private bool $esta_verificado_usuario,
-        private string $rol = 'USUARIO'
+        private string $rol_usuario = 'usuario'
     ) {
         $this->autoValidarEntidad();
     }
@@ -34,7 +34,7 @@ class UsuarioEntidad
 
     public function obtenerRol(): string
     {
-        return $this->rol;
+        return $this->rol_usuario;
     }
 
     public function obtenerContrasenadHash(): string

@@ -34,14 +34,14 @@ class NativaPhpSesionUsuario implements SesionUsuarioInterface
     }
     */
 
-    public function iniciarSesion(int $idUsuario, string $apodoUsuario, string $rol = 'USUARIO'): void
+    public function iniciarSesion(int $idUsuario, string $apodoUsuario, string $rolUsuario = 'usuario'): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         session_regenerate_id(true);
         $_SESSION['id_usuario_autenticado'] = $idUsuario;
-        $_SESSION['rol_usuario_autenticado'] = $rolUsuario;
+        $_SESSION['rol_usuario_autenticado'] = strtolower($rolUsuario);
         $_SESSION['apodo_usuario_autenticado'] = $apodoUsuario;
     }
 

@@ -25,8 +25,8 @@ class UsuarioDAO
     {
         // Usamos sentencias preparadas para blindar el sistema contra Inyección SQL
         $stmt = $this->db->prepare("
-            INSERT INTO usuarios (apodo_usuario, correo_usuario, contrasena_hash_usuario, esta_verificado_usuario) 
-            VALUES (:apodo_usuario, :correo_usuario, :contrasena_hash_usuario, :esta_verificado_usuario)
+            INSERT INTO usuarios (apodo_usuario, correo_usuario, contrasena_hash_usuario, esta_verificado_usuario, rol)
+            VALUES (:apodo_usuario, :correo_usuario, :contrasena_hash_usuario, :esta_verificado_usuario, :rol)
         ");
 
         $stmt->execute([
@@ -34,7 +34,7 @@ class UsuarioDAO
             ':correo_usuario'          => $data['correo_usuario'],
             ':contrasena_hash_usuario' => $data['contrasena_hash_usuario'],
             ':esta_verificado_usuario' => (int)$data['esta_verificado_usuario'],
-            ':rol'                     => (string)($data['rol'] ?? 'USUARIO')
+            ':rol'                     => (string)($data['rol'] ?? 'usuario')
         ]);
 
         // Retornamos el último ID insertado
@@ -123,7 +123,8 @@ class UsuarioDAO
         SET apodo_usuario = :apodo_usuario,
             correo_usuario = :correo_usuario,
             contrasena_hash_usuario = :contrasena_hash_usuario,
-            esta_verificado_usuario = :esta_verificado_usuario
+            esta_verificado_usuario = :esta_verificado_usuario,
+            rol = :rol
         WHERE pk_id_usuario = :pk_id_usuario
         ");
 
@@ -132,6 +133,7 @@ class UsuarioDAO
             ':correo_usuario'          => $data['correo_usuario'],
             ':contrasena_hash_usuario' => $data['contrasena_hash_usuario'],
             ':esta_verificado_usuario' => (int)$data['esta_verificado_usuario'],
+            ':rol'                     => (string)($data['rol'] ?? 'usuario'),
             ':pk_id_usuario'           => $data['pk_id_usuario']
         ]);
     }

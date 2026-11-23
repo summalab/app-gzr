@@ -21,7 +21,8 @@ class MySQLUsuarioRepositorio implements UsuarioRepositorioInterface
                 'apodo_usuario'           => $mUsuarioEntidad->obtenerApodo(),
                 'correo_usuario'          => $mUsuarioEntidad->obtenerCorreo(),
                 'contrasena_hash_usuario' => $mUsuarioEntidad->obtenerContrasenadHash(),
-                'esta_verificado_usuario' => $mUsuarioEntidad->obtenerVerificacionUsuario()
+                'esta_verificado_usuario' => $mUsuarioEntidad->obtenerVerificacionUsuario(),
+                'rol'                     => $mUsuarioEntidad->obtenerRol()
             ];
 
             $id_usuario_creado = $this->mUsuarioDao->insertar($data);
@@ -31,7 +32,8 @@ class MySQLUsuarioRepositorio implements UsuarioRepositorioInterface
                 apodo_usuario: $mUsuarioEntidad->obtenerApodo(),
                 correo_usuario: $mUsuarioEntidad->obtenerCorreo(),
                 contrasena_hash_usuario: $mUsuarioEntidad->obtenerContrasenadHash(),
-                esta_verificado_usuario: $mUsuarioEntidad->obtenerVerificacionUsuario()
+                esta_verificado_usuario: $mUsuarioEntidad->obtenerVerificacionUsuario(),
+                rol_usuario: $mUsuarioEntidad->obtenerRol()
             );
         } else {
             $data = [
@@ -39,7 +41,8 @@ class MySQLUsuarioRepositorio implements UsuarioRepositorioInterface
                 'apodo_usuario'           => $mUsuarioEntidad->obtenerApodo(),
                 'correo_usuario'          => $mUsuarioEntidad->obtenerCorreo(),
                 'contrasena_hash_usuario' => $mUsuarioEntidad->obtenerContrasenadHash(),
-                'esta_verificado_usuario' => $mUsuarioEntidad->obtenerVerificacionUsuario()
+                'esta_verificado_usuario' => $mUsuarioEntidad->obtenerVerificacionUsuario(),
+                'rol'                     => $mUsuarioEntidad->obtenerRol()
             ];
 
             $this->mUsuarioDao->actualizar($data);
@@ -49,7 +52,8 @@ class MySQLUsuarioRepositorio implements UsuarioRepositorioInterface
                 apodo_usuario: $mUsuarioEntidad->obtenerApodo(),
                 correo_usuario: $mUsuarioEntidad->obtenerCorreo(),
                 contrasena_hash_usuario: $mUsuarioEntidad->obtenerContrasenadHash(),
-                esta_verificado_usuario: $mUsuarioEntidad->obtenerVerificacionUsuario()
+                esta_verificado_usuario: $mUsuarioEntidad->obtenerVerificacionUsuario(),
+                rol_usuario: $mUsuarioEntidad->obtenerRol()
             );
         }
     }
@@ -67,7 +71,8 @@ class MySQLUsuarioRepositorio implements UsuarioRepositorioInterface
             apodo_usuario: (string)$row['apodo_usuario'],
             correo_usuario: (string)$row['correo_usuario'],
             contrasena_hash_usuario: (string)$row['contrasena_hash_usuario'],
-            esta_verificado_usuario: (bool)$row['esta_verificado_usuario']
+            esta_verificado_usuario: (bool)$row['esta_verificado_usuario'],
+            rol_usuario: (string)($row['rol'] ?? 'usuario')
         );
     }
 
@@ -91,7 +96,8 @@ class MySQLUsuarioRepositorio implements UsuarioRepositorioInterface
             apodo_usuario: (string)$row['apodo_usuario'],
             correo_usuario: (string)$row['correo_usuario'],
             contrasena_hash_usuario: (string)$row['contrasena_hash_usuario'],
-            esta_verificado_usuario: (bool)($row['esta_verificado_usuario'] ?? false)
+            esta_verificado_usuario: (bool)($row['esta_verificado_usuario'] ?? false),
+            rol_usuario: (string)($row['rol'] ?? 'usuario')
         );
     }
 
