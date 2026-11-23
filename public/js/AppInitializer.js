@@ -1,72 +1,46 @@
-import { HttpApiClient } from './Shared/HttpApiClient.js';
-import { ServicioAuth } from './Auth/ServicioAuth.js';
-import { ServicioUsuario } from './Usuarios/ServicioUsuario.js';
-import { GestorMapaLeaflet } from './Ubicaciones/GestorMapaLeaflet.js';
+import { AutenticacionUseCases } from './Aplicacion/Autenticacion/AutenticacionUseCases.js';
+import { CuentaUsuarioUseCases } from './Aplicacion/Usuarios/CuentaUsuarioUseCases.js';
+import { UbicacionUseCases } from './Aplicacion/Ubicaciones/UbicacionUseCases.js';
+import { AuthGateway } from './Infraestructura/Api/AuthGateway.js';
+import { UbicacionGateway } from './Infraestructura/Api/UbicacionGateway.js';
+import { UsuarioGateway } from './Infraestructura/Api/UsuarioGateway.js';
+import { HttpApiClient } from './Infraestructura/Http/HttpApiClient.js';
+import { GeolocalizadorNavegador } from './Infraestructura/Map/GeolocalizadorNavegador.js';
+import { LeafletMapAdapter } from './Infraestructura/Map/LeafletMapAdapter.js';
+import { ControladorAutenticacion } from './Presentacion/Autenticacion/ControladorAutenticacion.js';
+import { ControladorPerfilUsuario } from './Presentacion/Usuarios/ControladorPerfilUsuario.js';
+import { ControladorUbicaciones } from './Presentacion/Ubicaciones/ControladorUbicaciones.js';
+import { VistaInterfaz } from './Presentacion/Shared/VistaInterfaz.js';
+import { VistaPopupUbicacion } from './Presentacion/Ubicaciones/VistaPopupUbicacion.js';
 import { ControladorInterfaz } from './ControladorInterfaz.js';
-import { ServicioUbicacion } from './Ubicaciones/ServicioUbicacion.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Inicializar dependencias principales (Inyección de Dependencias manual en JS)
     const clienteHttp = new HttpApiClient();
-    const servicioAuth = new ServicioAuth(clienteHttp);
-    const servicioUsuario = new ServicioUsuario(clienteHttp);
-    const gestorMapa = new GestorMapaLeaflet('mapa-leaflet', 'insignia-vista');
-    const servicioUbicacion = new ServicioUbicacion(clienteHttp);
-    const interfaz = new ControladorInterfaz(servicioAuth, servicioUsuario, gestorMapa, servicioUbicacion);
-
-    // 2. Encender el lienzo del mapa con soporte de clic directo y enlazar eventos
-    gestorMapa.inicializar(
-        [4.8133, -75.6961],
-        6,
-        (coordenadas) => interfaz.manejarClicEnMapa(coordenadas)
+    const autenticacion = new AutenticacionUseCases(new AuthGateway(clienteHttp));
+    const cuentaUsuario = new CuentaUsuarioUseCases(new UsuarioGateway(clienteHttp));
+    const ubicaciones = new UbicacionUseCases(new UbicacionGateway(clienteHttp));
+    const vista = new VistaInterfaz();
+    const popupUbicacion = new VistaPopupUbicacion();
+    const mapa = new LeafletMapAdapter(
+        'mapa-leaflet',
+        'insignia-vista',
+        new GeolocalizadorNavegador(),
+        popupUbicacion
     );
-    interfaz.inicializarEventos();
 
+    const controladorAutenticacion = new ControladorAutenticacion(autenticacion, cuentaUsuario, vista);
+    const controladorPerfil = new ControladorPerfilUsuario(cuentaUsuario, autenticacion, vista);
+    const controladorUbicaciones = new ControladorUbicaciones(ubicaciones, mapa, vista);
+    const aplicacion = new ControladorInterfaz({
+        autenticacion,
+        autenticacionController: controladorAutenticacion,
+        perfilController: controladorPerfil,
+        ubicacionesController: controladorUbicaciones,
+        gestorMapa: mapa,
+        vista
+    });
 
-
-    // 3. Revisar si la URL contiene enlaces mágicos desde el correo (?token= o ?recuperar=)
-    const parametrosUrl = new URLSearchParams(window.location.search);
-    const tokenVerificacion = parametrosUrl.get('token');
-    const tokenRecuperacion = parametrosUrl.get('recuperar');
-
-    if (tokenVerificacion) {
-        try {
-            const respuesta = await servicioUsuario.verificarCorreo(tokenVerificacion);
-            interfaz.mostrarAlertaGlobal(respuesta.message, true);
-            interfaz.abrirModal('modal-login');
-        } catch (error) {
-            interfaz.mostrarAlertaGlobal(error.message, false);
-        } finally {
-            limpiarUrl();
-        }
-    } else if (tokenRecuperacion) {
-        const inputToken = document.getElementById('token-recuperacion');
-        if (inputToken) {
-            inputToken.value = tokenRecuperacion;
-        }
-        interfaz.abrirModal('modal-restablecer');
-        limpiarUrl();
-    }
-
-    // 4. Consultar al servidor si el usuario ya tiene una sesión activa
-    try {
-        const estado = await servicioAuth.verificarSesion();
-        if (estado.autenticado && estado.usuario) {
-            interfaz.actualizarEstadoSesion(estado.usuario);
-        } else {
-            interfaz.actualizarEstadoSesion(null);
-        }
-    } catch (error) {
-        console.error('Error al verificar la sesión inicial:', error);
-        interfaz.actualizarEstadoSesion(null);
-    }
+    aplicacion.inicializar();
+    await controladorAutenticacion.procesarEnlaceInicial();
+    await aplicacion.restaurarSesion();
 });
-
-/**
- * Elimina los parámetros ?token= o ?recuperar= de la barra de direcciones
- * sin recargar la página para evitar reenvíos accidentales.
- */
-function limpiarUrl() {
-    const urlLimpia = window.location.origin + window.location.pathname;
-    window.history.replaceState({}, document.title, urlLimpia);
-}
