@@ -18,7 +18,7 @@ class VerificarSesionCasoDeUso
     /**
      * Comprueba si existe una sesión activa y valida que el usuario siga activo en MySQL.
      *
-     * @return array{autenticado: bool, usuario: ?array{id_usuario: int, apodo_usuario: string, correo_usuario: string}}
+     * @return array{autenticado: bool, usuario: ?array{id_usuario: int, apodo_usuario: string, correo_usuario: string, rol_usuario: string}}
      */
     public function execute(): array
     {
@@ -51,6 +51,7 @@ class VerificarSesionCasoDeUso
                     'id_usuario'     => $mUsuarioEntidad->obtenerId(),
                     'apodo_usuario'  => $mUsuarioEntidad->obtenerApodo(),
                     'correo_usuario' => $mUsuarioEntidad->obtenerCorreo(),
+                    'rol_usuario'    => $mUsuarioEntidad->obtenerRol(),
                 ]
             ];
 

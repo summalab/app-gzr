@@ -150,15 +150,26 @@ export class ControladorInterfaz {
         const zonaInvitado = document.getElementById('nav-invitado');
         const zonaAutenticado = document.getElementById('nav-autenticado');
         const saludo = document.getElementById('saludo-usuario');
+        const rol = document.getElementById('rol-usuario');
 
         if (usuario) {
             if (zonaInvitado) zonaInvitado.classList.add('oculto');
             if (zonaAutenticado) zonaAutenticado.classList.remove('oculto');
             if (saludo) saludo.textContent = `Hola, ${usuario.apodo_usuario}`;
+            if (rol) {
+                const roles = {
+                    usuario: 'Usuario',
+                    moderador: 'Moderador',
+                    administrador: 'Administrador'
+                };
+                const rolNormalizado = String(usuario.rol_usuario || '').toLowerCase();
+                rol.textContent = `Rol: ${roles[rolNormalizado] || 'No disponible'}`;
+            }
         } else {
             if (zonaAutenticado) zonaAutenticado.classList.add('oculto');
             if (zonaInvitado) zonaInvitado.classList.remove('oculto');
             if (saludo) saludo.textContent = '';
+            if (rol) rol.textContent = '';
             this.alternarPanelPerfil(false);
         }
 

@@ -74,11 +74,26 @@ html, body {
     gap: 0.75rem;
 }
 
+.identidad-usuario {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.1rem;
+    min-width: 0;
+    margin-right: 0.5rem;
+}
+
 .saludo-usuario {
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--color-texto-secundario);
-    margin-right: 0.5rem;
+}
+
+.rol-usuario {
+    font-size: 0.72rem;
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--color-primario);
 }
 
 /* ============================================================================
@@ -384,10 +399,22 @@ dialog.modal-nativo::backdrop {
    ============================================================================ */
 @media (max-width: 600px) {
     .saludo-usuario {
-        display: none;
+        max-width: 6rem;
+        overflow: hidden;
+        font-size: 0.75rem;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .rol-usuario {
+        font-size: 0.65rem;
     }
 
     .navbar {
         padding: 0 1rem;
+    }
+
+    .navbar-acciones {
+        gap: 0.4rem;
     }
 }
