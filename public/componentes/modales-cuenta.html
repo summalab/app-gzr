@@ -1,0 +1,74 @@
+<modal-ui id="modal-editar-apodo" aria-labelledby="titulo-editar-apodo">
+    <contenedor-ui class="cabecera-modal">
+        <h2 id="titulo-editar-apodo">Cambiar apodo</h2>
+        <boton-ui tipo="button" variante="cerrar" data-cerrar-modal aria-label="Cerrar diálogo">&times;</boton-ui>
+    </contenedor-ui>
+    <form id="formulario-editar-apodo">
+        <div class="alerta-modal" role="alert" aria-live="polite"></div>
+        <contenedor-ui class="grupo-campo">
+            <label for="nuevo-apodo">Nuevo apodo</label>
+            <input type="text" id="nuevo-apodo" name="nuevo_apodo" required autocomplete="nickname">
+        </contenedor-ui>
+        <boton-ui tipo="submit" variante="principal" ancho="completo">Guardar apodo</boton-ui>
+    </form>
+</modal-ui>
+
+<modal-ui id="modal-editar-correo" aria-labelledby="titulo-editar-correo">
+    <contenedor-ui class="cabecera-modal">
+        <h2 id="titulo-editar-correo">Actualizar correo</h2>
+        <boton-ui tipo="button" variante="cerrar" data-cerrar-modal aria-label="Cerrar diálogo">&times;</boton-ui>
+    </contenedor-ui>
+    <form id="formulario-editar-correo">
+        <div class="alerta-modal" role="alert" aria-live="polite"></div>
+        <contenedor-ui class="grupo-campo">
+            <label for="nuevo-correo">Nuevo correo electrónico</label>
+            <input type="email" id="nuevo-correo" name="nuevo_correo" required autocomplete="email">
+        </contenedor-ui>
+        <boton-ui tipo="submit" variante="principal" ancho="completo">Actualizar y enviar verificación</boton-ui>
+    </form>
+</modal-ui>
+
+<modal-ui id="modal-cambiar-contrasena" aria-labelledby="titulo-cambiar-contrasena">
+    <contenedor-ui class="cabecera-modal">
+        <h2 id="titulo-cambiar-contrasena">Cambiar contraseña</h2>
+        <boton-ui tipo="button" variante="cerrar" data-cerrar-modal aria-label="Cerrar diálogo">&times;</boton-ui>
+    </contenedor-ui>
+    <form id="formulario-cambiar-contrasena">
+        <div class="alerta-modal" role="alert" aria-live="polite"></div>
+        <contenedor-ui class="grupo-campo">
+            <label for="contrasena-actual">Contraseña actual</label>
+            <input type="password" id="contrasena-actual" name="contrasena_actual" required
+                autocomplete="current-password">
+        </contenedor-ui>
+        <contenedor-ui class="grupo-campo">
+            <label for="contrasena-nueva">Nueva contraseña</label>
+            <input type="password" id="contrasena-nueva" name="contrasena_nueva" minlength="8" required
+                autocomplete="new-password" placeholder="Mínimo 8 caracteres">
+        </contenedor-ui>
+        <contenedor-ui class="grupo-campo">
+            <label for="confirmar-contrasena-nueva">Confirmar nueva contraseña</label>
+            <input type="password" id="confirmar-contrasena-nueva" name="confirmar_contrasena_nueva" minlength="8"
+                required autocomplete="new-password">
+        </contenedor-ui>
+        <boton-ui tipo="submit" variante="principal" ancho="completo">Actualizar contraseña</boton-ui>
+    </form>
+</modal-ui>
+
+<modal-ui id="modal-eliminar-cuenta" aria-labelledby="titulo-eliminar-cuenta">
+    <contenedor-ui class="cabecera-modal">
+        <h2 id="titulo-eliminar-cuenta">Eliminar cuenta</h2>
+        <boton-ui tipo="button" variante="cerrar" data-cerrar-modal aria-label="Cerrar diálogo">&times;</boton-ui>
+    </contenedor-ui>
+    <form id="formulario-eliminar-cuenta">
+        <div class="alerta-modal" role="alert" aria-live="polite"></div>
+        <p class="texto-ayuda texto-peligro">
+            Esta acción desactivará tu cuenta de forma permanente. Confirma tu contraseña para continuar.
+        </p>
+        <contenedor-ui class="grupo-campo">
+            <label for="contrasena-confirmacion-cuenta">Contraseña actual</label>
+            <input type="password" id="contrasena-confirmacion-cuenta" name="contrasena_confirmacion" required
+                autocomplete="current-password">
+        </contenedor-ui>
+        <boton-ui tipo="submit" variante="peligro" ancho="completo">Confirmar baja de cuenta</boton-ui>
+    </form>
+</modal-ui>

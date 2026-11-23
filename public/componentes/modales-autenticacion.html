@@ -1,0 +1,90 @@
+<modal-ui id="modal-inicio-sesion" aria-labelledby="titulo-inicio-sesion">
+    <contenedor-ui class="cabecera-modal">
+        <h2 id="titulo-inicio-sesion">Iniciar sesión</h2>
+        <boton-ui tipo="button" variante="cerrar" data-cerrar-modal aria-label="Cerrar diálogo">&times;</boton-ui>
+    </contenedor-ui>
+    <form id="formulario-inicio-sesion">
+        <div class="alerta-modal" role="alert" aria-live="polite"></div>
+        <contenedor-ui class="grupo-campo">
+            <label for="correo-inicio-sesion">Correo electrónico</label>
+            <input type="email" id="correo-inicio-sesion" name="correo_usuario" required autocomplete="email"
+                placeholder="ejemplo@correo.com">
+        </contenedor-ui>
+        <contenedor-ui class="grupo-campo">
+            <label for="contrasena-inicio-sesion">Contraseña</label>
+            <input type="password" id="contrasena-inicio-sesion" name="contrasena" required
+                autocomplete="current-password" placeholder="Tu contraseña">
+        </contenedor-ui>
+        <boton-ui tipo="submit" variante="principal" ancho="completo">Entrar</boton-ui>
+        <boton-ui id="boton-ir-recuperacion" tipo="button" variante="enlace">¿Olvidaste tu contraseña?</boton-ui>
+    </form>
+</modal-ui>
+
+<modal-ui id="modal-registro" aria-labelledby="titulo-registro">
+    <contenedor-ui class="cabecera-modal">
+        <h2 id="titulo-registro">Crear cuenta</h2>
+        <boton-ui tipo="button" variante="cerrar" data-cerrar-modal aria-label="Cerrar diálogo">&times;</boton-ui>
+    </contenedor-ui>
+    <form id="formulario-registro">
+        <div class="alerta-modal" role="alert" aria-live="polite"></div>
+        <contenedor-ui class="grupo-campo">
+            <label for="apodo-registro">Apodo de usuario</label>
+            <input type="text" id="apodo-registro" name="apodo_usuario" required autocomplete="nickname"
+                placeholder="Ej: viajero99">
+        </contenedor-ui>
+        <contenedor-ui class="grupo-campo">
+            <label for="correo-registro">Correo electrónico</label>
+            <input type="email" id="correo-registro" name="correo_usuario" required autocomplete="email"
+                placeholder="ejemplo@correo.com">
+        </contenedor-ui>
+        <contenedor-ui class="grupo-campo">
+            <label for="contrasena-registro">Contraseña</label>
+            <input type="password" id="contrasena-registro" name="contrasena_hash_usuario" minlength="8" required
+                autocomplete="new-password" placeholder="Mínimo 8 caracteres">
+        </contenedor-ui>
+        <contenedor-ui class="grupo-campo">
+            <label for="confirmar-contrasena-registro">Confirmar contraseña</label>
+            <input type="password" id="confirmar-contrasena-registro" name="confirmar_contrasena" minlength="8"
+                required autocomplete="new-password" placeholder="Repite tu contraseña">
+        </contenedor-ui>
+        <boton-ui tipo="submit" variante="principal" ancho="completo">Registrarse</boton-ui>
+    </form>
+</modal-ui>
+
+<modal-ui id="modal-recuperacion" aria-labelledby="titulo-recuperacion">
+    <contenedor-ui class="cabecera-modal">
+        <h2 id="titulo-recuperacion">Recuperar contraseña</h2>
+        <boton-ui tipo="button" variante="cerrar" data-cerrar-modal aria-label="Cerrar diálogo">&times;</boton-ui>
+    </contenedor-ui>
+    <form id="formulario-recuperacion">
+        <div class="alerta-modal" role="alert" aria-live="polite"></div>
+        <contenedor-ui class="grupo-campo">
+            <label for="correo-recuperacion">Ingresa tu correo registrado</label>
+            <input type="email" id="correo-recuperacion" name="correo_usuario" required autocomplete="email"
+                placeholder="ejemplo@correo.com">
+        </contenedor-ui>
+        <boton-ui tipo="submit" variante="principal" ancho="completo">Enviar enlace</boton-ui>
+    </form>
+</modal-ui>
+
+<modal-ui id="modal-restablecimiento" aria-labelledby="titulo-restablecimiento">
+    <contenedor-ui class="cabecera-modal">
+        <h2 id="titulo-restablecimiento">Nueva contraseña</h2>
+        <boton-ui tipo="button" variante="cerrar" data-cerrar-modal aria-label="Cerrar diálogo">&times;</boton-ui>
+    </contenedor-ui>
+    <form id="formulario-restablecimiento">
+        <div class="alerta-modal" role="alert" aria-live="polite"></div>
+        <input type="hidden" id="token-recuperacion" name="token">
+        <contenedor-ui class="grupo-campo">
+            <label for="contrasena-nueva-restablecimiento">Nueva contraseña</label>
+            <input type="password" id="contrasena-nueva-restablecimiento" name="nueva_contrasena" minlength="8"
+                required autocomplete="new-password" placeholder="Mínimo 8 caracteres">
+        </contenedor-ui>
+        <contenedor-ui class="grupo-campo">
+            <label for="confirmar-contrasena-restablecimiento">Confirmar nueva contraseña</label>
+            <input type="password" id="confirmar-contrasena-restablecimiento" name="confirmar_nueva_contrasena"
+                minlength="8" required autocomplete="new-password" placeholder="Repite tu contraseña">
+        </contenedor-ui>
+        <boton-ui tipo="submit" variante="principal" ancho="completo">Restablecer contraseña</boton-ui>
+    </form>
+</modal-ui>

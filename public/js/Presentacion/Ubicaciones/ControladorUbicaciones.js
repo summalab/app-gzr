@@ -13,10 +13,10 @@ export class ControladorUbicaciones {
 
     inicializar() {
         this.gestorMapa.establecerManejadorEliminacion((id) => this.procesarEliminarUbicacion(id));
-        this.vista.enlazarClick('btn-nueva-ubicacion', () => this.vista.abrirModal('modal-nueva-ubicacion'));
-        this.vista.enlazarFormulario('form-nueva-ubicacion', (formulario) => this.procesarCrearUbicacion(formulario));
+        this.vista.enlazarClick('boton-nueva-ubicacion', () => this.vista.abrirModal('modal-nueva-ubicacion'));
+        this.vista.enlazarFormulario('formulario-nueva-ubicacion', (formulario) => this.procesarCrearUbicacion(formulario));
 
-        this.vista.enlazarClick('btn-usar-gps', () => this.procesarUbicacionGps());
+        this.vista.enlazarClick('boton-usar-gps', () => this.procesarUbicacionGps());
     }
 
     async cargarParaUsuario(usuario) {
@@ -45,7 +45,7 @@ export class ControladorUbicaciones {
     async procesarUbicacionGps() {
         try {
             const gpsEjecutado = await this.vista.ejecutarConBotonEnCarga(
-                'btn-usar-gps',
+                'boton-usar-gps',
                 '📡 Obteniendo señal GPS...',
                 async () => {
                     const coordenadas = await this.gestorMapa.obtenerUbicacionGps();

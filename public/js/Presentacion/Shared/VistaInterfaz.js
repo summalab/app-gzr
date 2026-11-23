@@ -27,7 +27,7 @@ export class VistaInterfaz {
             } catch (error) {
                 if (alerta) {
                     alerta.textContent = error.message;
-                    alerta.className = 'alerta-modal alerta-error';
+                    alerta.className = 'alerta-modal estado-error';
                 } else {
                     this.mostrarAlertaGlobal(error.message, false);
                 }
@@ -59,7 +59,8 @@ export class VistaInterfaz {
     }
 
     async ejecutarConBotonEnCarga(idBoton, textoCarga, accion) {
-        const boton = this.documento.getElementById(idBoton);
+        const elemento = this.documento.getElementById(idBoton);
+        const boton = elemento?.querySelector('button') || elemento;
         if (!boton) return false;
 
         const textoOriginal = boton.textContent;
@@ -92,7 +93,8 @@ export class VistaInterfaz {
     }
 
     alternarPanelPerfil(abrir) {
-        this.documento.getElementById('panel-perfil')?.classList.toggle('abierto', abrir);
+        this.documento.getElementById('panel-cuenta')?.classList.toggle('abierto', abrir);
+        this.documento.getElementById('boton-menu-cuenta')?.setAttribute('aria-expanded', String(abrir));
     }
 
     mostrarAlertaGlobal(mensaje, esExito = true) {
@@ -100,7 +102,7 @@ export class VistaInterfaz {
         if (!contenedor) return;
 
         contenedor.textContent = mensaje;
-        contenedor.className = `alerta-global ${esExito ? 'alerta-exito' : 'alerta-error'}`;
+        contenedor.className = `alerta-global ${esExito ? 'estado-exito' : 'estado-error'}`;
         globalThis.setTimeout(() => {
             contenedor.className = 'alerta-global oculto';
             contenedor.textContent = '';
@@ -113,12 +115,12 @@ export class VistaInterfaz {
         if (!contenedor) return;
 
         contenedor.textContent = mensaje;
-        contenedor.className = `alerta-modal ${esExito ? 'alerta-exito' : 'alerta-error'}`;
+        contenedor.className = `alerta-modal ${esExito ? 'estado-exito' : 'estado-error'}`;
     }
 
     renderizarSesion(usuario) {
-        const zonaInvitado = this.documento.getElementById('nav-invitado');
-        const zonaAutenticado = this.documento.getElementById('nav-autenticado');
+        const zonaInvitado = this.documento.getElementById('navegacion-invitado');
+        const zonaAutenticado = this.documento.getElementById('navegacion-autenticada');
         const saludo = this.documento.getElementById('saludo-usuario');
         const rol = this.documento.getElementById('rol-usuario');
 

@@ -1,44 +1,42 @@
 export class VistaPopupUbicacion {
     construir(ubicacion, mostrarAutor, alEliminar) {
         const contenedor = document.createElement('div');
-        contenedor.style.minWidth = '180px';
+        contenedor.className = 'popup-ubicacion';
 
         const titulo = document.createElement('h3');
-        titulo.style.fontSize = '1rem';
-        titulo.style.marginBottom = '0.25rem';
+        titulo.className = 'popup-titulo';
         titulo.textContent = ubicacion.titulo || 'Ubicación sin título';
         contenedor.appendChild(titulo);
 
         if (ubicacion.descripcion) {
             const descripcion = document.createElement('p');
-            descripcion.style.fontSize = '0.85rem';
-            descripcion.style.marginBottom = '0.5rem';
+            descripcion.className = 'popup-descripcion';
             descripcion.textContent = ubicacion.descripcion;
             contenedor.appendChild(descripcion);
         }
 
         if (mostrarAutor && ubicacion.apodo_usuario) {
             const autor = document.createElement('small');
-            autor.style.color = '#4b5563';
+            autor.className = 'popup-autor';
             autor.textContent = `Compartido por: ${ubicacion.apodo_usuario}`;
             contenedor.appendChild(autor);
         }
 
         if (!mostrarAutor && ubicacion.id_ubicacion && typeof alEliminar === 'function') {
-            const botonEliminar = document.createElement('button');
-            botonEliminar.type = 'button';
+            const accion = document.createElement('contenedor-ui');
+            accion.classList.add('accion-popup');
+            const botonEliminar = document.createElement('boton-ui');
+            botonEliminar.setAttribute('tipo', 'button');
+            botonEliminar.setAttribute('variante', 'peligro');
+            botonEliminar.setAttribute('ancho', 'completo');
             botonEliminar.textContent = '🗑️ Eliminar ubicación';
-            botonEliminar.className = 'btn btn-peligro';
-            botonEliminar.style.marginTop = '0.5rem';
-            botonEliminar.style.width = '100%';
-            botonEliminar.style.padding = '0.35rem 0.6rem';
-            botonEliminar.style.fontSize = '0.8rem';
             botonEliminar.addEventListener('click', () => {
                 botonEliminar.disabled = true;
-                botonEliminar.textContent = 'Eliminando...';
+                botonEliminar.texto = 'Eliminando...';
                 alEliminar(ubicacion.id_ubicacion);
             });
-            contenedor.appendChild(botonEliminar);
+            accion.appendChild(botonEliminar);
+            contenedor.appendChild(accion);
         }
 
         return contenedor;

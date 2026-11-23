@@ -11,17 +11,17 @@ export class ControladorAutenticacion {
     }
 
     inicializar() {
-        this.vista.enlazarClick('btn-abrir-login', () => this.vista.abrirModal('modal-login'));
-        this.vista.enlazarClick('btn-abrir-registro', () => this.vista.abrirModal('modal-registro'));
-        this.vista.enlazarClick('btn-ir-recuperar', () => {
-            this.vista.cerrarModal('modal-login');
-            this.vista.abrirModal('modal-recuperar');
+        this.vista.enlazarClick('boton-abrir-inicio-sesion', () => this.vista.abrirModal('modal-inicio-sesion'));
+        this.vista.enlazarClick('boton-abrir-registro', () => this.vista.abrirModal('modal-registro'));
+        this.vista.enlazarClick('boton-ir-recuperacion', () => {
+            this.vista.cerrarModal('modal-inicio-sesion');
+            this.vista.abrirModal('modal-recuperacion');
         });
 
-        this.vista.enlazarFormulario('form-login', (formulario) => this.procesarLogin(formulario));
-        this.vista.enlazarFormulario('form-registro', (formulario) => this.procesarRegistro(formulario));
-        this.vista.enlazarFormulario('form-recuperar', (formulario) => this.procesarRecuperacion(formulario));
-        this.vista.enlazarFormulario('form-restablecer', (formulario) => this.procesarRestablecimiento(formulario));
+        this.vista.enlazarFormulario('formulario-inicio-sesion', (formulario) => this.procesarLogin(formulario));
+        this.vista.enlazarFormulario('formulario-registro', (formulario) => this.procesarRegistro(formulario));
+        this.vista.enlazarFormulario('formulario-recuperacion', (formulario) => this.procesarRecuperacion(formulario));
+        this.vista.enlazarFormulario('formulario-restablecimiento', (formulario) => this.procesarRestablecimiento(formulario));
     }
 
     async procesarEnlaceInicial() {
@@ -33,7 +33,7 @@ export class ControladorAutenticacion {
             try {
                 const respuesta = await this.cuentaUsuario.verificarCorreo(tokenVerificacion);
                 this.vista.mostrarAlertaGlobal(respuesta.message, true);
-                this.vista.abrirModal('modal-login');
+                this.vista.abrirModal('modal-inicio-sesion');
             } catch (error) {
                 this.vista.mostrarAlertaGlobal(error.message, false);
             } finally {
@@ -41,7 +41,7 @@ export class ControladorAutenticacion {
             }
         } else if (tokenRecuperacion) {
             this.vista.asignarValor('token-recuperacion', tokenRecuperacion);
-            this.vista.abrirModal('modal-restablecer');
+            this.vista.abrirModal('modal-restablecimiento');
             this.limpiarUrl();
         }
     }
@@ -52,7 +52,7 @@ export class ControladorAutenticacion {
             this.vista.valorCampo(formulario, 'contrasena')
         );
         formulario.reset();
-        this.vista.cerrarModal('modal-login');
+        this.vista.cerrarModal('modal-inicio-sesion');
         await this.onSesionCambiada(respuesta.usuario);
         this.vista.mostrarAlertaGlobal(respuesta.message, true);
     }
@@ -74,7 +74,7 @@ export class ControladorAutenticacion {
             this.vista.valorCampo(formulario, 'correo_usuario')
         );
         formulario.reset();
-        this.vista.cerrarModal('modal-recuperar');
+        this.vista.cerrarModal('modal-recuperacion');
         this.vista.mostrarAlertaGlobal(respuesta.message, true);
     }
 
@@ -85,9 +85,9 @@ export class ControladorAutenticacion {
             this.vista.valorCampo(formulario, 'confirmar_nueva_contrasena')
         );
         formulario.reset();
-        this.vista.cerrarModal('modal-restablecer');
+        this.vista.cerrarModal('modal-restablecimiento');
         this.vista.mostrarAlertaGlobal(respuesta.message, true);
-        this.vista.abrirModal('modal-login');
+        this.vista.abrirModal('modal-inicio-sesion');
     }
 
     limpiarUrl() {

@@ -1,0 +1,35 @@
+<modal-ui id="modal-nueva-ubicacion" aria-labelledby="titulo-nueva-ubicacion">
+    <contenedor-ui class="cabecera-modal">
+        <h2 id="titulo-nueva-ubicacion">Nueva ubicación</h2>
+        <boton-ui tipo="button" variante="cerrar" data-cerrar-modal aria-label="Cerrar diálogo">&times;</boton-ui>
+    </contenedor-ui>
+    <contenedor-ui class="grupo-campo">
+        <boton-ui id="boton-usar-gps" tipo="button" variante="secundario" ancho="completo">
+            📍 Usar mi ubicación actual (GPS)
+        </boton-ui>
+    </contenedor-ui>
+    <form id="formulario-nueva-ubicacion">
+        <div class="alerta-modal" role="alert" aria-live="polite"></div>
+        <contenedor-ui class="grupo-campo">
+            <label for="ubicacion-titulo">Título del lugar *</label>
+            <input type="text" id="ubicacion-titulo" name="titulo" maxlength="120" required
+                placeholder="Ej. Edificio del Valle">
+        </contenedor-ui>
+        <contenedor-ui class="grupo-campo">
+            <label for="ubicacion-descripcion">Descripción *</label>
+            <input type="text" id="ubicacion-descripcion" name="descripcion" minlength="15" required
+                placeholder="Explica qué hace relevante este sitio (mín. 15 caracteres)">
+        </contenedor-ui>
+        <contenedor-ui class="grupo-campo">
+            <label for="ubicacion-latitud">Latitud *</label>
+            <input type="number" id="ubicacion-latitud" name="latitud" step="any" min="-90" max="90" required
+                placeholder="Ej. 4.8133">
+        </contenedor-ui>
+        <contenedor-ui class="grupo-campo">
+            <label for="ubicacion-longitud">Longitud *</label>
+            <input type="number" id="ubicacion-longitud" name="longitud" step="any" min="-180" max="180" required
+                placeholder="Ej. -75.6961">
+        </contenedor-ui>
+        <boton-ui tipo="submit" variante="principal" ancho="completo">Guardar en el mapa</boton-ui>
+    </form>
+</modal-ui>

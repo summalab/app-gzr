@@ -2,8 +2,8 @@ import { GeolocalizadorNavegador } from './GeolocalizadorNavegador.js';
 
 export class LeafletMapAdapter {
     constructor(
-        idContenedorMapa = 'mapa-leaflet',
-        idInsigniaVista = 'insignia-vista',
+        idContenedorMapa = 'mapa-interactivo',
+        idInsigniaVista = 'indicador-vista-mapa',
         geolocalizador = new GeolocalizadorNavegador(),
         vistaPopup
     ) {

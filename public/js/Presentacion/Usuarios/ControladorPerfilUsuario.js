@@ -13,18 +13,18 @@ export class ControladorPerfilUsuario {
     }
 
     inicializar() {
-        this.vista.enlazarClick('btn-menu-hamburguesa', () => this.vista.alternarPanelPerfil(true));
-        this.vista.enlazarClick('btn-cerrar-panel', () => this.vista.alternarPanelPerfil(false));
+        this.vista.enlazarClick('boton-menu-cuenta', () => this.vista.alternarPanelPerfil(true));
+        this.vista.enlazarClick('boton-cerrar-panel-cuenta', () => this.vista.alternarPanelPerfil(false));
         this.vista.enlazarClick('opcion-editar-apodo', () => this.abrirOpcion('modal-editar-apodo'));
         this.vista.enlazarClick('opcion-editar-correo', () => this.abrirOpcion('modal-editar-correo'));
-        this.vista.enlazarClick('opcion-cambiar-clave', () => this.abrirOpcion('modal-cambiar-clave'));
+        this.vista.enlazarClick('opcion-cambiar-clave', () => this.abrirOpcion('modal-cambiar-contrasena'));
         this.vista.enlazarClick('opcion-eliminar-cuenta', () => this.abrirOpcion('modal-eliminar-cuenta'));
-        this.vista.enlazarClick('btn-cerrar-sesion', () => this.procesarLogout());
+        this.vista.enlazarClick('boton-cerrar-sesion', () => this.procesarLogout());
 
-        this.vista.enlazarFormulario('form-editar-apodo', (formulario) => this.procesarActualizarApodo(formulario));
-        this.vista.enlazarFormulario('form-editar-correo', (formulario) => this.procesarActualizarCorreo(formulario));
-        this.vista.enlazarFormulario('form-cambiar-clave', (formulario) => this.procesarCambiarContrasena(formulario));
-        this.vista.enlazarFormulario('form-eliminar-cuenta', (formulario) => this.procesarEliminarCuenta(formulario));
+        this.vista.enlazarFormulario('formulario-editar-apodo', (formulario) => this.procesarActualizarApodo(formulario));
+        this.vista.enlazarFormulario('formulario-editar-correo', (formulario) => this.procesarActualizarCorreo(formulario));
+        this.vista.enlazarFormulario('formulario-cambiar-contrasena', (formulario) => this.procesarCambiarContrasena(formulario));
+        this.vista.enlazarFormulario('formulario-eliminar-cuenta', (formulario) => this.procesarEliminarCuenta(formulario));
     }
 
     abrirOpcion(idModal) {
@@ -58,7 +58,7 @@ export class ControladorPerfilUsuario {
             this.vista.valorCampo(formulario, 'confirmar_contrasena_nueva')
         );
         formulario.reset();
-        this.vista.cerrarModal('modal-cambiar-clave');
+        this.vista.cerrarModal('modal-cambiar-contrasena');
         this.vista.mostrarAlertaGlobal(respuesta.message, true);
     }
 

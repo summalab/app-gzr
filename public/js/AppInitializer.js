@@ -13,8 +13,22 @@ import { ControladorUbicaciones } from './Presentacion/Ubicaciones/ControladorUb
 import { VistaInterfaz } from './Presentacion/Shared/VistaInterfaz.js';
 import { VistaPopupUbicacion } from './Presentacion/Ubicaciones/VistaPopupUbicacion.js';
 import { ControladorInterfaz } from './ControladorInterfaz.js';
+import './Presentacion/Componentes/RegistrarComponentesUI.js';
+import { CargadorComponentes } from './Presentacion/Componentes/CargadorComponentes.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await new CargadorComponentes().cargar();
+    } catch (error) {
+        console.error('No se pudo componer la interfaz:', error);
+        const aviso = document.createElement('p');
+        aviso.className = 'error-carga-componentes';
+        aviso.setAttribute('role', 'alert');
+        aviso.textContent = 'No se pudo cargar la interfaz. Recarga la página o inténtalo más tarde.';
+        document.body.prepend(aviso);
+        return;
+    }
+
     const clienteHttp = new HttpApiClient();
     const autenticacion = new AutenticacionUseCases(new AuthGateway(clienteHttp));
     const cuentaUsuario = new CuentaUsuarioUseCases(new UsuarioGateway(clienteHttp));
@@ -22,8 +36,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const vista = new VistaInterfaz();
     const popupUbicacion = new VistaPopupUbicacion();
     const mapa = new LeafletMapAdapter(
-        'mapa-leaflet',
-        'insignia-vista',
+        'mapa-interactivo',
+        'indicador-vista-mapa',
         new GeolocalizadorNavegador(),
         popupUbicacion
     );
