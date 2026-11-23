@@ -113,18 +113,4 @@ class MySQLUsuarioRepositorio implements UsuarioRepositorioInterface
     }
 
 
-    public function beginTransaction(): void
-    {
-        $this->mUsuarioDao->beginTransaction();
-    }
-
-    public function commit(): void
-    {
-        $this->mUsuarioDao->commit();
-    }
-
-    public function rollBack(): void
-    {
-        $this->mUsuarioDao->rollBack();
-    }
 }

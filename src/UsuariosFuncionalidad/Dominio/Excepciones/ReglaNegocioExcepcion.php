@@ -11,32 +11,32 @@ class ReglaNegocioExcepcion extends ExcepcionNegocio
 
     public static function apodoDuplicado(string $apodo): self
     {
-        $mensajes = require dirname(__DIR__, 3) . '/Shared/Infraestructura/Idiomas/es.php';
-        return new self($mensajes['usuario']['apodo_duplicado'], 422);
+        return new self('usuario.apodo_duplicado', 422);
     }
 
     public static function correoDuplicado(string $correo): self
     {
-        $mensajes = require dirname(__DIR__, 3) . '/Shared/Infraestructura/Idiomas/es.php';
-        return new self($mensajes['usuario']['correo_duplicado'], 422);
+        return new self('usuario.correo_duplicado', 422);
     }
 
     public static function contrasenaCorta(int $minimo = 8): self
     {
-        $mensajes = require dirname(__DIR__, 3) . '/Shared/Infraestructura/Idiomas/es.php';
-        return new self(str_replace('{minimo}', (string)$minimo, $mensajes['usuario']['contrasena_corta']), 422);
+        return new self('usuario.contrasena_corta', 422);
     }
 
     public static function tokenInvalido(): self
     {
-        $mensajes = require dirname(__DIR__, 3) . '/Shared/Infraestructura/Idiomas/es.php';
-        return new self($mensajes['usuario']['token_invalido'], 422);
+        return new self('usuario.token_invalido', 422);
     }
 
     public static function tokenExpirado(): self
     {
-        $mensajes = require dirname(__DIR__, 3) . '/Shared/Infraestructura/Idiomas/es.php';
-        return new self($mensajes['usuario']['token_expirado'], 422);
+        return new self('usuario.token_expirado', 422);
+    }
+
+    public static function usuarioYaVerificado(): self
+    {
+        return new self('usuario.ya_verificado', 422);
     }
 
 }

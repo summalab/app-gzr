@@ -39,14 +39,6 @@ class MySQLTokenConfirmacionUsuarioRepositorio implements TokenConfirmacionUsuar
     //public function crearTokenVerificacion(string $id_usuario, string $token_verificacion, string $fecha_expiracion): void;
     public function crearTokenVerificacion(TokenConfirmacionUsuarioEntidad $mTokenConfirmacionUsuarioEntidad): TokenConfirmacionUsuarioEntidad
     {
-        /*
-        $this->mTokenConfirmacionUsuarioDAO->insertarToken([
-            'id_usuario'         => $id_usuario,
-            'token_verificacion' => $token_verificacion,
-            'fecha_expiracion'   => $fecha_expiracion
-        ]);
-        */
-
         // Extraemos los datos de la entidad en un arreglo plano para el DAO
         $data = [
             'id_usuario'         => $mTokenConfirmacionUsuarioEntidad->obtenerIdUsuario(),

@@ -7,12 +7,14 @@ namespace UsuariosFuncionalidad\Aplicacion\CasosDeUso;
 use UsuariosFuncionalidad\Aplicacion\DTOs\RegistrarUsuarioEntradaDTO;
 use UsuariosFuncionalidad\Dominio\Entidades\TokenConfirmacionUsuarioEntidad;
 use UsuariosFuncionalidad\Dominio\Repositorios\TokenConfirmacionUsuarioRepositorioInterface;
-use Exception;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
+use UsuariosFuncionalidad\Dominio\Excepciones\ReglaNegocioExcepcion;
 
 class GenerarTokenConfirmacionUsuarioCasoDeUso
 {
     public function __construct(
-        private TokenConfirmacionUsuarioRepositorioInterface $mTokenConfirmacionUsuarioRepositorio
+        private TokenConfirmacionUsuarioRepositorioInterface $mTokenConfirmacionUsuarioRepositorio,
+        private CatalogoMensajesInterface $mensajes
     ) {}
 
     /**
@@ -25,7 +27,7 @@ class GenerarTokenConfirmacionUsuarioCasoDeUso
         // $esta_verificado_usuario = 0 (no verificado)
         // $esta_verificado_usuario = 1 (verificado) Genera Excpcion
         if ($esta_verificado_usuario) {
-            throw new \Exception("El usuario ya se encuentra verificado.");
+            throw ReglaNegocioExcepcion::usuarioYaVerificado();
         }
 
         // 1. Generación de un token criptográfico seguro de 64 caracteres de forma nativa

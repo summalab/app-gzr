@@ -7,12 +7,14 @@ namespace AuthFuncionalidad\Aplicacion\CasosDeUso;
 use Shared\Dominio\Servicios\SesionUsuarioInterface;
 use Throwable;
 use UsuariosFuncionalidad\Dominio\Repositorios\UsuarioRepositorioInterface;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
 
 class VerificarSesionCasoDeUso
 {
     public function __construct(
         private SesionUsuarioInterface $mSesionUsuario,
-        private UsuarioRepositorioInterface $mUsuarioRepositorio
+        private UsuarioRepositorioInterface $mUsuarioRepositorio,
+        private CatalogoMensajesInterface $mensajes
     ) {}
 
     /**
@@ -57,7 +59,7 @@ class VerificarSesionCasoDeUso
 
         } catch (Throwable $falla) {
             error_log('Error crítico en VerificarSesionCasoDeUso: ' . $falla->getMessage());
-            throw new \Exception('No se pudo verificar el estado de la sesión por un problema interno.');
+            throw new \Exception($this->mensajes->obtener('sistema.operacion_verificar_sesion'));
         }
     }
 }

@@ -9,25 +9,32 @@ use Throwable;
 use UsuariosFuncionalidad\Aplicacion\DTOs\CambiarContrasenaEntradaDTO;
 use UsuariosFuncionalidad\Dominio\Excepciones\ReglaNegocioExcepcion;
 use UsuariosFuncionalidad\Dominio\Repositorios\UsuarioRepositorioInterface;
+use Shared\Dominio\Servicios\AutorizadorInterface;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
+use Shared\Dominio\Servicios\GestorTransaccionesInterface;
 
 class CambiarContrasenaCasoDeUso
 {
     public function __construct(
-        private UsuarioRepositorioInterface $mUsuarioRepositorio
+        private UsuarioRepositorioInterface $mUsuarioRepositorio,
+        private AutorizadorInterface $mAutorizador,
+        private CatalogoMensajesInterface $mensajes,
+        private GestorTransaccionesInterface $transacciones
     ) {}
 
     public function execute(CambiarContrasenaEntradaDTO $dto): void
     {
+        $this->mAutorizador->exigirPermiso('perfil.gestionar_propio');
         // 1. Recuperar al usuario actual desde el repositorio
         $mUsuarioEntidad = $this->mUsuarioRepositorio->encontrarPorId($dto->id_usuario);
 
         if (!$mUsuarioEntidad) {
-            throw new ReglaNegocioExcepcion('El usuario solicitado no existe en el sistema.', 404);
+            throw new ReglaNegocioExcepcion($this->mensajes->obtener('usuario.usuario_no_encontrado'), 404);
         }
 
         // 2. Verificar que la contraseña actual sea correcta usando password_verify
         if (!password_verify($dto->contrasena_actual, $mUsuarioEntidad->obtenerContrasenadHash())) {
-            throw new ReglaNegocioExcepcion('La contraseña actual ingresada es incorrecta.', 422);
+            throw new ReglaNegocioExcepcion($this->mensajes->obtener('usuario.contrasena_actual_mala'), 422);
         }
 
         // 3. Validar la longitud mínima de la nueva contraseña
@@ -37,7 +44,7 @@ class CambiarContrasenaCasoDeUso
 
         // 4. Evitar que ponga exactamente la misma contraseña que ya tiene
         if (password_verify($dto->contrasena_nueva, $mUsuarioEntidad->obtenerContrasenadHash())) {
-            throw new ReglaNegocioExcepcion('La nueva contraseña debe ser diferente a la contraseña actual.', 422);
+            throw new ReglaNegocioExcepcion($this->mensajes->obtener('usuario.contrasena_diferente'), 422);
         }
 
         try {
@@ -48,13 +55,15 @@ class CambiarContrasenaCasoDeUso
             $mUsuarioEntidad->cambiarContrasena($nuevoHashContrasena);
 
             // 7. Persistir los cambios reutilizando el método único guardar() (ejecuta UPDATE)
-            $this->mUsuarioRepositorio->guardar($mUsuarioEntidad);
+            $this->transacciones->ejecutar(function () use ($mUsuarioEntidad) {
+                $this->mUsuarioRepositorio->guardar($mUsuarioEntidad);
+            });
 
         } catch (ReglaNegocioExcepcion | InvalidArgumentException $reglaExcepcion) {
             throw $reglaExcepcion;
         } catch (Throwable $falla) {
             error_log('Error crítico en CambiarContrasenaCasoDeUso: ' . $falla->getMessage());
-            throw new \Exception('No se pudo actualizar la contraseña por un problema interno.');
+            throw new \Exception($this->mensajes->obtener('sistema.operacion_cambio_clave'));
         }
     }
 }

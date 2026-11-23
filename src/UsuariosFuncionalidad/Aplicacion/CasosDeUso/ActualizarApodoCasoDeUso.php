@@ -9,26 +9,31 @@ use Throwable;
 use UsuariosFuncionalidad\Aplicacion\DTOs\ActualizarApodoEntradaDTO;
 use UsuariosFuncionalidad\Dominio\Excepciones\ReglaNegocioExcepcion;
 use UsuariosFuncionalidad\Dominio\Repositorios\UsuarioRepositorioInterface;
+use Shared\Dominio\Servicios\AutorizadorInterface;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
 
 class ActualizarApodoCasoDeUso
 {
     public function __construct(
-        private UsuarioRepositorioInterface $mUsuarioRepositorio
+        private UsuarioRepositorioInterface $mUsuarioRepositorio,
+        private AutorizadorInterface $mAutorizador,
+        private CatalogoMensajesInterface $mensajes
     ) {}
 
     public function execute(ActualizarApodoEntradaDTO $dto): void
     {
+        $this->mAutorizador->exigirPermiso('perfil.gestionar_propio');
         $nuevoApodoLimpio = trim($dto->nuevo_apodo);
 
         if ($nuevoApodoLimpio === '') {
-            throw new InvalidArgumentException('El nuevo apodo no puede estar vacío.');
+            throw new InvalidArgumentException($this->mensajes->obtener('usuario.apodo_vacio'));
         }
 
         // 1. Recuperar la entidad actual del usuario desde el repositorio
         $mUsuarioEntidad = $this->mUsuarioRepositorio->encontrarPorId($dto->id_usuario);
 
         if (!$mUsuarioEntidad) {
-            throw new ReglaNegocioExcepcion('El usuario solicitado no existe en el sistema.', 404);
+            throw new ReglaNegocioExcepcion($this->mensajes->obtener('usuario.usuario_no_encontrado'), 404);
         }
 
         // 2. Si el apodo ingresado es idéntico al que ya tiene, evitamos trabajo innecesario
@@ -52,7 +57,7 @@ class ActualizarApodoCasoDeUso
             throw $reglaExcepcion;
         } catch (Throwable $falla) {
             error_log('Error crítico en ActualizarApodoCasoDeUso: ' . $falla->getMessage());
-            throw new \Exception('No se pudo actualizar el apodo por un problema interno.');
+            throw new \Exception($this->mensajes->obtener('sistema.operacion_cambio_apodo'));
         }
     }
 }

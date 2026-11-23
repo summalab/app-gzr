@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace UsuariosFuncionalidad\Dominio\Entidades;
 
+use UsuariosFuncionalidad\Dominio\Excepciones\InvarianteUsuarioExcepcion;
+
 class UsuarioEntidad
 {
     public function __construct(
@@ -69,15 +71,15 @@ class UsuarioEntidad
     private function autoValidarEntidad(): void
     {
         if (empty($this->apodo_usuario)) {
-            throw new \InvalidArgumentException("El apodo no puede estar vacío.");
+            throw new InvarianteUsuarioExcepcion('usuario.apodo_invalido');
         }
 
         if (empty($this->correo_usuario) || !filter_var($this->correo_usuario, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException("El formato del correo electrónico no es válido.");
+            throw new InvarianteUsuarioExcepcion('usuario.correo_invalido');
         }
 
         if (empty($this->contrasena_hash_usuario)) {
-            throw new \InvalidArgumentException("El hash de la contraseña no puede estar vacío.");
+            throw new InvarianteUsuarioExcepcion('usuario.hash_contrasena_vacio');
         }
     }
 }

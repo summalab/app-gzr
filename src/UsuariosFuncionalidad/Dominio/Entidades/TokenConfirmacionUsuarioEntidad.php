@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace UsuariosFuncionalidad\Dominio\Entidades;
 
+use UsuariosFuncionalidad\Dominio\Excepciones\InvarianteUsuarioExcepcion;
+
 class TokenConfirmacionUsuarioEntidad
 {
 
@@ -50,19 +52,19 @@ class TokenConfirmacionUsuarioEntidad
     {
         
         if (empty($this->id_usuario)) {
-            throw new \InvalidArgumentException("El id_usuario no puede estar vacío.");
+            throw new InvarianteUsuarioExcepcion('usuario.id_usuario_vacio');
         }
 
         if (empty($this->token_verificacion)) {
-            throw new \InvalidArgumentException("El token_verificacion no puede estar vacío.");
+            throw new InvarianteUsuarioExcepcion('usuario.token_vacio');
         }
 
         if (empty($this->fecha_expiracion)) {
-            throw new \InvalidArgumentException("La fecha_expiracion no puede estar vacia.");
-            }
+            throw new InvarianteUsuarioExcepcion('usuario.expiracion_vacia');
+        }
             
         if (!in_array($this->tipo_token, ['VERIFICACION', 'RECUPERACION'], true)) {
-            throw new \InvalidArgumentException("El tipo_token '{$this->tipo_token}' no es válido.");
+            throw new InvarianteUsuarioExcepcion('usuario.tipo_token_invalido');
         }
     }
 }

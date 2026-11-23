@@ -10,28 +10,35 @@ use UsuariosFuncionalidad\Aplicacion\DTOs\ActualizarCorreoEntradaDTO;
 use UsuariosFuncionalidad\Dominio\Excepciones\ReglaNegocioExcepcion;
 use UsuariosFuncionalidad\Dominio\Repositorios\UsuarioRepositorioInterface;
 use UsuariosFuncionalidad\Dominio\Servicios\EnviadorCorreoInterface;
+use Shared\Dominio\Servicios\AutorizadorInterface;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
+use Shared\Dominio\Servicios\GestorTransaccionesInterface;
 
 class ActualizarCorreoCasoDeUso
 {
     public function __construct(
         private UsuarioRepositorioInterface $mUsuarioRepositorio,
         private GenerarTokenConfirmacionUsuarioCasoDeUso $mGenerarTokenConfirmacionUsuarioCasoDeUso,
-        private EnviadorCorreoInterface $mEnviadorCorreoInterfaceImp
+        private EnviadorCorreoInterface $mEnviadorCorreoInterfaceImp,
+        private AutorizadorInterface $mAutorizador,
+        private CatalogoMensajesInterface $mensajes,
+        private GestorTransaccionesInterface $transacciones
     ) {}
 
     public function execute(ActualizarCorreoEntradaDTO $dto): void
     {
+        $this->mAutorizador->exigirPermiso('perfil.gestionar_propio');
         $nuevoCorreoLimpio = trim($dto->nuevo_correo);
 
         if ($nuevoCorreoLimpio === '' || !filter_var($nuevoCorreoLimpio, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException('El formato del nuevo correo electrónico no es válido.');
+            throw new InvalidArgumentException($this->mensajes->obtener('usuario.correo_nuevo_invalido'));
         }
 
         // 1. Recuperar al usuario actual desde la base de datos
         $mUsuarioEntidad = $this->mUsuarioRepositorio->encontrarPorId($dto->id_usuario);
 
         if (!$mUsuarioEntidad) {
-            throw new ReglaNegocioExcepcion('El usuario solicitado no existe en el sistema.', 404);
+            throw new ReglaNegocioExcepcion($this->mensajes->obtener('usuario.usuario_no_encontrado'), 404);
         }
 
         // 2. Si el correo nuevo es idéntico al actual, no hacemos nada
@@ -45,9 +52,7 @@ class ActualizarCorreoCasoDeUso
         }
 
         // 4. Iniciar transacción ACID para actualizar usuario y generar nuevo token
-        $this->mUsuarioRepositorio->beginTransaction();
-
-        try {
+        $tokenVerificacion = $this->transacciones->ejecutar(function () use ($mUsuarioEntidad, $nuevoCorreoLimpio) {
             // Mutamos la entidad (esto cambia el correo y pone esta_verificado_usuario = false)
             $mUsuarioEntidad->actualizarCorreo($nuevoCorreoLimpio);
 
@@ -60,26 +65,15 @@ class ActualizarCorreoCasoDeUso
                 $mUsuarioEntidad->obtenerVerificacionUsuario()
             );
 
-            // Confirmamos ambos cambios en disco
-            $this->mUsuarioRepositorio->commit();
-            
-            // 5. Armar URL dinámica desde .env y enviar correo fuera de la transacción
-            $urlBase = rtrim(\Core\EnvLoader::obtener('APP_URL', 'http://app-gzr.test'), '/');
-            $enlaceVerificacion = "{$urlBase}/?token={$tokenVerificacion}";
+            return $tokenVerificacion;
+        });
 
-            $this->mEnviadorCorreoInterfaceImp->enviarCorreoVerificacion(
-                $mUsuarioEntidad->obtenerCorreo(),
-                $mUsuarioEntidad->obtenerApodo(),
-                $enlaceVerificacion
-            );
-
-        } catch (ReglaNegocioExcepcion | InvalidArgumentException $reglaExcepcion) {
-            $this->mUsuarioRepositorio->rollBack();
-            throw $reglaExcepcion;
-        } catch (Throwable $falla) {
-            $this->mUsuarioRepositorio->rollBack();
-            error_log('Error crítico en ActualizarCorreoCasoDeUso: ' . $falla->getMessage());
-            throw new \Exception('No se pudo actualizar el correo electrónico por un problema interno.');
-        }
+        $urlBase = rtrim(\Core\EnvLoader::obtener('APP_URL', 'http://app-gzr.test'), '/');
+        $enlaceVerificacion = "{$urlBase}/?token={$tokenVerificacion}";
+        $this->mEnviadorCorreoInterfaceImp->enviarCorreoVerificacion(
+            $mUsuarioEntidad->obtenerCorreo(),
+            $mUsuarioEntidad->obtenerApodo(),
+            $enlaceVerificacion
+        );
     }
 }

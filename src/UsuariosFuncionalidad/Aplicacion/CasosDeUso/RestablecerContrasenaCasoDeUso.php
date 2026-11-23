@@ -11,12 +11,16 @@ use UsuariosFuncionalidad\Aplicacion\DTOs\RestablecerContrasenaEntradaDTO;
 use UsuariosFuncionalidad\Dominio\Excepciones\ReglaNegocioExcepcion;
 use UsuariosFuncionalidad\Dominio\Repositorios\TokenConfirmacionUsuarioRepositorioInterface;
 use UsuariosFuncionalidad\Dominio\Repositorios\UsuarioRepositorioInterface;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
+use Shared\Dominio\Servicios\GestorTransaccionesInterface;
 
 class RestablecerContrasenaCasoDeUso
 {
     public function __construct(
         private UsuarioRepositorioInterface $mUsuarioRepositorio,
-        private TokenConfirmacionUsuarioRepositorioInterface $mTokenRepositorio
+        private TokenConfirmacionUsuarioRepositorioInterface $mTokenRepositorio,
+        private CatalogoMensajesInterface $mensajes,
+        private GestorTransaccionesInterface $transacciones
     ) {}
 
     public function execute(RestablecerContrasenaEntradaDTO $dto): void
@@ -24,7 +28,7 @@ class RestablecerContrasenaCasoDeUso
         $tokenLimpio = trim($dto->token);
 
         if ($tokenLimpio === '') {
-            throw new InvalidArgumentException('El token de recuperación es obligatorio.');
+            throw new InvalidArgumentException($this->mensajes->obtener('usuario.token_recuperacion_obligatorio'));
         }
 
         if (strlen($dto->nueva_contrasena) < 8) {
@@ -40,7 +44,7 @@ class RestablecerContrasenaCasoDeUso
 
         // 2. Regla de seguridad: Verificar que sea específicamente un token de RECUPERACION
         if (($datosToken['tipo_token'] ?? '') !== 'RECUPERACION') {
-            throw new ReglaNegocioExcepcion('El token proporcionado no es válido para restablecer contraseñas.', 422);
+            throw new ReglaNegocioExcepcion($this->mensajes->obtener('usuario.token_tipo_recuperacion'), 422);
         }
 
         // 3. Validar que el token no haya expirado (1 hora)
@@ -58,13 +62,11 @@ class RestablecerContrasenaCasoDeUso
         $mUsuarioEntidad = $this->mUsuarioRepositorio->encontrarPorId($idUsuario);
 
         if (!$mUsuarioEntidad) {
-            throw new ReglaNegocioExcepcion('El usuario asociado a este enlace ya no existe.', 404);
+            throw new ReglaNegocioExcepcion($this->mensajes->obtener('usuario.usuario_token_inexistente'), 404);
         }
 
         // 5. Ejecutar actualización de clave y borrado del token en una transacción atómica
-        $this->mUsuarioRepositorio->beginTransaction();
-
-        try {
+        $this->transacciones->ejecutar(function () use ($mUsuarioEntidad, $dto, $tokenLimpio) {
             $nuevoHash = password_hash($dto->nueva_contrasena, PASSWORD_DEFAULT);
             $mUsuarioEntidad->cambiarContrasena($nuevoHash);
 
@@ -74,16 +76,7 @@ class RestablecerContrasenaCasoDeUso
             // Eliminamos el token usado para que sea de un solo uso
             $this->mTokenRepositorio->borrarToken($tokenLimpio);
 
-            $this->mUsuarioRepositorio->commit();
-
-        } catch (ReglaNegocioExcepcion | InvalidArgumentException $reglaExcepcion) {
-            $this->mUsuarioRepositorio->rollBack();
-            throw $reglaExcepcion;
-        } catch (Throwable $falla) {
-            $this->mUsuarioRepositorio->rollBack();
-            error_log('Error crítico en RestablecerContrasenaCasoDeUso: ' . $falla->getMessage());
-            throw new \Exception('No se pudo restablecer la contraseña por un problema interno.');
-        }
+        });
     }
 }
 

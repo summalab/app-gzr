@@ -16,14 +16,6 @@ interface TokenConfirmacionUsuarioRepositorioInterface
     /**
      * Registra un token de verificación para un usuario.
      */
-    /*
-    public function crearTokenVerificacion(
-        string $id_usuario, 
-        string $token_verificacion, 
-        string $fecha_expiracion
-    ): void;
-    */
-
     public function crearTokenVerificacion(TokenConfirmacionUsuarioEntidad $mTokenConfirmacionUsuarioEntidad): TokenConfirmacionUsuarioEntidad;
 
     /**

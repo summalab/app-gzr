@@ -53,11 +53,7 @@ class SharedModulo
 
     public static function registrarRutas(Router $enrutador): void
     {
-        /*
-        // Rutas públicas
-        $enrutador->addRoute('POST', '/registrar-usuario', UsuarioControlador::class, 'registrar');
-        $enrutador->addRoute('GET', '/verificar-correo', UsuarioControlador::class, 'verificar');
-        */
+        // Las rutas públicas se registran desde sus módulos funcionales.
     }
 
 }

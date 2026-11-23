@@ -8,10 +8,8 @@ use Core\EnvLoader;
 use InvalidArgumentException;
 use RuntimeException;
 use UsuariosFuncionalidad\Dominio\Servicios\EnviadorCorreoInterface;
-
 class SmtpEnviadorCorreo implements EnviadorCorreoInterface
 {
-
     private string $host;
     private int $port;
     private string $encryption;
@@ -37,34 +35,47 @@ class SmtpEnviadorCorreo implements EnviadorCorreoInterface
     {
         $correoLimpio = trim($correoDestino);
         if ($correoLimpio === '' || filter_var($correoLimpio, FILTER_VALIDATE_EMAIL) === false) {
-            throw new InvalidArgumentException("La dirección de correo destino no es válida: {$correoLimpio}");
+            throw new InvalidArgumentException($this->mensaje('usuario.correo_destino_invalido'));
         }
 
-        $cuerpo = "Hola {$apodoUsuario},\n\n"
-                . "Gracias por registrarte en {$this->fromName}.\n"
-                . "Para activar tu cuenta, abre el siguiente enlace (válido por 24 horas):\n\n"
-                . "{$enlaceVerificacion}\n\n"
-                . "Si no creaste esta cuenta, ignora este mensaje.\n";
+        $cuerpo = $this->mensaje('usuario.correo_verificacion_cuerpo', [
+            'apodo' => $apodoUsuario,
+            'enlace' => $enlaceVerificacion
+        ]);
+        $asunto = $this->mensaje('usuario.correo_verificacion_asunto') . ' - ' . $this->fromName;
 
-        $this->enviarPorSmtp($correoLimpio, 'Activa tu cuenta - ' . $this->fromName, $cuerpo);
+        $this->enviarPorSmtp($correoLimpio, $asunto, $cuerpo);
     }
 
     public function enviarCorreoRecuperacion(string $correoDestino, string $apodoUsuario, string $enlaceRecuperacion): void
     {
         $correoLimpio = trim($correoDestino);
         if ($correoLimpio === '' || filter_var($correoLimpio, FILTER_VALIDATE_EMAIL) === false) {
-            throw new InvalidArgumentException("La dirección de correo destino no es válida: {$correoLimpio}");
+            throw new InvalidArgumentException($this->mensaje('usuario.correo_destino_invalido'));
         }
 
-        $cuerpo = "Hola {$apodoUsuario},\n\n"
-                . "Recibimos una solicitud para restablecer tu contraseña en {$this->fromName}.\n"
-                . "Usa el siguiente enlace para crear una nueva clave (válido por 1 hora):\n\n"
-                . "{$enlaceRecuperacion}\n\n"
-                . "Si no solicitaste este cambio, tu contraseña actual sigue siendo segura.\n";
+        $cuerpo = $this->mensaje('usuario.correo_recuperacion_cuerpo', [
+            'apodo' => $apodoUsuario,
+            'enlace' => $enlaceRecuperacion
+        ]);
+        $asunto = $this->mensaje('usuario.correo_recuperacion_asunto') . ' - ' . $this->fromName;
 
-        $this->enviarPorSmtp($correoLimpio, 'Recuperación de contraseña - ' . $this->fromName, $cuerpo);
+        $this->enviarPorSmtp($correoLimpio, $asunto, $cuerpo);
     }
 
+    private function mensaje(string $clave, array $parametros = []): string
+    {
+        $mensajes = require dirname(__DIR__, 3) . '/Shared/Infraestructura/Idiomas/es.php';
+        $valor = $mensajes;
+        foreach (explode('.', $clave) as $segmento) {
+            $valor = is_array($valor) ? ($valor[$segmento] ?? $clave) : $clave;
+        }
+        if (!is_string($valor)) return $clave;
+        foreach ($parametros as $nombre => $reemplazo) {
+            $valor = str_replace('{' . $nombre . '}', (string)$reemplazo, $valor);
+        }
+        return $valor;
+    }
 
     private function enviarPorSmtp(string $destinatario, string $asunto, string $cuerpoTexto): void
     {

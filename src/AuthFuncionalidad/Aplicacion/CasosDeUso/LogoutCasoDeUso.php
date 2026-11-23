@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace AuthFuncionalidad\Aplicacion\CasosDeUso;
 
 use Shared\Dominio\Servicios\SesionUsuarioInterface;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
 use Throwable;
 
 class LogoutCasoDeUso
 {
     public function __construct(
-        private SesionUsuarioInterface $mSesionUsuario
+        private SesionUsuarioInterface $mSesionUsuario,
+        private CatalogoMensajesInterface $mensajes
     ) {}
 
     /**
@@ -22,7 +24,7 @@ class LogoutCasoDeUso
             $this->mSesionUsuario->cerrarSesion();
         } catch (Throwable $falla) {
             error_log('Error crítico en LogoutCasoDeUso: ' . $falla->getMessage());
-            throw new \Exception('No se pudo cerrar la sesión correctamente por un problema interno.');
+            throw new \Exception($this->mensajes->obtener('sistema.operacion_cerrar_sesion'));
         }
     }
 }

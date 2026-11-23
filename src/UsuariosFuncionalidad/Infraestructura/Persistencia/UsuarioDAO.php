@@ -155,18 +155,6 @@ class UsuarioDAO
 
 
 
-    public function beginTransaction(): void {
-        // Si tu DAO tiene el PDO, puedes hacer $this->userDao->getPdo()->beginTransaction();
-        $this->db->beginTransaction(); 
-    }
-
-    public function commit(): void {
-        $this->db->commit();
-    }
-
-    public function rollBack(): void {
-        $this->db->rollBack();
-    }
 
 
 }

@@ -5,17 +5,22 @@ declare(strict_types=1);
 namespace UbicacionesFuncionalidad\Aplicacion\CasosDeUso;
 
 use Throwable;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
+use Shared\Dominio\Servicios\AutorizadorInterface;
 use UbicacionesFuncionalidad\Dominio\Entidades\UbicacionEntidad;
 use UbicacionesFuncionalidad\Dominio\Repositorios\UbicacionRepositorioInterface;
 
 class ListarUbicacionesUsuarioCasoDeUso
 {
     public function __construct(
-        private UbicacionRepositorioInterface $mUbicacionRepositorio
+        private UbicacionRepositorioInterface $mUbicacionRepositorio,
+        private CatalogoMensajesInterface $mensajes,
+        private AutorizadorInterface $mAutorizador
     ) {}
 
     public function execute(int $idUsuario): array
     {
+        $this->mAutorizador->exigirPermiso('perfil.gestionar_propio');
         try {
             $entidades = $this->mUbicacionRepositorio->listarActivasPorUsuario($idUsuario);
 
@@ -31,7 +36,7 @@ class ListarUbicacionesUsuarioCasoDeUso
             );
         } catch (Throwable $falla) {
             error_log('Error crítico en ListarUbicacionesUsuarioCasoDeUso: ' . $falla->getMessage());
-            throw new \Exception('No se pudieron cargar tus ubicaciones por un problema interno.');
+            throw new \Exception($this->mensajes->obtener('sistema.operacion_listar_ubicaciones'));
         }
     }
 }

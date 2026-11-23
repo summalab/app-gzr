@@ -10,12 +10,14 @@ use Throwable;
 use AuthFuncionalidad\Aplicacion\DTOs\LoginEntradaDTO;
 use UsuariosFuncionalidad\Dominio\Excepciones\ReglaNegocioExcepcion;
 use UsuariosFuncionalidad\Dominio\Repositorios\UsuarioRepositorioInterface;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
 
 class LoginCasoDeUso
 {
     public function __construct(
         private UsuarioRepositorioInterface $mUsuarioRepositorio,
-        private SesionUsuarioInterface $mSesionUsuario
+        private SesionUsuarioInterface $mSesionUsuario,
+        private CatalogoMensajesInterface $mensajes
     ) {}
 
     /**
@@ -29,11 +31,11 @@ class LoginCasoDeUso
         $correoLimpio = trim($dto->correo_usuario);
 
         if ($correoLimpio === '' || !filter_var($correoLimpio, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException('El formato del correo electrónico no es válido.');
+            throw new InvalidArgumentException($this->mensajes->obtener('usuario.correo_invalido'));
         }
 
         if ($dto->contrasena === '') {
-            throw new InvalidArgumentException('Debe ingresar su contraseña.');
+            throw new InvalidArgumentException($this->mensajes->obtener('usuario.contrasena_obligatoria_login'));
         }
 
         try {
@@ -42,12 +44,12 @@ class LoginCasoDeUso
 
             // Seguridad: Usamos un mensaje genérico para no revelar si el correo existe o no
             if (!$mUsuarioEntidad || !password_verify($dto->contrasena, $mUsuarioEntidad->obtenerContrasenadHash())) {
-                throw new ReglaNegocioExcepcion('Credenciales incorrectas. Verifique su correo y contraseña.', 401);
+                throw new ReglaNegocioExcepcion($this->mensajes->obtener('usuario.credenciales_malas'), 401);
             }
 
             // 2. Regla de negocio: Impedir el acceso si no ha confirmado su correo
             if (!$mUsuarioEntidad->obtenerVerificacionUsuario()) {
-                throw new ReglaNegocioExcepcion('Su cuenta aún no ha sido verificada. Revise su correo electrónico.', 403);
+                throw new ReglaNegocioExcepcion($this->mensajes->obtener('usuario.cuenta_no_verificada'), 403);
             }
 
             // 3. Iniciar la sesión segura en el servidor (regenera ID de sesión)
@@ -74,7 +76,7 @@ class LoginCasoDeUso
             throw $reglaExcepcion;
         } catch (Throwable $falla) {
             error_log('Error crítico en LoginCasoDeUso: ' . $falla->getMessage());
-            throw new \Exception('No se pudo iniciar sesión por un problema interno.');
+            throw new \Exception($this->mensajes->obtener('sistema.operacion_login'));
         }
     }
 }

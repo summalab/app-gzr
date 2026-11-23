@@ -11,13 +11,17 @@ use UsuariosFuncionalidad\Dominio\Entidades\TokenConfirmacionUsuarioEntidad;
 use UsuariosFuncionalidad\Dominio\Repositorios\TokenConfirmacionUsuarioRepositorioInterface;
 use UsuariosFuncionalidad\Dominio\Repositorios\UsuarioRepositorioInterface;
 use UsuariosFuncionalidad\Dominio\Servicios\EnviadorCorreoInterface;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
+use Shared\Dominio\Servicios\GestorTransaccionesInterface;
 
 class SolicitarRecuperacionContrasenaCasoDeUso
 {
     public function __construct(
         private UsuarioRepositorioInterface $mUsuarioRepositorio,
         private TokenConfirmacionUsuarioRepositorioInterface $mTokenRepositorio,
-        private EnviadorCorreoInterface $mEnviadorCorreo
+        private EnviadorCorreoInterface $mEnviadorCorreo,
+        private CatalogoMensajesInterface $mensajes,
+        private GestorTransaccionesInterface $transacciones
     ) {}
 
     public function execute(string $correo): void
@@ -25,7 +29,7 @@ class SolicitarRecuperacionContrasenaCasoDeUso
         $correoLimpio = trim($correo);
 
         if ($correoLimpio === '' || !filter_var($correoLimpio, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException('El formato del correo electrónico no es válido.');
+            throw new InvalidArgumentException($this->mensajes->obtener('usuario.correo_invalido'));
         }
 
         try {
@@ -54,7 +58,9 @@ class SolicitarRecuperacionContrasenaCasoDeUso
             );
 
             // 5. Guardar el token en base de datos
-            $this->mTokenRepositorio->crearTokenVerificacion($mTokenEntidad);
+            $this->transacciones->ejecutar(function () use ($mTokenEntidad) {
+                $this->mTokenRepositorio->crearTokenVerificacion($mTokenEntidad);
+            });
 
             // 6. Armar el enlace dinámico (?recuperar=TOKEN) y enviar correo
             $urlBase = rtrim(\Core\EnvLoader::obtener('APP_URL', 'http://app-gzr.test'), '/');
@@ -70,7 +76,7 @@ class SolicitarRecuperacionContrasenaCasoDeUso
             throw $reglaExcepcion;
         } catch (Throwable $falla) {
             error_log('Error crítico en SolicitarRecuperacionContrasenaCasoDeUso: ' . $falla->getMessage());
-            throw new \Exception('No se pudo procesar la solicitud de recuperación por un problema interno.');
+            throw new \Exception($this->mensajes->obtener('sistema.operacion_recuperacion'));
         }
     }
 }

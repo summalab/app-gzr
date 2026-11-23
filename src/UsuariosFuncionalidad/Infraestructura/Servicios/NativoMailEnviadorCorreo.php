@@ -5,46 +5,51 @@ declare(strict_types=1);
 namespace UsuariosFuncionalidad\Infraestructura\Servicios;
 
 use UsuariosFuncionalidad\Dominio\Servicios\EnviadorCorreoInterface;
-
 class NativoMailEnviadorCorreo implements EnviadorCorreoInterface
 {
     private string $remitente;
     private string $nombreRemitente;
 
-    public function __construct(
-        string $remitente = 'no-reply@tudominio.com',
-        string $nombreRemitente = 'Ecosistema de Mapas'
-    ) {
-        $this->remitente = $remitente;
-        $this->nombreRemitente = $nombreRemitente;
+    public function __construct()
+    {
+        $this->remitente = 'no-reply@tudominio.com';
+        $this->nombreRemitente = 'Ecosistema de Mapas';
     }
 
     public function enviarCorreoVerificacion(string $correoDestino, string $apodoUsuario, string $enlaceVerificacion): void
     {
-        $asunto = 'Activa tu cuenta - ' . $this->nombreRemitente;
-
-        $mensaje = "Hola {$apodoUsuario},\r\n\r\n"
-                 . "Gracias por registrarte en nuestra plataforma.\r\n"
-                 . "Para activar tu cuenta, haz clic en el siguiente enlace:\r\n\r\n"
-                 . "{$enlaceVerificacion}\r\n\r\n"
-                 . "Este enlace es válido por 24 horas.\r\n"
-                 . "Si no creaste esta cuenta, puedes ignorar este mensaje.\r\n";
+        $asunto = $this->mensaje('usuario.correo_verificacion_asunto') . ' - ' . $this->nombreRemitente;
+        $mensaje = $this->mensaje('usuario.correo_verificacion_cuerpo', [
+            'apodo' => $apodoUsuario,
+            'enlace' => $enlaceVerificacion
+        ]);
 
         $this->despacharCorreo($correoDestino, $asunto, $mensaje);
     }
 
     public function enviarCorreoRecuperacion(string $correoDestino, string $apodoUsuario, string $enlaceRecuperacion): void
     {
-        $asunto = 'Recuperación de contraseña - ' . $this->nombreRemitente;
-
-        $mensaje = "Hola {$apodoUsuario},\r\n\r\n"
-                 . "Recibimos una solicitud para restablecer la contraseña de tu cuenta.\r\n"
-                 . "Haz clic en el siguiente enlace para crear una nueva clave:\r\n\r\n"
-                 . "{$enlaceRecuperacion}\r\n\r\n"
-                 . "Por seguridad, este enlace expirará en 1 hora.\r\n"
-                 . "Si no solicitaste este cambio, tu contraseña actual sigue siendo segura.\r\n";
+        $asunto = $this->mensaje('usuario.correo_recuperacion_asunto') . ' - ' . $this->nombreRemitente;
+        $mensaje = $this->mensaje('usuario.correo_recuperacion_cuerpo', [
+            'apodo' => $apodoUsuario,
+            'enlace' => $enlaceRecuperacion
+        ]);
 
         $this->despacharCorreo($correoDestino, $asunto, $mensaje);
+    }
+
+    private function mensaje(string $clave, array $parametros = []): string
+    {
+        $mensajes = require dirname(__DIR__, 3) . '/Shared/Infraestructura/Idiomas/es.php';
+        $valor = $mensajes;
+        foreach (explode('.', $clave) as $segmento) {
+            $valor = is_array($valor) ? ($valor[$segmento] ?? $clave) : $clave;
+        }
+        if (!is_string($valor)) return $clave;
+        foreach ($parametros as $nombre => $reemplazo) {
+            $valor = str_replace('{' . $nombre . '}', (string)$reemplazo, $valor);
+        }
+        return $valor;
     }
 
     private function despacharCorreo(string $destinatario, string $asunto, string $mensaje): void

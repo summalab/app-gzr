@@ -53,7 +53,6 @@ class UbicacionControlador
                 ],
             ]);
         } catch (Throwable $e) {
-            //$this->manejarExcepcion($e);
             $this->mManejadorExcepciones->manejar($e, static::class);
         }
     }
@@ -81,7 +80,6 @@ class UbicacionControlador
                 'ubicaciones' => $ubicaciones
             ]);
         } catch (Throwable $e) {
-            //$this->manejarExcepcion($e);
             $this->mManejadorExcepciones->manejar($e, static::class);
         }
     }
@@ -131,7 +129,6 @@ class UbicacionControlador
                 'ubicacion' => $ubicacionCreada
             ]);
         } catch (Throwable $e) {
-            //$this->manejarExcepcion($e);
             $this->mManejadorExcepciones->manejar($e, static::class);
         }
     }
@@ -166,7 +163,6 @@ class UbicacionControlador
                 'message' => $this->mensajes->obtener('ubicacion.eliminada_exito')
             ]);
         } catch (Throwable $e) {
-            //$this->manejarExcepcion($e);
             $this->mManejadorExcepciones->manejar($e, static::class);
         }
     }

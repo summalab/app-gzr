@@ -10,6 +10,7 @@ use UsuariosFuncionalidad\Dominio\Repositorios\UsuarioRepositorioInterface;
 use UsuariosFuncionalidad\Dominio\Servicios\EnviadorCorreoInterface;
 use UsuariosFuncionalidad\Dominio\Excepciones\ReglaNegocioExcepcion;
 use Shared\Dominio\Servicios\GestorTransaccionesInterface;
+use Shared\Dominio\Servicios\CatalogoMensajesInterface;
 
 use InvalidArgumentException;
 
@@ -23,7 +24,8 @@ class RegistrarUsuarioCasoDeUso
         private UsuarioRepositorioInterface $mUsuarioRepositorio,
         private GenerarTokenConfirmacionUsuarioCasoDeUso $mGenerarTokenConfirmacionUsuarioCasoDeUso,
         private EnviadorCorreoInterface $mEnviadorCorreoInterfaceImp,
-        private GestorTransaccionesInterface $transacciones
+        private GestorTransaccionesInterface $transacciones,
+        private CatalogoMensajesInterface $mensajes
     ) {}
 
     /**
@@ -36,10 +38,7 @@ class RegistrarUsuarioCasoDeUso
     public function execute(RegistrarUsuarioEntradaDTO $mUsuarioDto): void
     {
 
-        //---------------------------------------------------------------------
-
         try {
-
             // 2. Escritura atómica ACID en múltiples tablas
             $registro = $this->transacciones->ejecutar(function () use ($mUsuarioDto) {
 
@@ -76,16 +75,13 @@ class RegistrarUsuarioCasoDeUso
         } catch (\Throwable $falla) {
 
             error_log("Error crítico en RegistrarUsuarioCasoDeUso: " . $falla->getMessage());
-            throw new \Exception("No se pudo completar el registro por un problema interno.");
+            throw new \Exception($this->mensajes->obtener('sistema.operacion_registro'));
         }
     }
 
     private function registrarUsuario(RegistrarUsuarioEntradaDTO $mUsuarioDto): array
     {
         
-    // funcion trim() eliminar todos los espacios en blanco (u otros caracteres invisibles)
-        // que estén al principio y al final de una cadena de texto pero NO altera los 
-        // espacios que se encuentran en medio de las palabras.
         $apodo_usuario_clean  = trim($mUsuarioDto->apodo_usuario);
         $correo_usuario_clean = trim($mUsuarioDto->correo_usuario);
 
@@ -131,9 +127,6 @@ class RegistrarUsuarioCasoDeUso
 
     private function generarTokenConfirmacion(int $id_usuario, bool $esta_verificado_usuario): string
     {
-        // Operación 2: Invocamos el segundo caso de uso pasando el ID
-        // Si esto falla (ej: error en la tabla de tokens), saltará de inmediato al catch
-        //$token = $this->mGenerarTokenConfirmacionUsuarioCasoDeUso->execute($id_usuario, $esta_verificado_usuario);
         return $this->mGenerarTokenConfirmacionUsuarioCasoDeUso->execute($id_usuario, $esta_verificado_usuario);
     }
 }

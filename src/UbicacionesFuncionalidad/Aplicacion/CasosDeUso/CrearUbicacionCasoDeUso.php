@@ -73,7 +73,7 @@ class CrearUbicacionCasoDeUso
             throw $reglaExcepcion;
         } catch (Throwable $falla) {
             error_log('Error crítico en CrearUbicacionCasoDeUso: ' . $falla->getMessage());
-            throw new \Exception('No se pudo guardar la ubicación por un problema interno.');
+            throw new \Exception($this->mensajes->obtener('sistema.operacion_crear_ubicacion'));
         }
     }
 
@@ -109,25 +109,7 @@ class CrearUbicacionCasoDeUso
     }
 
 
-    /*
     private function validarProximidadMinima(float $latitud, float $longitud, float $minimoKm): void
-    {
-        $ubicacionesExistentes = $this->mUbicacionRepositorio->listarTodasActivas();
-
-        foreach ($ubicacionesExistentes as $existente) {
-            $latExistente = (float)($existente['latitud'] ?? 0);
-            $lngExistente = (float)($existente['longitud'] ?? 0);
-
-            if ($this->calcularDistanciaKm($latExistente, $lngExistente, $latitud, $longitud) < $minimoKm) {
-                throw new InvalidArgumentException(
-                    $this->mensajes->obtener('ubicacion.duplicada_cercana', ['metros' => 25])
-                );
-            }
-        }
-    }
-    */
-
-        private function validarProximidadMinima(float $latitud, float $longitud, float $minimoKm): void
     {
         $ubicacionesExistentes = $this->mUbicacionRepositorio->listarTodasActivas();
 
@@ -137,7 +119,7 @@ class CrearUbicacionCasoDeUso
 
             if ($this->calcularDistanciaKm($latExistente, $lngExistente, $latitud, $longitud) < $minimoKm) {
                 throw new InvalidArgumentException(
-                    'Ya existe una ubicación registrada exactamente en este punto (a menos de 25 metros).'
+                    $this->mensajes->obtener('ubicacion.duplicada_cercana', ['metros' => 25])
                 );
             }
         }

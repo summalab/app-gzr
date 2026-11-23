@@ -67,7 +67,6 @@ class UsuarioControlador
                 'message' => $this->mensajes->obtener('sistema.registro_exito')
             ]);
         } catch (Throwable $e) {
-            //$this->manejarExcepcion($e);
             $this->mManejadorExcepciones->manejar($e, static::class);
         }
     }
@@ -96,7 +95,6 @@ class UsuarioControlador
                 'message' => $this->mensajes->obtener('sistema.verificacion_exito')
             ]);
         } catch (Throwable $e) {
-            //$this->manejarExcepcion($e);
             $this->mManejadorExcepciones->manejar($e, static::class);
         }
     }
@@ -131,7 +129,6 @@ class UsuarioControlador
                 'message' => $this->mensajes->obtener('sistema.apodo_actualizado')
             ]);
         } catch (Throwable $e) {
-            //$this->manejarExcepcion($e);
             $this->mManejadorExcepciones->manejar($e, static::class);
         }
     }
@@ -166,7 +163,6 @@ class UsuarioControlador
                 'message' => $this->mensajes->obtener('sistema.correo_actualizado')
             ]);
         } catch (Throwable $e) {
-            //$this->manejarExcepcion($e);
             $this->mManejadorExcepciones->manejar($e, static::class);
         }
     }
@@ -203,7 +199,6 @@ class UsuarioControlador
                 'message' => $this->mensajes->obtener('sistema.contrasena_actualizada')
             ]);
         } catch (Throwable $e) {
-            //$this->manejarExcepcion($e);
             $this->mManejadorExcepciones->manejar($e, static::class);
         }
     }
@@ -232,7 +227,6 @@ class UsuarioControlador
                 'message' => $this->mensajes->obtener('sistema.recuperacion_exito')
             ]);
         } catch (Throwable $e) {
-            //$this->manejarExcepcion($e);
             $this->mManejadorExcepciones->manejar($e, static::class);
         }
     }
@@ -261,7 +255,6 @@ class UsuarioControlador
                 'message' => $this->mensajes->obtener('sistema.contrasena_restablecida')
             ]);
         } catch (Throwable $e) {
-            //$this->manejarExcepcion($e);
             $this->mManejadorExcepciones->manejar($e, static::class);
         }
     }
@@ -297,7 +290,6 @@ class UsuarioControlador
             ]);
             
         } catch (Throwable $e) {
-            //$this->manejarExcepcion($e);
             $this->mManejadorExcepciones->manejar($e, static::class);
         }
     }

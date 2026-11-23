@@ -37,15 +37,4 @@ interface UsuarioRepositorioInterface
      * Realiza una baja lógica de la cuenta del usuario sin destruir sus relaciones.
      */
     public function eliminarCuenta(int $id_usuario): void;
-    
-
-    // IMPLEMENTACION DE TRANSACCIONES EN LA BASE DE DATOS
-    // este mecanismo permite tener control sobre multiples insertos a la base de datos
-    // si uno de esos insertos es fallido toda la transaccion reversa la operacion para
-    // no dejar reigistros corruptos o sin relacines necesarias con otras tablas,
-    public function beginTransaction(): void; //iniciarTransaccion()
-    
-    public function commit(): void; //comprometerse()
-    
-    public function rollBack(): void; //revertir()
 }
