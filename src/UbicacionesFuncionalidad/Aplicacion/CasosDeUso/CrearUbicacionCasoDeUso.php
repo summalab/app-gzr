@@ -10,15 +10,20 @@ use Throwable;
 use UbicacionesFuncionalidad\Aplicacion\DTOs\CrearUbicacionEntradaDTO;
 use UbicacionesFuncionalidad\Dominio\Entidades\UbicacionEntidad;
 use UbicacionesFuncionalidad\Dominio\Repositorios\UbicacionRepositorioInterface;
+use Shared\Dominio\Servicios\AutorizadorInterface;
 
 class CrearUbicacionCasoDeUso
 {
     public function __construct(
-        private UbicacionRepositorioInterface $mUbicacionRepositorio
+        private UbicacionRepositorioInterface $mUbicacionRepositorio,
+        private AutorizadorInterface $mAutorizador
     ) {}
 
     public function execute(CrearUbicacionEntradaDTO $dto): array
     {
+        $this->mAutorizador->exigirPermiso('ubicacion.crear');
+
+        // Validar que el usuario esté autenticado y autorizado
         $tituloLimpio = trim($dto->titulo);
         $descripcionLimpia = $dto->descripcion !== null ? trim($dto->descripcion) : null;
 

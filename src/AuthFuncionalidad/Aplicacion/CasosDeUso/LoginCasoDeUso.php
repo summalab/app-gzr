@@ -58,6 +58,7 @@ class LoginCasoDeUso
                 'id_usuario'     => $mUsuarioEntidad->obtenerId(),
                 'apodo_usuario'  => $mUsuarioEntidad->obtenerApodo(),
                 'correo_usuario' => $mUsuarioEntidad->obtenerCorreo(),
+                'rol_usuario'    => $mUsuarioEntidad->obtenerRol(),
             ];
 
         } catch (ReglaNegocioExcepcion | InvalidArgumentException $reglaExcepcion) {

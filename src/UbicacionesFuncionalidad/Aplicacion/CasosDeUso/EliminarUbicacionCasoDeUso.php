@@ -8,15 +8,29 @@ use Throwable;
 use UbicacionesFuncionalidad\Aplicacion\DTOs\EliminarUbicacionEntradaDTO;
 use UbicacionesFuncionalidad\Dominio\Repositorios\UbicacionRepositorioInterface;
 use UsuariosFuncionalidad\Dominio\Excepciones\ReglaNegocioExcepcion;
+use Shared\Dominio\Servicios\AutorizadorInterface;
 
 class EliminarUbicacionCasoDeUso
 {
     public function __construct(
-        private UbicacionRepositorioInterface $mUbicacionRepositorio
+        private UbicacionRepositorioInterface $mUbicacionRepositorio,
+        private AutorizadorInterface $mAutorizador
     ) {}
 
     public function execute(EliminarUbicacionEntradaDTO $dto): void
     {
+
+
+
+        // Si el usuario tiene 'ubicacion.eliminar_cualquiera' (moderador/admin), puede borrar cualquier pin;
+        // si no, solo puede borrar si es dueño y tiene 'ubicacion.eliminar_propia'.
+        if (!$this->autorizador->puede('ubicacion.eliminar_cualquiera')) {
+            $this->autorizador->exigirPermiso('ubicacion.eliminar_propia');
+            if ($ubicacion->obtenerIdUsuario() !== $dto->id_usuario) {
+                throw new ReglaNegocioExcepcion($this->mensajes->obtener('ubicacion.no_encontrada'), 403);
+            }
+        }
+
         $ubicacion = $this->mUbicacionRepositorio->encontrarPorId($dto->id_ubicacion);
 
         if (!$ubicacion) {

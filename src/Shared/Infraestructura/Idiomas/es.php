@@ -7,6 +7,7 @@ return [
         'error_interno'        => 'Ocurrió un error interno en el servidor. Inténtalo más tarde.',
         'no_autorizado'        => 'Debes iniciar sesión para realizar esta acción.',
         'demasiadas_peticiones'=> 'Has realizado demasiadas solicitudes. Intenta nuevamente en {segundos} segundos.',
+        'permiso_denegado'     => 'No tienes permisos suficientes para realizar esta acción.',
     ],
     'ubicacion' => [
         'titulo_invalido'      => 'El título debe tener al menos {minimo} caracteres y palabras descriptivas reales.',

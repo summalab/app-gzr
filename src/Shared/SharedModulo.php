@@ -14,6 +14,8 @@ use Shared\Infraestructura\Servicios\ArchivoRegistradorLog;
 use Shared\Infraestructura\Servicios\NativaPhpSesionUsuario;
 use Shared\Dominio\Servicios\GestorTransaccionesInterface;
 use Shared\Infraestructura\Persistencia\PdoGestorTransacciones;
+use Shared\Dominio\Servicios\AutorizadorInterface;
+use Shared\Infraestructura\SeguridadSesionAutorizador;
 
 class SharedModulo
 {
@@ -40,6 +42,10 @@ class SharedModulo
             PdoGestorTransacciones::class
         );
 
+        $contenedor->bind(
+            AutorizadorInterface::class, 
+            SesionAutorizador::class
+        );
 
     }
 

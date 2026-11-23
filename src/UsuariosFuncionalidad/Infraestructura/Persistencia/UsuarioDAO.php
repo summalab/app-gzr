@@ -33,7 +33,8 @@ class UsuarioDAO
             ':apodo_usuario'           => $data['apodo_usuario'],
             ':correo_usuario'          => $data['correo_usuario'],
             ':contrasena_hash_usuario' => $data['contrasena_hash_usuario'],
-            ':esta_verificado_usuario' => (int)$data['esta_verificado_usuario']
+            ':esta_verificado_usuario' => (int)$data['esta_verificado_usuario'],
+            ':rol'                     => (string)($data['rol'] ?? 'USUARIO')
         ]);
 
         // Retornamos el último ID insertado
@@ -47,7 +48,7 @@ class UsuarioDAO
     public function encontrarPorApodo(string $apodo_usuario): ?array
     {
         $stmt = $this->db->prepare("
-            SELECT pk_id_usuario, apodo_usuario, correo_usuario, contrasena_hash_usuario 
+            SELECT pk_id_usuario, apodo_usuario, correo_usuario, contrasena_hash_usuario, esta_verificado_usuario, rol 
             FROM usuarios 
             WHERE apodo_usuario = :apodo_usuario AND fecha_eliminacion IS NULL
             LIMIT 1
@@ -64,7 +65,7 @@ class UsuarioDAO
     public function encontrarPorEmail(string $correo_usuario): ?array
     {
         $stmt = $this->db->prepare("
-            SELECT pk_id_usuario, apodo_usuario, correo_usuario, contrasena_hash_usuario ,esta_verificado_usuario
+            SELECT pk_id_usuario, apodo_usuario, correo_usuario, contrasena_hash_usuario ,esta_verificado_usuario, rol
             FROM usuarios 
             WHERE correo_usuario = :correo_usuario AND fecha_eliminacion IS NULL
             LIMIT 1
@@ -82,7 +83,7 @@ class UsuarioDAO
     public function encontrarPorId(int $pk_id_usuario): ?array
     {
         $stmt = $this->db->prepare("
-            SELECT pk_id_usuario, apodo_usuario, correo_usuario, contrasena_hash_usuario, esta_verificado_usuario
+            SELECT pk_id_usuario, apodo_usuario, correo_usuario, contrasena_hash_usuario, esta_verificado_usuario, rol
             FROM usuarios 
             WHERE pk_id_usuario = :pk_id_usuario AND fecha_eliminacion IS NULL
             LIMIT 1
