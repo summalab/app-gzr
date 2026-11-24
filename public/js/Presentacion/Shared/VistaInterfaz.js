@@ -61,6 +61,11 @@ export class VistaInterfaz {
         if (elemento) elemento.value = valor;
     }
 
+    asignarTexto(idElemento, texto) {
+        const elemento = this.documento.getElementById(idElemento);
+        if (elemento) elemento.textContent = texto;
+    }
+
     async ejecutarConBotonEnCarga(idBoton, textoCarga, accion) {
         const elemento = this.documento.getElementById(idBoton);
         const boton = elemento?.querySelector('button') || elemento;

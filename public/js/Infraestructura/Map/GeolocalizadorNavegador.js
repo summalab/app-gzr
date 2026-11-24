@@ -1,3 +1,5 @@
+const PRECISION_MAXIMA_METROS = 39;
+
 export class GeolocalizadorNavegador {
     constructor(geolocation = globalThis.navigator?.geolocation) {
         this.geolocation = geolocation;
@@ -11,10 +13,23 @@ export class GeolocalizadorNavegador {
             }
 
             this.geolocation.getCurrentPosition(
-                (posicion) => resolve({
-                    latitud: Number(posicion.coords.latitude.toFixed(6)),
-                    longitud: Number(posicion.coords.longitude.toFixed(6))
-                }),
+                (posicion) => {
+                    const precision = posicion.coords.accuracy;
+                    if (!Number.isFinite(precision) || precision > PRECISION_MAXIMA_METROS) {
+                        const precisionTexto = Number.isFinite(precision)
+                            ? `${Math.round(precision)} m`
+                            : 'desconocida';
+                        reject(new Error(
+                            `La precisión GPS es insuficiente (${precisionTexto}). Activa la ubicación precisa e inténtalo de nuevo.`
+                        ));
+                        return;
+                    }
+
+                    resolve({
+                        latitud: Number(posicion.coords.latitude.toFixed(6)),
+                        longitud: Number(posicion.coords.longitude.toFixed(6))
+                    });
+                },
                 (error) => reject(new Error(this.obtenerMensajeError(error))),
                 {
                     enableHighAccuracy: true,

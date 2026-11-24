@@ -32,7 +32,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    const clienteHttp = new HttpApiClient();
+    const baseUrl = new URL('.', globalThis.location.href).pathname;
+    const clienteHttp = new HttpApiClient(baseUrl);
     const autenticacion = new AutenticacionUseCases(new AuthGateway(clienteHttp));
     const cuentaUsuario = new CuentaUsuarioUseCases(new UsuarioGateway(clienteHttp));
     const ubicaciones = new UbicacionUseCases(new UbicacionGateway(clienteHttp));
