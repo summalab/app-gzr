@@ -66,6 +66,11 @@ export class VistaInterfaz {
         if (elemento) elemento.textContent = texto;
     }
 
+    establecerVisibilidad(idElemento, visible) {
+        const elemento = this.documento.getElementById(idElemento);
+        if (elemento) elemento.classList.toggle('oculto', !visible);
+    }
+
     async ejecutarConBotonEnCarga(idBoton, textoCarga, accion) {
         const elemento = this.documento.getElementById(idBoton);
         const boton = elemento?.querySelector('button') || elemento;

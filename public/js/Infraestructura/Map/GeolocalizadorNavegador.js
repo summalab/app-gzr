@@ -33,7 +33,7 @@ export class GeolocalizadorNavegador {
                 (error) => reject(new Error(this.obtenerMensajeError(error))),
                 {
                     enableHighAccuracy: true,
-                    timeout: 10000,
+                    timeout: 15000,
                     maximumAge: 0
                 }
             );

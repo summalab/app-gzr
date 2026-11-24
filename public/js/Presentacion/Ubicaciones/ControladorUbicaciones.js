@@ -56,6 +56,8 @@ export class ControladorUbicaciones {
             return;
         }
 
+        this.establecerCamposFormularioVisibles(true);
+
         /**
          * aqui se asignan las coordenadas del clic en el mapa a los campos de
          * latitud y longitud del formulario de nueva ubicación,
@@ -84,6 +86,7 @@ export class ControladorUbicaciones {
                 '📡 Obteniendo señal GPS...',
                 async () => {
                     this.coordenadasGpsCapturadas = null;
+                    this.establecerCamposFormularioVisibles(false);
                     this.vista.asignarValor('ubicacion-latitud', '');
                     this.vista.asignarTexto('label-ubicacion-latitud', 'Latitud:');
                     this.vista.asignarValor('ubicacion-longitud', '');
@@ -101,14 +104,31 @@ export class ControladorUbicaciones {
                     this.vista.asignarTexto('label-ubicacion-longitud', `Longitud: ${coordenadas.longitud}`);
 
                     this.coordenadasGpsCapturadas = coordenadas;
+                    this.establecerCamposFormularioVisibles(true);
                 }
             );
             if (!gpsEjecutado) return;
             this.vista.abrirModal('modal-nueva-ubicacion');
             this.vista.mostrarAlertaModal('modal-nueva-ubicacion', '¡Ubicación GPS capturada con éxito!', true);
         } catch (error) {
+            /**
+             * Si existe un error al obtener la ubicación GPS, se muestra un mensaje de error en el modal.
+             */
+            this.establecerCamposFormularioVisibles(false);
+            this.vista.asignarTexto('label-ubicacion-latitud', `Latitud: NO DISPONIBLE`);
+            this.vista.asignarTexto('label-ubicacion-longitud', `Longitud: NO DISPONIBLE`);
             this.vista.abrirModal('modal-nueva-ubicacion');
             this.vista.mostrarAlertaModal('modal-nueva-ubicacion', error.message, false);
+        }
+    }
+
+    establecerCamposFormularioVisibles(visible) {
+        for (const id of [
+            'grupo-ubicacion-titulo',
+            'grupo-ubicacion-descripcion',
+            'boton-guardar-ubicacion-gps'
+        ]) {
+            this.vista.establecerVisibilidad(id, visible);
         }
     }
 

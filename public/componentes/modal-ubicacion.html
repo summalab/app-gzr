@@ -12,12 +12,12 @@
 -->
     <form id="formulario-nueva-ubicacion">
         <div class="alerta-modal" role="alert" aria-live="polite"></div>
-        <contenedor-ui class="grupo-campo">
+        <contenedor-ui id="grupo-ubicacion-titulo" class="grupo-campo">
             <label for="ubicacion-titulo">Título del lugar *</label>
             <input type="text" id="ubicacion-titulo" name="titulo" maxlength="120" required
                 placeholder="Ej. Edificio del Valle">
         </contenedor-ui>
-        <contenedor-ui class="grupo-campo">
+        <contenedor-ui id="grupo-ubicacion-descripcion" class="grupo-campo">
             <label for="ubicacion-descripcion">Descripción *</label>
             <input type="text" id="ubicacion-descripcion" name="descripcion" minlength="15" required
                 placeholder="Explica qué hace relevante este sitio (mín. 15 caracteres)">
@@ -30,6 +30,6 @@
             <label for="ubicacion-longitud" id="label-ubicacion-longitud">Longitud:</label>
             <input type="hidden" id="ubicacion-longitud" name="longitud" step="any" min="-180" max="180" required readonly>
         </contenedor-ui>
-        <boton-ui tipo="submit" variante="principal" ancho="completo">Guardar en el mapa</boton-ui>
+        <boton-ui id="boton-guardar-ubicacion-gps" tipo="submit" variante="principal" ancho="completo">Guardar en el mapa</boton-ui>
     </form>
 </modal-ui>
