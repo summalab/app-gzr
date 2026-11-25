@@ -1,7 +1,7 @@
 import { PoliticaAccesoUbicacionTiempoReal } from '../Dominio/PoliticaAccesoUbicacionTiempoReal.js';
 import { PRECISION_MAXIMA_METROS } from '../Dominio/PrecisionUbicacion.js';
 
-const INTERVALO_ACTUALIZACION_POLITICA_MS = 30000;
+// const INTERVALO_ACTUALIZACION_POLITICA_MS = 30000;
 const ROLES_CONFIGURABLES = new Set(['todos', 'visitante', 'usuario', 'moderador', 'administrador']);
 
 export class ControladorUbicacionEnTiempoReal {
@@ -27,12 +27,12 @@ export class ControladorUbicacionEnTiempoReal {
 
         this.actualizarEstadoBoton(false);
         this.actualizarPolitica();
-        if (this.dispositivoCompatible) {
-            globalThis.setInterval(
-                () => this.actualizarPolitica(),
-                INTERVALO_ACTUALIZACION_POLITICA_MS
-            );
-        }
+        // if (this.dispositivoCompatible) {
+        //     globalThis.setInterval(
+        //         () => this.actualizarPolitica(),
+        //         INTERVALO_ACTUALIZACION_POLITICA_MS
+        //     );
+        // }
     }
 
     actualizarSesion(usuario) {

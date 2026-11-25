@@ -23,6 +23,7 @@ final class UbicacionEnTiempoRealControlador
 
     public function obtenerConfiguracion(): void
     {
+        // La política se consulta al recibir este endpoint; el backend no programa sondeos periódicos.
         header('Content-Type: application/json; charset=utf-8');
         header('Cache-Control: no-store');
 

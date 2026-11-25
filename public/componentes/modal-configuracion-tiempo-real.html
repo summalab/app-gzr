@@ -17,7 +17,10 @@
             </select>
         </contenedor-ui>
         <p class="texto-ayuda">
-            El cambio se guarda en el servidor y se aplica a los demás dispositivos en un máximo aproximado de 30 segundos.
+            El cambio se guarda globalmente. Otros dispositivos consultarán la política 
+            al cargar la página o al intentar iniciar la transmisión. 
+            Una transmisión ya activa no se detendrá remotamente hasta que esa 
+            página vuelva a consultar.
         </p>
         <boton-ui tipo="submit" variante="principal" ancho="completo">Guardar configuración</boton-ui>
     </form>
