@@ -5,11 +5,16 @@ export class ControladorUbicaciones {
         this.vista = vista;
         this.confirmar = confirmar;
         this.obtenerSesion = () => null;
+        this.obtenerCoordenadasEnTiempoReal = () => null;
         this.coordenadasGpsCapturadas = null;
     }
 
     establecerProveedorSesion(obtenerSesion) {
         this.obtenerSesion = obtenerSesion;
+    }
+
+    establecerProveedorCoordenadasEnTiempoReal(obtenerCoordenadas) {
+        this.obtenerCoordenadasEnTiempoReal = obtenerCoordenadas;
     }
 
     inicializar() {
@@ -92,7 +97,8 @@ export class ControladorUbicaciones {
                     this.vista.asignarValor('ubicacion-longitud', '');
                     this.vista.asignarTexto('label-ubicacion-longitud', 'Longitud:');
 
-                    const coordenadas = await this.gestorMapa.obtenerUbicacionGps();
+                    const coordenadas = this.obtenerCoordenadasEnTiempoReal()
+                        || await this.gestorMapa.obtenerUbicacionGps();
                     /**
                      * aqui se asignan las coordenadas del clic en el mapa a los campos de
                      * latitud y longitud del formulario de nueva ubicación,

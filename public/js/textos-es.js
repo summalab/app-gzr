@@ -42,5 +42,6 @@ export const TEXTOS_ES = Object.freeze({
     aprobarUbicaciones: '✓ Aprobar ubicaciones',
     gestionarUsuarios: '👥 Gestionar usuarios',
     auditoria: '📋 Auditoría',
-    configuracion: '⚙ Configuración'
+    configuracion: '⚙ Configuración',
+    configuracionUbicacionTiempoReal: '📡 Ubicación en tiempo real'
 });

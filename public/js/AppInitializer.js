@@ -18,6 +18,10 @@ import { CargadorComponentes } from './Presentacion/Componentes/CargadorComponen
 import { GestorTema } from './Presentacion/Shared/GestorTema.js';
 import { ConstructorDashboard } from './Presentacion/Shared/ConstructorDashboard.js';
 import { AplicadorTextos } from './Presentacion/Shared/AplicadorTextos.js';
+import { TransmitirUbicacionEnTiempoReal } from './UbicacionEnTiempoRealFeature/Aplicacion/TransmitirUbicacionEnTiempoReal.js';
+import { ConfiguracionUbicacionTiempoRealGateway } from './UbicacionEnTiempoRealFeature/Infraestructura/Api/ConfiguracionUbicacionTiempoRealGateway.js';
+import { GeolocalizadorContinuoNavegador } from './UbicacionEnTiempoRealFeature/Infraestructura/Geolocalizacion/GeolocalizadorContinuoNavegador.js';
+import { ControladorUbicacionEnTiempoReal } from './UbicacionEnTiempoRealFeature/Presentacion/ControladorUbicacionEnTiempoReal.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -54,16 +58,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     const controladorAutenticacion = new ControladorAutenticacion(autenticacion, cuentaUsuario, vista);
     const controladorPerfil = new ControladorPerfilUsuario(cuentaUsuario, autenticacion, vista);
     const controladorUbicaciones = new ControladorUbicaciones(ubicaciones, mapa, vista);
+    const transmisionUbicacion = new TransmitirUbicacionEnTiempoReal(
+        new GeolocalizadorContinuoNavegador(),
+        mapa
+    );
+    const controladorUbicacionTiempoReal = new ControladorUbicacionEnTiempoReal(
+        new ConfiguracionUbicacionTiempoRealGateway(clienteHttp),
+        transmisionUbicacion,
+        vista
+    );
+    controladorUbicaciones.establecerProveedorCoordenadasEnTiempoReal(
+        () => controladorUbicacionTiempoReal.obtenerUltimaUbicacion()
+    );
     const aplicacion = new ControladorInterfaz({
         autenticacion,
         autenticacionController: controladorAutenticacion,
         perfilController: controladorPerfil,
         ubicacionesController: controladorUbicaciones,
+        ubicacionTiempoRealController: controladorUbicacionTiempoReal,
         gestorMapa: mapa,
         vista
     });
 
     aplicacion.inicializar();
+    controladorUbicacionTiempoReal.inicializar();
     await controladorAutenticacion.procesarEnlaceInicial();
     await aplicacion.restaurarSesion();
 });

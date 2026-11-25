@@ -23,6 +23,7 @@ use Core\RateLimiter;
 use Shared\SharedModulo;
 use AuthFuncionalidad\AuthModulo;
 use UbicacionesFuncionalidad\UbicacionesModulo;
+use UbicacionEnTiempoRealFuncionalidad\UbicacionEnTiempoRealModulo;
 use UsuariosFuncionalidad\UsuariosModulo;
 use Shared\Http\ManejadorGlobalExcepciones;
 use Shared\Infraestructura\Servicios\ArchivoRegistradorLog;
@@ -120,7 +121,9 @@ try {
     UbicacionesModulo::registrarDependencias($contenedor);
     UbicacionesModulo::registrarRutas($enrutador);
 
-    
+    UbicacionEnTiempoRealModulo::registrarDependencias($contenedor);
+    UbicacionEnTiempoRealModulo::registrarRutas($enrutador);
+
 
     // 7. Si el navegador solicita la raíz '/', servir la Landing Page HTML
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($rutaLimpia === '/' || $rutaLimpia === '/index.php')) {

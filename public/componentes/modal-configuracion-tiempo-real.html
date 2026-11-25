@@ -1,0 +1,24 @@
+<modal-ui id="modal-configuracion-tiempo-real" aria-labelledby="titulo-configuracion-tiempo-real">
+    <contenedor-ui class="cabecera-modal">
+        <h2 id="titulo-configuracion-tiempo-real">Control de ubicación en tiempo real</h2>
+        <boton-ui tipo="button" variante="cerrar" data-cerrar-modal aria-label="Cerrar diálogo">&times;</boton-ui>
+    </contenedor-ui>
+    <form id="formulario-configuracion-tiempo-real">
+        <div id="alerta-configuracion-tiempo-real" class="alerta-modal" role="alert" aria-live="polite"></div>
+        <contenedor-ui class="grupo-campo">
+            <label for="configuracion-tiempo-real-alcance">Disponibilidad global</label>
+            <select id="configuracion-tiempo-real-alcance" name="alcance" required>
+                <option value="todos">Habilitada para todos los roles y visitantes</option>
+                <option value="visitante">Solo visitantes</option>
+                <option value="usuario">Solo usuarios</option>
+                <option value="moderador">Solo moderadores</option>
+                <option value="administrador">Solo administradores</option>
+                <option value="desactivada">Desactivada para todos</option>
+            </select>
+        </contenedor-ui>
+        <p class="texto-ayuda">
+            El cambio se guarda en el servidor y se aplica a los demás dispositivos en un máximo aproximado de 30 segundos.
+        </p>
+        <boton-ui tipo="submit" variante="principal" ancho="completo">Guardar configuración</boton-ui>
+    </form>
+</modal-ui>

@@ -17,6 +17,8 @@ export class LeafletMapAdapter {
         this.mapa = null;
         this.capaMarcadores = null;
         this.capaGeocerca = null;
+        this.marcadorUbicacionTiempoReal = null;
+        this.circuloPrecisionUbicacion = null;
         this.alEliminarUbicacion = null;
     }
 
@@ -128,6 +130,47 @@ export class LeafletMapAdapter {
         const coordenadas = await this.geolocalizador.obtenerUbicacion();
         this.mapa?.setView([coordenadas.latitud, coordenadas.longitud], 16);
         return coordenadas;
+    }
+
+    mostrarUbicacionEnTiempoReal(latitud, longitud, precisionMetros) {
+        if (!this.mapa) return;
+
+        const punto = [latitud, longitud];
+        if (!this.marcadorUbicacionTiempoReal) {
+            this.marcadorUbicacionTiempoReal = L.circleMarker(punto, {
+                radius: 8,
+                color: '#ffffff',
+                weight: 2,
+                fillColor: '#2563eb',
+                fillOpacity: 1,
+                interactive: false
+            }).addTo(this.mapa);
+            this.circuloPrecisionUbicacion = L.circle(punto, {
+                radius: precisionMetros,
+                color: '#2563eb',
+                weight: 1,
+                fillColor: '#3b82f6',
+                fillOpacity: 0.12,
+                interactive: false
+            }).addTo(this.mapa);
+        } else {
+            this.marcadorUbicacionTiempoReal.setLatLng(punto);
+            this.circuloPrecisionUbicacion.setLatLng(punto);
+            this.circuloPrecisionUbicacion.setRadius(precisionMetros);
+        }
+
+        this.mapa.panTo(punto, { animate: true });
+    }
+
+    limpiarUbicacionEnTiempoReal() {
+        if (this.marcadorUbicacionTiempoReal) {
+            this.mapa?.removeLayer(this.marcadorUbicacionTiempoReal);
+            this.marcadorUbicacionTiempoReal = null;
+        }
+        if (this.circuloPrecisionUbicacion) {
+            this.mapa?.removeLayer(this.circuloPrecisionUbicacion);
+            this.circuloPrecisionUbicacion = null;
+        }
     }
 
     actualizarInsignia(texto) {

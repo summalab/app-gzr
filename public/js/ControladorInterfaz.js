@@ -4,6 +4,7 @@ export class ControladorInterfaz {
         autenticacionController,
         perfilController,
         ubicacionesController,
+        ubicacionTiempoRealController,
         gestorMapa,
         vista
     }) {
@@ -11,6 +12,7 @@ export class ControladorInterfaz {
         this.autenticacionController = autenticacionController;
         this.perfilController = perfilController;
         this.ubicacionesController = ubicacionesController;
+        this.ubicacionTiempoRealController = ubicacionTiempoRealController;
         this.gestorMapa = gestorMapa;
         this.vista = vista;
         this.usuarioActual = null;
@@ -50,6 +52,7 @@ export class ControladorInterfaz {
     actualizarEstadoSesion(usuario) {
         this.usuarioActual = usuario;
         this.vista.renderizarSesion(usuario);
+        this.ubicacionTiempoRealController.actualizarSesion(usuario);
         this.ubicacionesController.cargarParaUsuario(usuario).catch((error) => {
             this.vista.mostrarAlertaGlobal(error.message, false);
         });

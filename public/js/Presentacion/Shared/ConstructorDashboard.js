@@ -31,7 +31,8 @@ export class ConstructorDashboard {
                     ['accion-nueva-ubicacion', TEXTOS_ES.nuevaUbicacion],
                     ['accion-gestion-usuarios', TEXTOS_ES.gestionarUsuarios],
                     ['accion-auditoria', TEXTOS_ES.auditoria],
-                    ['accion-configuracion', TEXTOS_ES.configuracion]
+                    ['accion-configuracion', TEXTOS_ES.configuracion],
+                    ['accion-configuracion-tiempo-real', TEXTOS_ES.configuracionUbicacionTiempoReal]
                 ]
             }
         };
