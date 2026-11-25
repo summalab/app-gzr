@@ -58,6 +58,26 @@ modal-ui {
     display: contents;
 }
 
+#seccion-botones-flotantes {
+    position: fixed;
+    bottom: max(1.25rem, env(safe-area-inset-bottom));
+    right: max(1.25rem, env(safe-area-inset-right));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.75rem;
+    z-index: 999;
+    pointer-events: none; /* permite tocar el contenido detrás si el contenedor está vacío */
+}
+
+#seccion-botones-flotantes .boton-flotante {
+    position: static;
+    z-index: auto;
+    right: auto;
+    bottom: auto;
+    pointer-events: auto;
+}
+
 contenedor-ui {
     display: block;
     min-width: 0;
@@ -251,7 +271,6 @@ contenedor-ui {
 }
 
 .boton-seguimiento-flotante .boton-flotante {
-    right: calc(max(1.25rem, env(safe-area-inset-right)) + 4.25rem);
     font-size: 1.65rem;
 }
 
@@ -580,16 +599,15 @@ contenedor-ui {
     }
 
     .boton-flotante {
-        right: max(1rem, env(safe-area-inset-right));
-        bottom: max(1rem, env(safe-area-inset-bottom));
         width: 3.5rem;
         height: 3.5rem;
         min-height: 3.5rem;
         border-radius: 1rem;
     }
 
-    .boton-seguimiento-flotante .boton-flotante {
-        right: calc(max(1rem, env(safe-area-inset-right)) + 4rem);
+    #seccion-botones-flotantes {
+        right: max(1rem, env(safe-area-inset-right));
+        bottom: max(1rem, env(safe-area-inset-bottom));
     }
 
     .indicador-vista {
@@ -616,10 +634,6 @@ contenedor-ui {
         width: 3.25rem;
         height: 3.25rem;
         min-height: 3.25rem;
-    }
-
-    .boton-seguimiento-flotante .boton-flotante {
-        right: calc(max(1rem, env(safe-area-inset-right)) + 3.75rem);
     }
 }
 
