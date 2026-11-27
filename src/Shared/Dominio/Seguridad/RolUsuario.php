@@ -22,6 +22,7 @@ enum RolUsuario: string
             self::USUARIO => [
                 'ubicacion.crear',
                 'ubicacion.eliminar_propia',
+                'ubicacion.editar_propia',
                 'ubicacion.reportar',
                 'perfil.gestionar_propio',
             ],
@@ -29,6 +30,8 @@ enum RolUsuario: string
                 'ubicacion.crear',
                 'ubicacion.eliminar_propia',
                 'ubicacion.eliminar_cualquiera',
+                'ubicacion.editar_propia',
+                'ubicacion.editar_cualquiera',
                 'ubicacion.aprobar',
                 'ubicacion.reportar',
                 'perfil.gestionar_propio',

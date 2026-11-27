@@ -28,6 +28,7 @@ class UbicacionesModulo
         // Rutas privadas (protegidas por sesión en el controlador)
         $enrutador->addRoute('GET', '/mis-ubicaciones', UbicacionControlador::class, 'listarPropias');
         $enrutador->addRoute('POST', '/crear-ubicacion', UbicacionControlador::class, 'crear');
+        $enrutador->addRoute('POST', '/actualizar-ubicacion', UbicacionControlador::class, 'actualizar');
         $enrutador->addRoute('POST', '/eliminar-ubicacion', UbicacionControlador::class, 'eliminar');
     }
 }

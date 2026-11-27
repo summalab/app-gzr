@@ -7,6 +7,7 @@ export class ControladorUbicaciones {
         this.obtenerSesion = () => null;
         this.obtenerCoordenadasEnTiempoReal = () => null;
         this.coordenadasGpsCapturadas = null;
+        this.ubicacionEditandoId = null;
     }
 
     establecerProveedorSesion(obtenerSesion) {
@@ -19,7 +20,9 @@ export class ControladorUbicaciones {
 
     inicializar() {
         this.gestorMapa.establecerManejadorEliminacion((id) => this.procesarEliminarUbicacion(id));
+        this.gestorMapa.establecerManejadorEdicion((ubicacion) => this.prepararEdicionUbicacion(ubicacion));
         this.vista.enlazarClick('boton-nueva-ubicacion', () => this.procesarUbicacionGps());
+        this.vista.establecerPreparadorNuevaUbicacion(() => this.prepararFormularioNuevo());
 
         this.vista.enlazarFormulario('formulario-nueva-ubicacion', (formulario) => this.procesarCrearUbicacion(formulario));
     }
@@ -61,6 +64,7 @@ export class ControladorUbicaciones {
             return;
         }
 
+        this.prepararFormularioNuevo();
         this.establecerCamposFormularioVisibles(true);
 
         /**
@@ -90,6 +94,7 @@ export class ControladorUbicaciones {
                 'boton-nueva-ubicacion',
                 '📡 Obteniendo señal GPS...',
                 async () => {
+                    this.prepararFormularioNuevo();
                     this.coordenadasGpsCapturadas = null;
                     this.establecerCamposFormularioVisibles(false);
                     this.vista.asignarValor('ubicacion-latitud', '');
@@ -138,32 +143,75 @@ export class ControladorUbicaciones {
         }
     }
 
+    prepararFormularioNuevo() {
+        this.ubicacionEditandoId = null;
+        this.coordenadasGpsCapturadas = null;
+        this.vista.restablecerFormulario('formulario-nueva-ubicacion');
+        this.vista.asignarTexto('titulo-nueva-ubicacion', 'Nueva ubicación');
+        this.vista.asignarTextoBoton('boton-guardar-ubicacion-gps', 'Guardar en el mapa');
+        this.vista.asignarTexto('label-ubicacion-latitud', 'Latitud:');
+        this.vista.asignarTexto('label-ubicacion-longitud', 'Longitud:');
+    }
+
+    prepararEdicionUbicacion(ubicacion) {
+        this.prepararFormularioNuevo();
+        this.ubicacionEditandoId = Number(ubicacion.id_ubicacion);
+
+        this.vista.asignarValor('ubicacion-titulo', ubicacion.titulo || '');
+        this.vista.asignarValor('ubicacion-descripcion', ubicacion.descripcion || 'sin descripción');
+        this.vista.asignarValor('tipo_infraestructura', ubicacion.tipo_infraestructura || '');
+        this.vista.asignarValor('estado_infraestructura', ubicacion.estado_infraestructura || '');
+        this.vista.asignarValor('riesgos_directos', ubicacion.riesgos_directos || '');
+        this.vista.asignarValor('riesgos_indirectos', ubicacion.riesgos_indirectos || '');
+        this.vista.asignarValor('actividades_delictivas', ubicacion.actividades_delictivas || '');
+        this.vista.asignarValor('condiciones_sociales', ubicacion.condiciones_sociales || '');
+
+        this.vista.asignarValor('ubicacion-latitud', ubicacion.latitud);
+        this.vista.asignarTexto('label-ubicacion-latitud', `Latitud: ${ubicacion.latitud}`);
+        this.vista.asignarValor('ubicacion-longitud', ubicacion.longitud);
+        this.vista.asignarTexto('label-ubicacion-longitud', `Longitud: ${ubicacion.longitud}`);
+
+        this.vista.asignarTexto('titulo-nueva-ubicacion', 'Editar ubicación');
+        this.vista.asignarTextoBoton('boton-guardar-ubicacion-gps', 'Guardar cambios');
+        this.establecerCamposFormularioVisibles(true);
+        this.vista.abrirModal('modal-nueva-ubicacion');
+    }
+
     async procesarCrearUbicacion(formulario) {
         const latitud = Number.parseFloat(this.vista.valorCampo(formulario, 'latitud'));
         const longitud = Number.parseFloat(this.vista.valorCampo(formulario, 'longitud'));
         const usuario = this.obtenerSesion();
-        if (usuario && String(usuario.rol_usuario).toLowerCase() !== 'administrador') {
+        if (
+            this.ubicacionEditandoId === null
+            && usuario
+            && String(usuario.rol_usuario).toLowerCase() !== 'administrador'
+        ) {
             const coordenadasGps = this.coordenadasGpsCapturadas;
             if (!coordenadasGps || latitud !== coordenadasGps.latitud || longitud !== coordenadasGps.longitud) {
                 throw new Error('Usa el botón GPS para capturar las coordenadas antes de guardar la ubicación.');
             }
         }
 
-        const respuesta = await this.ubicacionUseCases.crear(
-            this.vista.valorCampo(formulario, 'titulo'),
-            this.vista.valorCampo(formulario, 'descripcion'),
-            latitud,
-            longitud,
-            {
-                tipo_infraestructura: this.vista.valorCampo(formulario, 'tipo_infraestructura'),
-                estado_infraestructura: this.vista.valorCampo(formulario, 'estado_infraestructura'),
-                riesgos_directos: this.vista.valorCampo(formulario, 'riesgos_directos'),
-                riesgos_indirectos: this.vista.valorCampo(formulario, 'riesgos_indirectos'),
-                actividades_delictivas: this.vista.valorCampo(formulario, 'actividades_delictivas'),
-                condiciones_sociales: this.vista.valorCampo(formulario, 'condiciones_sociales')
-            }
-        );
-        formulario.reset();
+        const clasificaciones = {
+            tipo_infraestructura: this.vista.valorCampo(formulario, 'tipo_infraestructura'),
+            estado_infraestructura: this.vista.valorCampo(formulario, 'estado_infraestructura'),
+            riesgos_directos: this.vista.valorCampo(formulario, 'riesgos_directos'),
+            riesgos_indirectos: this.vista.valorCampo(formulario, 'riesgos_indirectos'),
+            actividades_delictivas: this.vista.valorCampo(formulario, 'actividades_delictivas'),
+            condiciones_sociales: this.vista.valorCampo(formulario, 'condiciones_sociales')
+        };
+        const titulo = this.vista.valorCampo(formulario, 'titulo');
+        const descripcion = this.vista.valorCampo(formulario, 'descripcion');
+        const respuesta = this.ubicacionEditandoId === null
+            ? await this.ubicacionUseCases.crear(titulo, descripcion, latitud, longitud, clasificaciones)
+            : await this.ubicacionUseCases.actualizar(
+                this.ubicacionEditandoId,
+                titulo,
+                descripcion,
+                clasificaciones
+            );
+
+        this.prepararFormularioNuevo();
         this.vista.cerrarModal('modal-nueva-ubicacion');
         this.vista.mostrarAlertaGlobal(respuesta.message, true);
         await this.cargarParaUsuario(this.obtenerSesion());

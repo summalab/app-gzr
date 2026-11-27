@@ -20,6 +20,7 @@ Los endpoints se registran por módulo; el Router compara método HTTP y ruta no
 | `GET /ubicaciones-publicas` | Listar ubicación de la comunidad y configuración de geocerca. | Ninguna | Público. | [ruta](../src/UbicacionesFuncionalidad/UbicacionesModulo.php#L24-L32), [controlador](../src/UbicacionesFuncionalidad/Http/UbicacionControlador.php#L33-L58) |
 | `GET /mis-ubicaciones` | Listar ubicaciones activas propias. | Ninguna | Sesión + `perfil.gestionar_propio`. | [ruta](../src/UbicacionesFuncionalidad/UbicacionesModulo.php#L24-L32), [caso de uso](../src/UbicacionesFuncionalidad/Aplicacion/CasosDeUso/ListarUbicacionesUsuarioCasoDeUso.php#L21-L44) |
 | `POST /crear-ubicacion` | Crear ubicación. | `titulo`, `descripcion`, `latitud`, `longitud` | Sesión + `ubicacion.crear`. | [ruta](../src/UbicacionesFuncionalidad/UbicacionesModulo.php#L24-L32), [controlador](../src/UbicacionesFuncionalidad/Http/UbicacionControlador.php#L87-L133) |
+| `POST /actualizar-ubicacion` | Actualizar título, descripción y clasificaciones; no acepta coordenadas. | `id_ubicacion`, `titulo`, `descripcion` y las seis clasificaciones | Sesión + `ubicacion.editar_propia`; propietario o permiso para editar cualquiera. | [ruta](../src/UbicacionesFuncionalidad/UbicacionesModulo.php), [caso de uso](../src/UbicacionesFuncionalidad/Aplicacion/CasosDeUso/ActualizarUbicacionCasoDeUso.php) |
 | `POST /eliminar-ubicacion` | Baja lógica de ubicación. | `id_ubicacion` | Sesión; propia o permiso para eliminar cualquiera. | [controlador](../src/UbicacionesFuncionalidad/Http/UbicacionControlador.php#L136-L174), [caso de uso](../src/UbicacionesFuncionalidad/Aplicacion/CasosDeUso/EliminarUbicacionCasoDeUso.php#L22-L45) |
 
 ## 2. Roles y autorización
@@ -28,8 +29,8 @@ Los roles válidos definidos son `usuario`, `moderador` y `administrador` ([enum
 
 | Rol | Permisos declarados en `RolUsuario` |
 |---|---|
-| `usuario` | `ubicacion.crear`, `ubicacion.eliminar_propia`, `ubicacion.reportar`, `perfil.gestionar_propio`. |
-| `moderador` | Los anteriores, además de `ubicacion.eliminar_cualquiera` y `ubicacion.aprobar`. |
+| `usuario` | `ubicacion.crear`, `ubicacion.eliminar_propia`, `ubicacion.editar_propia`, `ubicacion.reportar`, `perfil.gestionar_propio`. |
+| `moderador` | Los anteriores, además de `ubicacion.eliminar_cualquiera`, `ubicacion.editar_cualquiera` y `ubicacion.aprobar`. |
 | `administrador` | `*` (todos los permisos). |
 
 `SesionAutorizador` devuelve falso sin rol; un valor de rol no reconocido se convierte a `usuario`. `exigirPermiso` devuelve 401 si no hay ID de sesión y 403 si la sesión no tiene permiso ([autorizador](../src/Shared/Infraestructura/Seguridad/SesionAutorizador.php#L21-L48)).
@@ -38,6 +39,7 @@ Los casos de uso conectados a las rutas aplican estas reglas:
 
 - Crear: requiere `ubicacion.crear`, por lo tanto los tres roles pueden crear mediante el backend ([crear](../src/UbicacionesFuncionalidad/Aplicacion/CasosDeUso/CrearUbicacionCasoDeUso.php#L24-L27), [permisos](../src/Shared/Dominio/Seguridad/RolUsuario.php#L19-L42)).
 - Eliminar: si no puede eliminar cualquiera, debe tener permiso de eliminar propias y ser propietario. Moderador y administrador tienen el permiso global ([eliminar](../src/UbicacionesFuncionalidad/Aplicacion/CasosDeUso/EliminarUbicacionCasoDeUso.php#L22-L39)).
+- Editar: el caso de uso conserva las coordenadas del registro y solo cambia título, descripción y clasificaciones. El usuario debe ser propietario; moderador y administrador pueden editar cualquiera ([actualizar](../src/UbicacionesFuncionalidad/Aplicacion/CasosDeUso/ActualizarUbicacionCasoDeUso.php)).
 - Listar propias y gestionar perfil requieren `perfil.gestionar_propio` ([listar propias](../src/UbicacionesFuncionalidad/Aplicacion/CasosDeUso/ListarUbicacionesUsuarioCasoDeUso.php#L21-L24), [perfil](../src/UsuariosFuncionalidad/Aplicacion/CasosDeUso/ActualizarApodoCasoDeUso.php#L23-L26)).
 
 La restricción de que solo el administrador use clic de mapa y otros roles utilicen GPS se ejecuta en [ControladorUbicaciones](../public/js/Presentacion/Ubicaciones/ControladorUbicaciones.js#L39-L53), que captura GPS y comprueba la igualdad de las coordenadas en el submit ([captura y control](../public/js/Presentacion/Ubicaciones/ControladorUbicaciones.js#L55-L89)). **La API no recibe un indicador fiable de “origen GPS”** y `CrearUbicacionCasoDeUso` solo ve valores numéricos; la regla de origen es frontend y puede ser omitida por un cliente que invoque la API directamente. No debe interpretarse como garantía de GPS auténtico.
@@ -82,12 +84,12 @@ La API devuelve configuración de geocerca junto a ubicaciones públicas ([respu
 
 ## 6. Persistencia observada
 
-No hay migraciones ni DDL SQL en el inventario fuente revisado. Los nombres de tablas/campos aquí descritos son los que emplean las consultas y requieren contrastarse con el esquema MySQL instalado.
+No hay un DDL completo para reconstruir la base de datos. La migración [20261127_ampliar_columnas_clasificacion_ubicacion.sql](../migrations/20261127_ampliar_columnas_clasificacion_ubicacion.sql) amplía a `VARCHAR(128)` los seis campos de clasificación de `ubicaciones`; es necesario aplicarla a los esquemas existentes.
 
 | Tabla inferida por los DAOs | Campos y comportamiento visible en consultas |
 |---|---|
 | `usuarios` | `pk_id_usuario`, `apodo_usuario`, `correo_usuario`, `contrasena_hash_usuario`, `esta_verificado_usuario`, `rol`, `fecha_eliminacion`; la baja escribe fecha y las búsquedas habituales ignoran las filas dadas de baja. | [UsuarioDAO](../src/UsuariosFuncionalidad/Infraestructura/Persistencia/UsuarioDAO.php#L25-L156) |
 | `tokens_confirmacion_usuario` | `pk_id_token`, `fk_id_usuario`, `token_verificacion`, `tipo_token`, `fecha_expiracion`; los tokens se buscan por token y se borran al usarse. | [TokenConfirmacionUsuarioDAO](../src/UsuariosFuncionalidad/Infraestructura/Persistencia/TokenConfirmacionUsuarioDAO.php#L10-L83) |
-| `ubicaciones` | `pk_id_ubicacion`, `fk_id_usuario`, `titulo`, `descripcion`, `latitud`, `longitud`, `tipo_infraestructura`, `estado_infraestructura`, `riesgos_directos`, `riesgos_indirectos`, `actividades_delictivas`, `condiciones_sociales`, `fecha_creacion`, `fecha_eliminacion`; listas filtran soft delete y ordenan por fecha descendente. La descripción usa `sin descripción` cuando está vacía. | [UbicacionDAO](../src/UbicacionesFuncionalidad/Infraestructura/Persistencia/UbicacionDAO.php), [migración](../migrations/20261126_agregar_clasificaciones_ubicaciones.sql) |
+| `ubicaciones` | `pk_id_ubicacion`, `fk_id_usuario`, `titulo`, `descripcion`, `latitud`, `longitud`, `tipo_infraestructura`, `estado_infraestructura`, `riesgos_directos`, `riesgos_indirectos`, `actividades_delictivas`, `condiciones_sociales`, `fecha_creacion`, `fecha_eliminacion`; listas filtran soft delete y ordenan por fecha descendente. La descripción usa `sin descripción` cuando está vacía y cada clasificación admite hasta 128 caracteres. | [UbicacionDAO](../src/UbicacionesFuncionalidad/Infraestructura/Persistencia/UbicacionDAO.php), [migración de longitudes](../migrations/20261127_ampliar_columnas_clasificacion_ubicacion.sql) |
 
 La conexión se obtiene de `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS`, `DB_CHARSET`; `EnvLoader` lee `.env` y ofrece defaults solo donde se indican ([variables usadas](../core/ConnexionDB.php#L24-L46), [cargador](../core/EnvLoader.php#L10-L63)). La documentación no incluye valores secretos. El módulo de usuarios selecciona `LogLocalEnviadorCorreo` cuando `APP_ENV=local`; en otro caso enlaza SMTP ([selección](../src/UsuariosFuncionalidad/UsuariosModulo.php#L20-L45)). Los enlaces de cuenta dependen de `APP_URL` ([registro](../src/UsuariosFuncionalidad/Aplicacion/CasosDeUso/RegistrarUsuarioCasoDeUso.php#L60-L69)).

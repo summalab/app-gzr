@@ -47,6 +47,35 @@ class UbicacionDAO
         return (int)$this->db->lastInsertId();
     }
 
+    public function actualizarDatos(array $data): void
+    {
+        $stmt = $this->db->prepare('
+            UPDATE ubicaciones
+            SET titulo = :titulo,
+                descripcion = :descripcion,
+                tipo_infraestructura = :tipo_infraestructura,
+                estado_infraestructura = :estado_infraestructura,
+                riesgos_directos = :riesgos_directos,
+                riesgos_indirectos = :riesgos_indirectos,
+                actividades_delictivas = :actividades_delictivas,
+                condiciones_sociales = :condiciones_sociales
+            WHERE pk_id_ubicacion = :pk_id_ubicacion
+              AND fecha_eliminacion IS NULL
+        ');
+
+        $stmt->execute([
+            ':titulo' => $data['titulo'],
+            ':descripcion' => $data['descripcion'],
+            ':tipo_infraestructura' => $data['tipo_infraestructura'],
+            ':estado_infraestructura' => $data['estado_infraestructura'],
+            ':riesgos_directos' => $data['riesgos_directos'],
+            ':riesgos_indirectos' => $data['riesgos_indirectos'],
+            ':actividades_delictivas' => $data['actividades_delictivas'],
+            ':condiciones_sociales' => $data['condiciones_sociales'],
+            ':pk_id_ubicacion' => $data['pk_id_ubicacion'],
+        ]);
+    }
+
     /**
      * Busca una ubicación activa por su ID único.
      */

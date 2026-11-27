@@ -14,6 +14,11 @@ interface UbicacionRepositorioInterface
     public function guardar(UbicacionEntidad $ubicacion): UbicacionEntidad;
 
     /**
+     * Actualiza los datos descriptivos sin modificar las coordenadas.
+     */
+    public function actualizarDatos(UbicacionEntidad $ubicacion): ?UbicacionEntidad;
+
+    /**
      * Busca una ubicación activa por su identificador único.
      */
     public function encontrarPorId(int $id_ubicacion): ?UbicacionEntidad;

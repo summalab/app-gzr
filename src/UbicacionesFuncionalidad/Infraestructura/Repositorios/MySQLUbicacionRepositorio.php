@@ -49,6 +49,23 @@ class MySQLUbicacionRepositorio implements UbicacionRepositorioInterface
         );
     }
 
+    public function actualizarDatos(UbicacionEntidad $ubicacion): ?UbicacionEntidad
+    {
+        $this->mUbicacionDao->actualizarDatos([
+            'pk_id_ubicacion' => $ubicacion->obtenerId(),
+            'titulo' => $ubicacion->obtenerTitulo(),
+            'descripcion' => $ubicacion->obtenerDescripcion(),
+            'tipo_infraestructura' => $ubicacion->obtenerTipoInfraestructura(),
+            'estado_infraestructura' => $ubicacion->obtenerEstadoInfraestructura(),
+            'riesgos_directos' => $ubicacion->obtenerRiesgosDirectos(),
+            'riesgos_indirectos' => $ubicacion->obtenerRiesgosIndirectos(),
+            'actividades_delictivas' => $ubicacion->obtenerActividadesDelictivas(),
+            'condiciones_sociales' => $ubicacion->obtenerCondicionesSociales(),
+        ]);
+
+        return $this->encontrarPorId((int)$ubicacion->obtenerId());
+    }
+
     public function encontrarPorId(int $id_ubicacion): ?UbicacionEntidad
     {
         $row = $this->mUbicacionDao->encontrarPorId($id_ubicacion);

@@ -9,11 +9,13 @@ use Throwable;
 use Core\EnvLoader;
 use Shared\Dominio\Servicios\SesionUsuarioInterface;
 use Shared\Http\ManejadorGlobalExcepciones;
+use UbicacionesFuncionalidad\Aplicacion\CasosDeUso\ActualizarUbicacionCasoDeUso;
 use UbicacionesFuncionalidad\Aplicacion\CasosDeUso\CrearUbicacionCasoDeUso;
 use UbicacionesFuncionalidad\Aplicacion\CasosDeUso\EliminarUbicacionCasoDeUso;
 use UbicacionesFuncionalidad\Aplicacion\CasosDeUso\ListarUbicacionesPublicasCasoDeUso;
 use UbicacionesFuncionalidad\Aplicacion\CasosDeUso\ListarUbicacionesUsuarioCasoDeUso;
 use UbicacionesFuncionalidad\Aplicacion\DTOs\CrearUbicacionEntradaDTO;
+use UbicacionesFuncionalidad\Aplicacion\DTOs\ActualizarUbicacionEntradaDTO;
 use UbicacionesFuncionalidad\Aplicacion\DTOs\EliminarUbicacionEntradaDTO;
 use UsuariosFuncionalidad\Dominio\Excepciones\ReglaNegocioExcepcion;
 use Shared\Dominio\Servicios\CatalogoMensajesInterface;
@@ -21,6 +23,7 @@ use Shared\Dominio\Servicios\CatalogoMensajesInterface;
 class UbicacionControlador
 {
     public function __construct(
+        private ActualizarUbicacionCasoDeUso $mActualizarUbicacionCasoDeUso,
         private CrearUbicacionCasoDeUso $mCrearUbicacionCasoDeUso,
         private ListarUbicacionesPublicasCasoDeUso $mListarPublicasCasoDeUso,
         private ListarUbicacionesUsuarioCasoDeUso $mListarUsuarioCasoDeUso,
@@ -149,6 +152,80 @@ class UbicacionControlador
                 'success'   => true,
                 'message'   => $this->mensajes->obtener('ubicacion.creada_exito'),
                 'ubicacion' => $ubicacionCreada
+            ]);
+        } catch (Throwable $e) {
+            $this->mManejadorExcepciones->manejar($e, static::class);
+        }
+    }
+
+    public function actualizar(): void
+    {
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->responderJson(405, ['success' => false, 'error' => $this->mensajes->obtener('sistema.metodo_no_permitido')]);
+            return;
+        }
+
+        try {
+            $idUsuarioSesion = $this->mSesionUsuario->obtenerIdUsuarioAutenticado();
+            if ($idUsuarioSesion === null) {
+                $this->responderJson(401, ['success' => false, 'error' => $this->mensajes->obtener('sistema.no_autorizado')]);
+                return;
+            }
+
+            $idUbicacion = filter_var($_POST['id_ubicacion'] ?? null, FILTER_VALIDATE_INT);
+            $titulo = isset($_POST['titulo']) ? (string)$_POST['titulo'] : '';
+            $tipoInfraestructura = trim((string)($_POST['tipo_infraestructura'] ?? ''));
+            $estadoInfraestructura = trim((string)($_POST['estado_infraestructura'] ?? ''));
+            $riesgosDirectos = trim((string)($_POST['riesgos_directos'] ?? ''));
+            $riesgosIndirectos = trim((string)($_POST['riesgos_indirectos'] ?? ''));
+            $actividadesDelictivas = trim((string)($_POST['actividades_delictivas'] ?? ''));
+            $condicionesSociales = trim((string)($_POST['condiciones_sociales'] ?? ''));
+
+            if ($idUbicacion === false || $idUbicacion <= 0) {
+                $this->responderJson(400, [
+                    'success' => false,
+                    'error' => $this->mensajes->obtener('ubicacion.identificador_invalido')
+                ]);
+                return;
+            }
+
+            if (
+                trim($titulo) === ''
+                || $tipoInfraestructura === ''
+                || $estadoInfraestructura === ''
+                || $riesgosDirectos === ''
+                || $riesgosIndirectos === ''
+                || $actividadesDelictivas === ''
+                || $condicionesSociales === ''
+            ) {
+                $this->responderJson(400, [
+                    'success' => false,
+                    'error' => $this->mensajes->obtener('ubicacion.campos_edicion_obligatorios')
+                ]);
+                return;
+            }
+
+            $dto = new ActualizarUbicacionEntradaDTO(
+                id_ubicacion: $idUbicacion,
+                id_usuario_autenticado: $idUsuarioSesion,
+                titulo: $titulo,
+                descripcion: isset($_POST['descripcion']) ? (string)$_POST['descripcion'] : null,
+                tipo_infraestructura: $tipoInfraestructura,
+                estado_infraestructura: $estadoInfraestructura,
+                riesgos_directos: $riesgosDirectos,
+                riesgos_indirectos: $riesgosIndirectos,
+                actividades_delictivas: $actividadesDelictivas,
+                condiciones_sociales: $condicionesSociales
+            );
+
+            $ubicacionActualizada = $this->mActualizarUbicacionCasoDeUso->execute($dto);
+
+            $this->responderJson(200, [
+                'success' => true,
+                'message' => $this->mensajes->obtener('ubicacion.actualizada_exito'),
+                'ubicacion' => $ubicacionActualizada
             ]);
         } catch (Throwable $e) {
             $this->mManejadorExcepciones->manejar($e, static::class);

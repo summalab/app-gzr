@@ -20,10 +20,15 @@ export class LeafletMapAdapter {
         this.marcadorUbicacionTiempoReal = null;
         this.circuloPrecisionUbicacion = null;
         this.alEliminarUbicacion = null;
+        this.alEditarUbicacion = null;
     }
 
     establecerManejadorEliminacion(manejador) {
         this.alEliminarUbicacion = manejador;
+    }
+
+    establecerManejadorEdicion(manejador) {
+        this.alEditarUbicacion = manejador;
     }
 
     inicializar(coordenadasCentro = [4.8133, -75.6961], zoomInicial = 11, alHacerClic = null) {
@@ -115,7 +120,8 @@ export class LeafletMapAdapter {
             marcador.bindPopup(this.vistaPopup.construir(
                 ubicacion,
                 mostrarAutor,
-                this.alEliminarUbicacion
+                this.alEliminarUbicacion,
+                this.alEditarUbicacion
             ));
             marcador.addTo(this.capaMarcadores);
             limites.push([lat, lng]);

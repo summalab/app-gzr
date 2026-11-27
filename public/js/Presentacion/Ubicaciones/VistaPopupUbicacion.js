@@ -1,7 +1,7 @@
 import { TEXTOS_ES } from '../../textos-es.js';
 
 export class VistaPopupUbicacion {
-    construir(ubicacion, mostrarAutor, alEliminar) {
+    construir(ubicacion, mostrarAutor, alEliminar, alEditar) {
         const contenedor = document.createElement('div');
         contenedor.className = 'popup-ubicacion';
 
@@ -48,20 +48,35 @@ export class VistaPopupUbicacion {
             contenedor.appendChild(autor);
         }
 
-        if (!mostrarAutor && ubicacion.id_ubicacion && typeof alEliminar === 'function') {
+        if (!mostrarAutor && ubicacion.id_ubicacion && (
+            typeof alEliminar === 'function' || typeof alEditar === 'function'
+        )) {
             const accion = document.createElement('contenedor-ui');
             accion.classList.add('accion-popup');
-            const botonEliminar = document.createElement('boton-ui');
-            botonEliminar.setAttribute('tipo', 'button');
-            botonEliminar.setAttribute('variante', 'peligro');
-            botonEliminar.setAttribute('ancho', 'completo');
-            botonEliminar.textContent = `🗑️ ${TEXTOS_ES.eliminarUbicacion}`;
-            botonEliminar.addEventListener('click', () => {
-                botonEliminar.disabled = true;
-                botonEliminar.texto = TEXTOS_ES.eliminandoUbicacion;
-                alEliminar(ubicacion.id_ubicacion);
-            });
-            accion.appendChild(botonEliminar);
+
+            if (typeof alEditar === 'function') {
+                const botonEditar = document.createElement('boton-ui');
+                botonEditar.setAttribute('tipo', 'button');
+                botonEditar.setAttribute('variante', 'secundario');
+                botonEditar.setAttribute('ancho', 'completo');
+                botonEditar.textContent = 'Editar ubicación';
+                botonEditar.addEventListener('click', () => alEditar(ubicacion));
+                accion.appendChild(botonEditar);
+            }
+
+            if (typeof alEliminar === 'function') {
+                const botonEliminar = document.createElement('boton-ui');
+                botonEliminar.setAttribute('tipo', 'button');
+                botonEliminar.setAttribute('variante', 'peligro');
+                botonEliminar.setAttribute('ancho', 'completo');
+                botonEliminar.textContent = `🗑️ ${TEXTOS_ES.eliminarUbicacion}`;
+                botonEliminar.addEventListener('click', () => {
+                    botonEliminar.disabled = true;
+                    botonEliminar.texto = TEXTOS_ES.eliminandoUbicacion;
+                    alEliminar(ubicacion.id_ubicacion);
+                });
+                accion.appendChild(botonEliminar);
+            }
             contenedor.appendChild(accion);
         }
 

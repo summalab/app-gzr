@@ -26,6 +26,20 @@ export class UbicacionGateway {
         return this.httpClient.post('/crear-ubicacion', datos);
     }
 
+    actualizar(idUbicacion, titulo, descripcion, clasificaciones) {
+        const datos = new FormData();
+        datos.append('id_ubicacion', idUbicacion);
+        datos.append('titulo', titulo);
+        datos.append('descripcion', descripcion);
+        datos.append('tipo_infraestructura', clasificaciones.tipo_infraestructura);
+        datos.append('estado_infraestructura', clasificaciones.estado_infraestructura);
+        datos.append('riesgos_directos', clasificaciones.riesgos_directos);
+        datos.append('riesgos_indirectos', clasificaciones.riesgos_indirectos);
+        datos.append('actividades_delictivas', clasificaciones.actividades_delictivas);
+        datos.append('condiciones_sociales', clasificaciones.condiciones_sociales);
+        return this.httpClient.post('/actualizar-ubicacion', datos);
+    }
+
     eliminar(idUbicacion) {
         const datos = new FormData();
         datos.append('id_ubicacion', idUbicacion);

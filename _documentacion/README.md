@@ -4,7 +4,7 @@
 
 Esta documentación recorre la aplicación desde el servidor web y la carga de la landing page hasta el navegador, los endpoints PHP, los casos de uso, las reglas de dominio y las consultas de persistencia. Los enlaces a código apuntan a los archivos actuales del repositorio y, cuando es útil, a una línea concreta (`#Lnn`).
 
-La revisión se hizo sobre el código fuente de `public/`, `core/` y `src/`, además de la configuración de raíz y `.env.example`. No se inspeccionaron los valores del archivo `.env`, los archivos de `storage/` ni el contenido de `.git`; esos elementos pueden contener configuración local, datos o registros y no son parte de la documentación funcional. No se encontró un esquema o migración SQL versionado: las tablas y columnas que se describen se deducen de los DAOs.
+La revisión se hizo sobre el código fuente de `public/`, `core/` y `src/`, además de la configuración de raíz y `.env.example`. No se inspeccionaron los valores del archivo `.env`, los archivos de `storage/` ni el contenido de `.git`; esos elementos pueden contener configuración local, datos o registros y no son parte de la documentación funcional. No hay un esquema SQL completo versionado; las tablas y columnas se deducen principalmente de los DAOs. La migración disponible amplía a `VARCHAR(128)` las columnas de clasificación de ubicaciones para alojar todas las opciones del dominio.
 
 ## Documentos
 

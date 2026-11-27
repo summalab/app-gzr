@@ -24,6 +24,15 @@ export class UbicacionUseCases {
         );
     }
 
+    actualizar(idUbicacion, titulo, descripcion, clasificaciones) {
+        return this.ubicacionGateway.actualizar(
+            idUbicacion,
+            titulo.trim(),
+            descripcion?.trim() || 'sin descripción',
+            clasificaciones
+        );
+    }
+
     eliminar(idUbicacion) {
         return this.ubicacionGateway.eliminar(idUbicacion);
     }

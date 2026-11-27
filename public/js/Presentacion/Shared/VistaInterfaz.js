@@ -4,6 +4,11 @@ export class VistaInterfaz {
     constructor(documento = globalThis.document) {
         this.documento = documento;
         this.constructorDashboard = null;
+        this.prepararNuevaUbicacion = null;
+    }
+
+    establecerPreparadorNuevaUbicacion(preparador) {
+        this.prepararNuevaUbicacion = preparador;
     }
 
     enlazarClick(idElemento, manejador) {
@@ -64,6 +69,16 @@ export class VistaInterfaz {
     asignarTexto(idElemento, texto) {
         const elemento = this.documento.getElementById(idElemento);
         if (elemento) elemento.textContent = texto;
+    }
+
+    asignarTextoBoton(idElemento, texto) {
+        const elemento = this.documento.getElementById(idElemento);
+        if (elemento) elemento.texto = texto;
+    }
+
+    restablecerFormulario(idFormulario) {
+        const formulario = this.documento.getElementById(idFormulario);
+        formulario?.reset();
     }
 
     establecerVisibilidad(idElemento, visible) {
@@ -172,7 +187,10 @@ export class VistaInterfaz {
 
         const accionNueva = this.documento.getElementById('accion-nueva-ubicacion');
         if (accionNueva) {
-            accionNueva.addEventListener('click', () => this.abrirModal('modal-nueva-ubicacion'));
+            accionNueva.addEventListener('click', () => {
+                this.prepararNuevaUbicacion?.();
+                this.abrirModal('modal-nueva-ubicacion');
+            });
         }
         const accionMisUbicaciones = this.documento.getElementById('accion-mis-ubicaciones');
         if (accionMisUbicaciones) {
