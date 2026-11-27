@@ -18,18 +18,26 @@ export class VistaPopupUbicacion {
         }
 
         const clasificaciones = [
-            ubicacion.tipo_infraestructura,
-            ubicacion.estado_infraestructura,
-            ubicacion.riesgos_directos,
-            ubicacion.riesgos_indirectos,
-            ubicacion.actividades_delictivas,
-            ubicacion.condiciones_sociales
-        ].filter(Boolean);
+            ['Tipo de infraestructura', ubicacion.tipo_infraestructura],
+            ['Estado de infraestructura', ubicacion.estado_infraestructura],
+            ['Riesgos directos', ubicacion.riesgos_directos],
+            ['Riesgos indirectos', ubicacion.riesgos_indirectos],
+            ['Actividades delictivas', ubicacion.actividades_delictivas],
+            ['Condiciones sociales', ubicacion.condiciones_sociales]
+        ].filter(([, valor]) => typeof valor === 'string' && valor.trim() !== '');
 
         if (clasificaciones.length > 0) {
-            const detalle = document.createElement('small');
+            const detalle = document.createElement('ul');
             detalle.className = 'popup-clasificaciones';
-            detalle.textContent = clasificaciones.join(' | ');
+
+            for (const [etiqueta, valor] of clasificaciones) {
+                const elemento = document.createElement('li');
+                const nombre = document.createElement('strong');
+                nombre.textContent = `${etiqueta}: `;
+                elemento.append(nombre, valor.replace(/_/g, ' '));
+                detalle.appendChild(elemento);
+            }
+
             contenedor.appendChild(detalle);
         }
 

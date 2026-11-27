@@ -539,6 +539,15 @@ contenedor-ui {
     font-size: 0.8125rem;
 }
 
+.popup-clasificaciones {
+    display: grid;
+    gap: 0.2rem;
+    margin: 0.5rem 0;
+    padding-left: 1rem;
+    font-size: 0.75rem;
+    line-height: 1.35;
+}
+
 .popup-autor {
     color: var(--sobre-superficie-variante);
 }

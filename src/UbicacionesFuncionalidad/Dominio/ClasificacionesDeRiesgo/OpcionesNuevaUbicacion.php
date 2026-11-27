@@ -59,7 +59,7 @@ enum OpcionesNuevaUbicacion: string
             ],
 
             self::RIESGOS_INDIRECTOS => [
-                'acumulacion_deaguas_estancadas',
+                'acumulacion_de_aguas_estancadas',
                 'acumulacion_o_vertedero_de_residuos_o_basura',
                 'acumulacion_o_vertedero_de_escombros',
                 'proliferacion_plagas',
