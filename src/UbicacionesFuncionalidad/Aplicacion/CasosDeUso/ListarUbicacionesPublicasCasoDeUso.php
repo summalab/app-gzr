@@ -29,6 +29,12 @@ class ListarUbicacionesPublicasCasoDeUso
                     'latitud'       => $u->obtenerLatitud(),
                     'longitud'      => $u->obtenerLongitud(),
                     'apodo_usuario' => $u->obtenerApodoAutor(),
+                    'tipo_infraestructura' => $u->obtenerTipoInfraestructura(),
+                    'estado_infraestructura' => $u->obtenerEstadoInfraestructura(),
+                    'riesgos_directos' => $u->obtenerRiesgosDirectos(),
+                    'riesgos_indirectos' => $u->obtenerRiesgosIndirectos(),
+                    'actividades_delictivas' => $u->obtenerActividadesDelictivas(),
+                    'condiciones_sociales' => $u->obtenerCondicionesSociales(),
                 ],
                 $entidades
             );

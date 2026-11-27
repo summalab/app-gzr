@@ -13,13 +13,14 @@ export class UbicacionUseCases {
         return this.ubicacionGateway.listarPropias();
     }
 
-    crear(titulo, descripcion, latitud, longitud) {
+    crear(titulo, descripcion, latitud, longitud, clasificaciones) {
         const coordenadas = new Coordenadas(latitud, longitud);
         return this.ubicacionGateway.crear(
             titulo.trim(),
-            descripcion.trim(),
+            descripcion?.trim() || 'sin descripción',
             coordenadas.latitud,
-            coordenadas.longitud
+            coordenadas.longitud,
+            clasificaciones
         );
     }
 

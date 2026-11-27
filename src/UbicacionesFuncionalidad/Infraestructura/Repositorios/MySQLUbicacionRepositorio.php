@@ -22,6 +22,12 @@ class MySQLUbicacionRepositorio implements UbicacionRepositorioInterface
             'descripcion'   => $ubicacion->obtenerDescripcion(),
             'latitud'       => $ubicacion->obtenerLatitud(),
             'longitud'      => $ubicacion->obtenerLongitud(),
+            'tipo_infraestructura' => $ubicacion->obtenerTipoInfraestructura(),
+            'estado_infraestructura' => $ubicacion->obtenerEstadoInfraestructura(),
+            'riesgos_directos' => $ubicacion->obtenerRiesgosDirectos(),
+            'riesgos_indirectos' => $ubicacion->obtenerRiesgosIndirectos(),
+            'actividades_delictivas' => $ubicacion->obtenerActividadesDelictivas(),
+            'condiciones_sociales' => $ubicacion->obtenerCondicionesSociales(),
         ];
 
         $idCreado = $this->mUbicacionDao->insertar($data);
@@ -33,6 +39,12 @@ class MySQLUbicacionRepositorio implements UbicacionRepositorioInterface
             descripcion: $ubicacion->obtenerDescripcion(),
             latitud: $ubicacion->obtenerLatitud(),
             longitud: $ubicacion->obtenerLongitud(),
+            tipo_infraestructura: $ubicacion->obtenerTipoInfraestructura(),
+            estado_infraestructura: $ubicacion->obtenerEstadoInfraestructura(),
+            riesgos_directos: $ubicacion->obtenerRiesgosDirectos(),
+            riesgos_indirectos: $ubicacion->obtenerRiesgosIndirectos(),
+            actividades_delictivas: $ubicacion->obtenerActividadesDelictivas(),
+            condiciones_sociales: $ubicacion->obtenerCondicionesSociales(),
             apodo_autor: $ubicacion->obtenerApodoAutor()
         );
     }
@@ -85,6 +97,12 @@ class MySQLUbicacionRepositorio implements UbicacionRepositorioInterface
             descripcion: isset($row['descripcion']) ? (string)$row['descripcion'] : null,
             latitud: (float)$row['latitud'],
             longitud: (float)$row['longitud'],
+            tipo_infraestructura: (string)$row['tipo_infraestructura'],
+            estado_infraestructura: (string)$row['estado_infraestructura'],
+            riesgos_directos: (string)$row['riesgos_directos'],
+            riesgos_indirectos: (string)$row['riesgos_indirectos'],
+            actividades_delictivas: (string)$row['actividades_delictivas'],
+            condiciones_sociales: (string)$row['condiciones_sociales'],
             apodo_autor: isset($row['apodo_usuario']) ? (string)$row['apodo_usuario'] : null
         );
     }

@@ -10,6 +10,7 @@ use Throwable;
 use UbicacionesFuncionalidad\Aplicacion\DTOs\CrearUbicacionEntradaDTO;
 use UbicacionesFuncionalidad\Dominio\Entidades\UbicacionEntidad;
 use UbicacionesFuncionalidad\Dominio\Repositorios\UbicacionRepositorioInterface;
+use UbicacionesFuncionalidad\Dominio\ClasificacionesDeRiesgo\OpcionesNuevaUbicacion;
 use Shared\Dominio\Servicios\AutorizadorInterface;
 use Shared\Dominio\Servicios\CatalogoMensajesInterface;
 
@@ -27,19 +28,25 @@ class CrearUbicacionCasoDeUso
 
         // Validar que el usuario esté autenticado y autorizado
         $tituloLimpio = trim($dto->titulo);
-        $descripcionLimpia = $dto->descripcion !== null ? trim($dto->descripcion) : null;
-
-        if ($descripcionLimpia === null || mb_strlen($descripcionLimpia) < 15) {
-            $descripcionLimpia = null;
-        }
+        $descripcionLimpia = UbicacionEntidad::normalizarDescripcion($dto->descripcion);
 
         // 1. Regla de calidad de contenido (evita títulos basura como "111" o "aaa")
         if (mb_strlen($tituloLimpio) < 5 || !preg_match('/[a-zA-ZáéíóúÁÉÍÓÚñÑ]{3,}/', $tituloLimpio)) {
             throw new InvalidArgumentException($this->mensajes->obtener('ubicacion.titulo_invalido', ['minimo' => 5]));
         }
 
-        if ($descripcionLimpia === null || mb_strlen($descripcionLimpia) < 15) {
-            throw new InvalidArgumentException($this->mensajes->obtener('ubicacion.descripcion_corta', ['minimo' => 15]));
+        foreach (OpcionesNuevaUbicacion::cases() as $opcion) {
+            $valor = match ($opcion) {
+                OpcionesNuevaUbicacion::TIPO_INFRAESTRUCTURA => $dto->tipo_infraestructura,
+                OpcionesNuevaUbicacion::ESTADO_INFRAESTRUCTURA => $dto->estado_infraestructura,
+                OpcionesNuevaUbicacion::RIESGOS_DIRECTOS => $dto->riesgos_directos,
+                OpcionesNuevaUbicacion::RIESGOS_INDIRECTOS => $dto->riesgos_indirectos,
+                OpcionesNuevaUbicacion::ACTIVIDADES_DELICTIVAS => $dto->actividades_delictivas,
+                OpcionesNuevaUbicacion::CONDICIONES_SOCIALES => $dto->condiciones_sociales,
+            };
+            if (!in_array(trim($valor), $opcion->clasificacionUbicacion(), true)) {
+                throw new InvalidArgumentException($this->mensajes->obtener('ubicacion.campos_obligatorios'));
+            }
         }
 
         // 2. Regla geográfica: Validar que esté dentro del radio autorizado alrededor de Pereira
@@ -56,7 +63,13 @@ class CrearUbicacionCasoDeUso
                 titulo: $tituloLimpio,
                 descripcion: $descripcionLimpia,
                 latitud: $dto->latitud,
-                longitud: $dto->longitud
+                longitud: $dto->longitud,
+                tipo_infraestructura: $dto->tipo_infraestructura,
+                estado_infraestructura: $dto->estado_infraestructura,
+                riesgos_directos: $dto->riesgos_directos,
+                riesgos_indirectos: $dto->riesgos_indirectos,
+                actividades_delictivas: $dto->actividades_delictivas,
+                condiciones_sociales: $dto->condiciones_sociales
             );
 
             $ubicacionGuardada = $this->mUbicacionRepositorio->guardar($ubicacionEntidad);
@@ -67,6 +80,12 @@ class CrearUbicacionCasoDeUso
                 'descripcion'  => $ubicacionGuardada->obtenerDescripcion(),
                 'latitud'      => $ubicacionGuardada->obtenerLatitud(),
                 'longitud'     => $ubicacionGuardada->obtenerLongitud(),
+                'tipo_infraestructura' => $ubicacionGuardada->obtenerTipoInfraestructura(),
+                'estado_infraestructura' => $ubicacionGuardada->obtenerEstadoInfraestructura(),
+                'riesgos_directos' => $ubicacionGuardada->obtenerRiesgosDirectos(),
+                'riesgos_indirectos' => $ubicacionGuardada->obtenerRiesgosIndirectos(),
+                'actividades_delictivas' => $ubicacionGuardada->obtenerActividadesDelictivas(),
+                'condiciones_sociales' => $ubicacionGuardada->obtenerCondicionesSociales(),
             ];
 
         } catch (InvalidArgumentException $reglaExcepcion) {

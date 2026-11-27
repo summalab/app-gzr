@@ -45,7 +45,7 @@ return [
         'eliminada_exito'      => 'Ubicación eliminada correctamente.',
         'no_encontrada'        => 'La ubicación solicitada no existe o no tienes permiso para modificarla.',
         'fuera_de_pais'        => 'Ubicación fuera de zona: el punto debe estar dentro del territorio de Colombia.',
-        'campos_obligatorios'  => 'El título, la latitud y la longitud son obligatorios y deben tener formato válido.',
+        'campos_obligatorios'  => 'Todos los campos de clasificación, el título, la latitud y la longitud son obligatorios.',
         'identificador_invalido'=> 'El identificador de la ubicación no es válido.',
         'usuario_propietario_invalido'=>'El identificador del usuario propietario no es válido.',
         'titulo_vacio'=>'El título de la ubicación no puede estar vacío.',

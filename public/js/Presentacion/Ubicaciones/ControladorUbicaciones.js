@@ -153,7 +153,15 @@ export class ControladorUbicaciones {
             this.vista.valorCampo(formulario, 'titulo'),
             this.vista.valorCampo(formulario, 'descripcion'),
             latitud,
-            longitud
+            longitud,
+            {
+                tipo_infraestructura: this.vista.valorCampo(formulario, 'tipo_infraestructura'),
+                estado_infraestructura: this.vista.valorCampo(formulario, 'estado_infraestructura'),
+                riesgos_directos: this.vista.valorCampo(formulario, 'riesgos_directos'),
+                riesgos_indirectos: this.vista.valorCampo(formulario, 'riesgos_indirectos'),
+                actividades_delictivas: this.vista.valorCampo(formulario, 'actividades_delictivas'),
+                condiciones_sociales: this.vista.valorCampo(formulario, 'condiciones_sociales')
+            }
         );
         formulario.reset();
         this.vista.cerrarModal('modal-nueva-ubicacion');

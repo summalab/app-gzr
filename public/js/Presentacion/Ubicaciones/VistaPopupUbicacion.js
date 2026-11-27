@@ -17,6 +17,22 @@ export class VistaPopupUbicacion {
             contenedor.appendChild(descripcion);
         }
 
+        const clasificaciones = [
+            ubicacion.tipo_infraestructura,
+            ubicacion.estado_infraestructura,
+            ubicacion.riesgos_directos,
+            ubicacion.riesgos_indirectos,
+            ubicacion.actividades_delictivas,
+            ubicacion.condiciones_sociales
+        ].filter(Boolean);
+
+        if (clasificaciones.length > 0) {
+            const detalle = document.createElement('small');
+            detalle.className = 'popup-clasificaciones';
+            detalle.textContent = clasificaciones.join(' | ');
+            contenedor.appendChild(detalle);
+        }
+
         if (mostrarAutor && ubicacion.apodo_usuario) {
             const autor = document.createElement('small');
             autor.className = 'popup-autor';

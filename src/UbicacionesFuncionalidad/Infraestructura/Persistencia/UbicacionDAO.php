@@ -18,8 +18,16 @@ class UbicacionDAO
     public function insertar(array $data): int
     {
         $stmt = $this->db->prepare('
-            INSERT INTO ubicaciones (fk_id_usuario, titulo, descripcion, latitud, longitud)
-            VALUES (:fk_id_usuario, :titulo, :descripcion, :latitud, :longitud)
+            INSERT INTO ubicaciones (
+                fk_id_usuario, titulo, descripcion, latitud, longitud,
+                tipo_infraestructura, estado_infraestructura, riesgos_directos,
+                riesgos_indirectos, actividades_delictivas, condiciones_sociales
+            )
+            VALUES (
+                :fk_id_usuario, :titulo, :descripcion, :latitud, :longitud,
+                :tipo_infraestructura, :estado_infraestructura, :riesgos_directos,
+                :riesgos_indirectos, :actividades_delictivas, :condiciones_sociales
+            )
         ');
 
         $stmt->execute([
@@ -28,6 +36,12 @@ class UbicacionDAO
             ':descripcion'   => $data['descripcion'],
             ':latitud'       => $data['latitud'],
             ':longitud'      => $data['longitud'],
+            ':tipo_infraestructura' => $data['tipo_infraestructura'],
+            ':estado_infraestructura' => $data['estado_infraestructura'],
+            ':riesgos_directos' => $data['riesgos_directos'],
+            ':riesgos_indirectos' => $data['riesgos_indirectos'],
+            ':actividades_delictivas' => $data['actividades_delictivas'],
+            ':condiciones_sociales' => $data['condiciones_sociales'],
         ]);
 
         return (int)$this->db->lastInsertId();
@@ -39,7 +53,9 @@ class UbicacionDAO
     public function encontrarPorId(int $pk_id_ubicacion): ?array
     {
         $stmt = $this->db->prepare('
-            SELECT pk_id_ubicacion, fk_id_usuario, titulo, descripcion, latitud, longitud
+            SELECT pk_id_ubicacion, fk_id_usuario, titulo, descripcion, latitud, longitud,
+                   tipo_infraestructura, estado_infraestructura, riesgos_directos,
+                   riesgos_indirectos, actividades_delictivas, condiciones_sociales
             FROM ubicaciones
             WHERE pk_id_ubicacion = :pk_id_ubicacion
               AND fecha_eliminacion IS NULL
@@ -65,6 +81,12 @@ class UbicacionDAO
                 u.descripcion,
                 u.latitud,
                 u.longitud,
+                u.tipo_infraestructura,
+                u.estado_infraestructura,
+                u.riesgos_directos,
+                u.riesgos_indirectos,
+                u.actividades_delictivas,
+                u.condiciones_sociales,
                 usr.apodo_usuario
             FROM ubicaciones u
             INNER JOIN usuarios usr ON u.fk_id_usuario = usr.pk_id_usuario
@@ -88,7 +110,13 @@ class UbicacionDAO
                 titulo,
                 descripcion,
                 latitud,
-                longitud
+                longitud,
+                tipo_infraestructura,
+                estado_infraestructura,
+                riesgos_directos,
+                riesgos_indirectos,
+                actividades_delictivas,
+                condiciones_sociales
             FROM ubicaciones
             WHERE fk_id_usuario = :fk_id_usuario
               AND fecha_eliminacion IS NULL

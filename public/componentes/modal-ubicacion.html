@@ -12,16 +12,6 @@
 -->
     <form id="formulario-nueva-ubicacion">
         <div class="alerta-modal" role="alert" aria-live="polite"></div>
-        <contenedor-ui id="grupo-ubicacion-titulo" class="grupo-campo">
-            <label for="ubicacion-titulo">Título del lugar *</label>
-            <input type="text" id="ubicacion-titulo" name="titulo" maxlength="120" required
-                placeholder="Ej. Edificio del Valle">
-        </contenedor-ui>
-        <contenedor-ui id="grupo-ubicacion-descripcion" class="grupo-campo">
-            <label for="ubicacion-descripcion">Descripción *</label>
-            <input type="text" id="ubicacion-descripcion" name="descripcion" minlength="15" required
-                placeholder="Explica qué hace relevante este sitio (mín. 15 caracteres)">
-        </contenedor-ui>
         <contenedor-ui class="grupo-campo">
             <label for="ubicacion-latitud" id="label-ubicacion-latitud">Latitud:</label>
             <input type="hidden" id="ubicacion-latitud" name="latitud" step="any" min="-90" max="90" required readonly>
@@ -30,6 +20,106 @@
             <label for="ubicacion-longitud" id="label-ubicacion-longitud">Longitud:</label>
             <input type="hidden" id="ubicacion-longitud" name="longitud" step="any" min="-180" max="180" required readonly>
         </contenedor-ui>
+        <contenedor-ui id="grupo-ubicacion-titulo" class="grupo-campo">
+            <label for="ubicacion-titulo">Título del lugar *</label>
+            <input type="text" id="ubicacion-titulo" name="titulo" maxlength="120" required
+                placeholder="Ej. Edificio del Valle">
+        </contenedor-ui>
+
+        <contenedor-ui class="grupo-campo">
+            <label for="tipo_infraestructura">Tipo de infraestructura *</label>
+            <select id="tipo_infraestructura" name="tipo_infraestructura" required>
+                <option value="" selected disabled>Seleccione una opción</option>
+                <option value="vivienda_unifamiliar">Vivienda unifamiliar</option>
+                <option value="edificio_residencial_multifamiliar">Edificio residencial multifamiliar</option>
+                <option value="edificio_gubernamental">Edificio gubernamental</option>
+                <option value="centro_comercial">Centro comercial</option>
+                <option value="local_comercial">Local comercial</option>
+                <option value="lugar_de_culto_religioso">Lugar de culto religioso</option>
+                <option value="institucion_educativa">Institución educativa</option>
+                <option value="hospital_o_centro_de_salud">Hospital o centro de salud</option>
+                <option value="bodega_industrial">Bodega industrial</option>
+                <option value="parqueadero_multinivel">Parqueadero multinivel</option>
+                <option value="centro_cultural_o_deportivo">Centro cultural o deportivo</option>
+                <option value="puente_peatonal">Puente peatonal</option>
+                <option value="puente_vehicular">Puente vehicular</option>
+                <option value="otro">Otro</option>
+            </select>
+        </contenedor-ui>
+
+        <contenedor-ui class="grupo-campo">
+            <label for="estado_infraestructura">Estado de la infraestructura *</label>
+            <select id="estado_infraestructura" name="estado_infraestructura" required>
+                <option value="" selected disabled>Seleccione una opción</option>
+                <option value="en_pie_con_afectaciones_parcial">En pie con afectaciones parcial</option>
+                <option value="en_pie_con_afectaciones_estructurales_graves">En pie con afectaciones estructurales graves</option>
+                <option value="totalmente_colapsada">Totalmente colapsada</option>
+                <option value="en_proceso_de_demolicion">En proceso de demolición</option>
+                <option value="en_proceso_de_reconstruccion">En proceso de reconstrucción</option>
+            </select>
+        </contenedor-ui>
+
+        <contenedor-ui class="grupo-campo">
+            <label for="riesgos_directos">Riesgos directos *</label>
+            <select id="riesgos_directos" name="riesgos_directos" required>
+                <option value="" selected disabled>Seleccione una opción</option>
+                <option value="desprendimiento_de_muros">Desprendimiento de muros</option>
+                <option value="desprendimiento_de_cubiertas_o_techos">Desprendimiento de cubiertas o techos</option>
+                <option value="desprendimiento_de_fachadas">Desprendimiento de fachadas</option>
+                <option value="desprendimiento_de_ventanas_o_vidrios">Desprendimiento de ventanas o vidrios</option>
+                <option value="riesgo_electrico_o_cables_expuestos">Riesgo eléctrico o cables expuestos</option>
+                <option value="tuberias_de_gas_expuestas">Tuberías de gas expuestas</option>
+                <option value="todas_los_anteriores">Todas las anteriores</option>
+                <option value="ninguno">Ninguno</option>
+            </select>
+        </contenedor-ui>
+
+        <contenedor-ui class="grupo-campo">
+            <label for="riesgos_indirectos">Riesgos indirectos *</label>
+            <select id="riesgos_indirectos" name="riesgos_indirectos" required>
+                <option value="" selected disabled>Seleccione una opción</option>
+                <option value="acumulacion_deaguas_estancadas">Acumulación de aguas estancadas</option>
+                <option value="acumulacion_o_vertedero_de_residuos_o_basura">Acumulación o vertedero de residuos o basura</option>
+                <option value="acumulacion_o_vertedero_de_escombros">Acumulación o vertedero de escombros</option>
+                <option value="proliferacion_plagas">Proliferación de plagas</option>
+                <option value="todas_las_anteriores">Todas las anteriores</option>
+                <option value="ninguno">Ninguno</option>
+            </select>
+        </contenedor-ui>
+
+        <contenedor-ui class="grupo-campo">
+            <label for="actividades_delictivas">Actividades delictivas *</label>
+            <select id="actividades_delictivas" name="actividades_delictivas" required>
+                <option value="" selected disabled>Seleccione una opción</option>
+                <option value="expendio_de_sustancias_ilicitas">Expendio de sustancias ilícitas</option>
+                <option value="comercio_informal_no_autorizado_dentro_o_fuera_de_los_bienes_afectados">Comercio informal no autorizado dentro o fuera de los bienes afectados</option>
+                <option value="intimidacion_o_extorsion_a_residentes_de_la_zona">Intimidación o extorsión a residentes de la zona</option>
+                <option value="vandalismo_o_hurto_a_infraestructura_o_bienes_afectados">Vandalismo o hurto a infraestructura o bienes afectados</option>
+                <option value="vandalismo_o_hurto_a_infraestructura_o_bienes_no_afectados">Vandalismo o hurto a infraestructura o bienes no afectados</option>
+                <option value="hurto_a_personas">Hurto a personas</option>
+                <option value="todas_las_anteriores">Todas las anteriores</option>
+                <option value="ninguna">Ninguna</option>
+            </select>
+        </contenedor-ui>
+        <contenedor-ui class="grupo-campo">
+            <label for="condiciones_sociales">Condiciones sociales *</label>
+            <select id="condiciones_sociales" name="condiciones_sociales" required>
+                <option value="" selected disabled>Seleccione una opción</option>
+                <option value="ocupacion_de_bienes_afectados_por_habitantes_de_calle">Ocupación de bienes afectados por habitantes de calle</option>
+                <option value="aumento_del_transito_o_permanencia_temporal_por_habitantes_de_calle">Aumento del tránsito o permanencia temporal por habitantes de calle</option>
+                <option value="consumo_de_sustancias_psicoactivas">Consumo de sustancias psicoactivas</option>
+                <option value="uso_de_bienes_afectados_como_bano_publico">Uso de bienes afectados como baño público</option>
+                <option value="todas_las_anteriores">Todas las anteriores</option>
+                <option value="ninguna">Ninguna</option>
+            </select>
+        </contenedor-ui>
+
+        <contenedor-ui id="grupo-ubicacion-descripcion" class="grupo-campo">
+            <label for="ubicacion-descripcion">Descripción</label>
+            <input type="text" id="ubicacion-descripcion" name="descripcion" minlength="7" maxlength="250"
+                value="sin descripción" placeholder="Explica qué hace relevante este sitio (mín. 7 caracteres)">
+        </contenedor-ui>
+
         <boton-ui id="boton-guardar-ubicacion-gps" tipo="submit" variante="principal" ancho="completo">Guardar en el mapa</boton-ui>
     </form>
 </modal-ui>

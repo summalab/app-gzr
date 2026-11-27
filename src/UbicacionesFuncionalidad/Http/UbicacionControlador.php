@@ -104,8 +104,24 @@ class UbicacionControlador
             $descripcion = isset($_POST['descripcion']) ? (string)$_POST['descripcion'] : null;
             $latitudRaw  = $_POST['latitud'] ?? null;
             $longitudRaw = $_POST['longitud'] ?? null;
+            $tipoInfraestructura = trim((string)($_POST['tipo_infraestructura'] ?? ''));
+            $estadoInfraestructura = trim((string)($_POST['estado_infraestructura'] ?? ''));
+            $riesgosDirectos = trim((string)($_POST['riesgos_directos'] ?? ''));
+            $riesgosIndirectos = trim((string)($_POST['riesgos_indirectos'] ?? ''));
+            $actividadesDelictivas = trim((string)($_POST['actividades_delictivas'] ?? ''));
+            $condicionesSociales = trim((string)($_POST['condiciones_sociales'] ?? ''));
 
-            if (trim($titulo) === '' || !is_numeric($latitudRaw) || !is_numeric($longitudRaw)) {
+            if (
+                trim($titulo) === ''
+                || !is_numeric($latitudRaw)
+                || !is_numeric($longitudRaw)
+                || $tipoInfraestructura === ''
+                || $estadoInfraestructura === ''
+                || $riesgosDirectos === ''
+                || $riesgosIndirectos === ''
+                || $actividadesDelictivas === ''
+                || $condicionesSociales === ''
+            ) {
                 $this->responderJson(400, [
                     'success' => false,
                     'error'   => $this->mensajes->obtener('ubicacion.campos_obligatorios')
@@ -118,7 +134,13 @@ class UbicacionControlador
                 titulo: $titulo,
                 descripcion: $descripcion,
                 latitud: (float)$latitudRaw,
-                longitud: (float)$longitudRaw
+                longitud: (float)$longitudRaw,
+                tipo_infraestructura: $tipoInfraestructura,
+                estado_infraestructura: $estadoInfraestructura,
+                riesgos_directos: $riesgosDirectos,
+                riesgos_indirectos: $riesgosIndirectos,
+                actividades_delictivas: $actividadesDelictivas,
+                condiciones_sociales: $condicionesSociales
             );
 
             $ubicacionCreada = $this->mCrearUbicacionCasoDeUso->execute($dto);
